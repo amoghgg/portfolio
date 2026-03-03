@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amogh Bajpai | Applied AI Engineer</title>
+    <title>Amogh Bajpai | Creative Technologist & Applied ML Engineer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
@@ -14,86 +15,168 @@
             color: #1a1a1a;
             font-family: "Inter", sans-serif;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
         }
         .reveal {
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s ease-out;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.215, 0.61, 0.355, 1);
         }
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
+        .status-ticker {
+            font-family: monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+        }
     </style>
 </head>
 <body class="selection:bg-black selection:text-white">
-    <main class="min-h-screen px-6 py-12 md:px-20 md:py-24 max-w-7xl mx-auto">
-        <header class="mb-32">
-            <h1 class="text-7xl md:text-[12rem] font-black mb-8 uppercase leading-[0.85] tracking-tighter">
+
+    <div id="canvas-container"></div>
+
+    <main class="relative min-h-screen px-6 py-12 md:px-20 md:py-24 max-w-7xl mx-auto">
+        
+        <div class="fixed top-6 right-6 md:right-20 status-ticker opacity-40 uppercase hidden md:block">
+            [AI_AUDITOR: ACTIVE] | [SYSTEM_HEALTH: 100%] | [LOC: 28.61N, 77.20E]
+        </div>
+
+        <header class="mb-48 mt-20">
+            <h1 class="text-7xl md:text-[13rem] font-black mb-12 uppercase leading-[0.8] tracking-tighter">
                 Amogh <br> Bajpai
             </h1>
-            <nav class="flex gap-8 text-xl font-semibold lowercase tracking-tight">
-                <a href="#work" class="hover:line-through transition-all underline decoration-1 underline-offset-4">Work</a>
-                <a href="#about" class="hover:line-through transition-all underline decoration-1 underline-offset-4">About</a>
-                <a href="#contact" class="hover:line-through transition-all underline decoration-1 underline-offset-4">Contact</a>
+            <nav class="flex gap-12 text-xl font-semibold lowercase tracking-tight">
+                <a href="#work" class="hover:line-through transition-all underline decoration-1 underline-offset-8">Work</a>
+                <a href="#about" class="hover:line-through transition-all underline decoration-1 underline-offset-8">Philosophy</a>
+                <a href="#contact" class="hover:line-through transition-all underline decoration-1 underline-offset-8">Contact</a>
             </nav>
         </header>
 
         <section id="work">
-            <div class="space-y-48">
-                <div class="reveal group cursor-pointer border-t border-black/10 pt-8">
-                    <p class="text-sm uppercase mb-6 opacity-50 font-bold tracking-widest">Applied AI / Enterprise</p>
-                    <h2 class="text-5xl md:text-8xl font-black mb-6 group-hover:italic transition-all uppercase leading-tight tracking-tighter">
-                        AI Data <br> Advisory Portal
+            <div class="space-y-64">
+                <div class="reveal group cursor-pointer border-t border-black/10 pt-12">
+                    <p class="text-xs uppercase mb-6 opacity-50 font-bold tracking-[0.3em]">01 / Applied AI</p>
+                    <h2 class="text-5xl md:text-9xl font-black mb-8 group-hover:italic transition-all uppercase leading-[0.85] tracking-tighter">
+                        AI Data <br> Advisory
                     </h2>
-                    <p class="text-2xl md:text-3xl max-w-3xl leading-snug opacity-80 font-medium tracking-tight">
-                        Built an intelligent auditing system for mission-critical exam data, using LLMs to detect logic anomalies in real-time.
+                    <p class="text-2xl md:text-4xl max-w-4xl leading-tight opacity-80 font-medium tracking-tight">
+                        Orchestrating LLMs to perform real-time logic audits on mission-critical biometric data at scale.
                     </p>
                 </div>
 
-                <div class="reveal group cursor-pointer border-t border-black/10 pt-8">
-                    <p class="text-sm uppercase mb-6 opacity-50 font-bold tracking-widest">Architecture / Scale</p>
-                    <h2 class="text-5xl md:text-8xl font-black mb-6 group-hover:italic transition-all uppercase leading-tight tracking-tighter">
-                        High-Integrity <br> Sync Engine
+                <div class="reveal group cursor-pointer border-t border-black/10 pt-12">
+                    <p class="text-xs uppercase mb-6 opacity-50 font-bold tracking-[0.3em]">02 / Systems Architecture</p>
+                    <h2 class="text-5xl md:text-9xl font-black mb-8 group-hover:italic transition-all uppercase leading-[0.85] tracking-tighter">
+                        Integrity <br> Engine
                     </h2>
-                    <p class="text-2xl md:text-3xl max-w-3xl leading-snug opacity-80 font-medium tracking-tight">
-                        Architected a recursive pagination system to defeat unstable external APIs, ensuring 100% data fidelity for 10k+ records.
+                    <p class="text-2xl md:text-4xl max-w-4xl leading-tight opacity-80 font-medium tracking-tight">
+                        Architecting recursive data-flow systems to ensure 100% fidelity across unstable API environments.
                     </p>
                 </div>
 
-                <div class="reveal group cursor-pointer border-t border-black/10 pt-8">
-                    <p class="text-sm uppercase mb-6 opacity-50 font-bold tracking-widest">AI Infrastructure</p>
-                    <h2 class="text-5xl md:text-8xl font-black mb-6 group-hover:italic transition-all uppercase leading-tight tracking-tighter">
-                        MCP Intelligence <br> Bridge
+                <div class="reveal group cursor-pointer border-t border-black/10 pt-12">
+                    <p class="text-xs uppercase mb-6 opacity-50 font-bold tracking-[0.3em]">03 / AI Infrastructure</p>
+                    <h2 class="text-5xl md:text-9xl font-black mb-8 group-hover:italic transition-all uppercase leading-[0.85] tracking-tighter">
+                        MCP <br> Bridge
                     </h2>
-                    <p class="text-2xl md:text-3xl max-w-3xl leading-snug opacity-80 font-medium tracking-tight">
-                        Developed a universal Model Context Protocol server for direct database orchestration via AI agents.
+                    <p class="text-2xl md:text-4xl max-w-4xl leading-tight opacity-80 font-medium tracking-tight">
+                        Universal Model Context Protocol implementation for autonomous database orchestration.
                     </p>
                 </div>
             </div>
         </section>
 
-        <footer class="mt-64 pt-12 border-t-2 border-black">
-            <div class="flex flex-col md:flex-row justify-between gap-8 items-start">
-                <p class="text-2xl font-bold uppercase tracking-tighter italic">Applied AI Engineer</p>
-                <div class="flex gap-12 font-bold uppercase text-sm">
-                    <a href="mailto:hi@amoghbajpai.com" class="hover:italic">Email</a>
-                    <a href="#" class="hover:italic">GitHub</a>
-                    <a href="#" class="hover:italic">LinkedIn</a>
+        <footer class="mt-96 pb-20 border-t-2 border-black pt-12" id="contact">
+            <div class="flex flex-col md:flex-row justify-between gap-12 items-start">
+                <div>
+                    <p class="text-3xl font-black uppercase tracking-tighter italic leading-none">Creative <br> Technologist</p>
+                </div>
+                <div class="flex flex-wrap gap-x-16 gap-y-4 font-black uppercase text-sm tracking-widest">
+                    <a href="mailto:hi@amoghbajpai.com" class="hover:line-through">Email</a>
+                    <a href="https://github.com/amoghgg" class="hover:line-through">GitHub</a>
+                    <a href="#" class="hover:line-through">LinkedIn</a>
                 </div>
             </div>
-            <p class="mt-20 opacity-40 text-xs font-bold uppercase">© 2026 Amogh Bajpai. Designed for performance.</p>
+            <p class="mt-32 opacity-30 text-[10px] font-bold uppercase tracking-[0.2em]">© 2026 Amogh Bajpai. Designed for scale.</p>
         </footer>
     </main>
 
     <script>
+        let scene, camera, renderer, points;
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            for (let i = 0; i < 4000; i++) {
+                vertices.push(
+                    Math.random() * 10 - 5,
+                    Math.random() * 10 - 5,
+                    Math.random() * 6 - 3
+                );
+            }
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            
+            const material = new THREE.PointsMaterial({ 
+                color: 0x1a1a1a, 
+                size: 0.012,
+                transparent: true,
+                opacity: 0.3
+            });
+
+            points = new THREE.Points(geometry, material);
+            scene.add(points);
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - window.innerWidth / 2) / 100;
+                mouseY = (e.clientY - window.innerHeight / 2) / 100;
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                targetX += (mouseX - targetX) * 0.05;
+                targetY += (mouseY - targetY) * 0.05;
+                points.rotation.y += 0.0005;
+                points.rotation.x = targetY * 0.1;
+                points.rotation.y += targetX * 0.1;
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        init();
+
         function reveal() {
             var reveals = document.querySelectorAll(".reveal");
             for (var i = 0; i < reveals.length; i++) {
                 var windowHeight = window.innerHeight;
                 var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 150;
-                if (elementTop < windowHeight - elementVisible) {
+                if (elementTop < windowHeight - 100) {
                     reveals[i].classList.add("active");
                 }
             }
