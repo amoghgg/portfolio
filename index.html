@@ -261,6 +261,30 @@
         </footer>
     </main>
 
+    <script>
+        // Critical Loader Logic - Separated from Module for reliability
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.0_ready"];
+        let textIdx = 0;
+        const loaderInterval = setInterval(() => {
+            const el = document.getElementById('loader-text');
+            if (el) el.innerText = loaderTexts[Math.min(textIdx++, loaderTexts.length - 1)];
+            if(textIdx >= loaderTexts.length + 1) {
+                clearInterval(loaderInterval);
+                const loader = document.getElementById('loader');
+                const main = document.getElementById('main-content');
+                if (window.gsap) {
+                    gsap.to(loader, { opacity: 0, duration: 1.2, delay: 0.5, onComplete: () => {
+                        loader.style.display = 'none';
+                        gsap.to(main, { opacity: 1, duration: 2 });
+                    }});
+                } else {
+                    loader.style.display = 'none';
+                    main.style.opacity = 1;
+                }
+            }
+        }, 600);
+    </script>
+
     <script type="module">
         import { FaceLandmarker, FilesetResolver } from "https://cdn.skypack.dev/@mediapipe/tasks-vision@0.10.3";
         import { GLTFLoader } from "https://cdn.skypack.dev/three@0.158.0/examples/jsm/loaders/GLTFLoader.js";
@@ -363,19 +387,6 @@
         }
 
         initScene(); setupAI();
-
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.0_ready"];
-        let textIdx = 0;
-        const loaderInterval = setInterval(() => {
-            document.getElementById('loader-text').innerText = loaderTexts[textIdx++];
-            if(textIdx >= loaderTexts.length) {
-                clearInterval(loaderInterval);
-                gsap.to("#loader", { opacity: 0, duration: 1.2, delay: 0.5, onComplete: () => {
-                    document.getElementById('loader').style.display = 'none';
-                    gsap.to("#main-content", { opacity: 1, duration: 2 });
-                }});
-            }
-        }, 600);
 
         window.addEventListener("scroll", () => {
             const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
