@@ -173,13 +173,11 @@
     </main>
 
     <script>
-        // CURSOR
         const cursor = document.getElementById('cursor');
         document.addEventListener('mousemove', e => {
             gsap.to(cursor, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.1 });
         });
 
-        // LOADER
         const loaderTexts = ["initializing_perception_engine...", "loading_point_cloud...", "checking_database_integrity...", "amoghbajpai_v2.0_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
@@ -194,7 +192,6 @@
             }
         }, 400);
 
-        // THREE.JS
         let scene, camera, renderer, points;
         let mouseX = 0, mouseY = 0;
         let targetX = 0, targetY = 0;
@@ -211,35 +208,35 @@
 
             const geometry = new THREE.BufferGeometry();
             const vertices = [];
-            for (let i = 0; i < 5000; i++) {
-                vertices.push(Math.random() * 12 - 6, Math.random() * 12 - 6, Math.random() * 8 - 4);
+            // Concentrated architectural point cloud
+            for (let i = 0; i < 6000; i++) {
+                vertices.push(Math.random() * 10 - 5, Math.random() * 10 - 5, Math.random() * 4 - 2);
             }
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            const material = new THREE.PointsMaterial({ color: 0x1a1a1a, size: 0.01, transparent: true, opacity: 0.2 });
+            const material = new THREE.PointsMaterial({ color: 0x1a1a1a, size: 0.008, transparent: true, opacity: 0.15 });
             points = new THREE.Points(geometry, material);
             scene.add(points);
 
             window.addEventListener('mousemove', e => {
-                // Reduced sensitivity by 3x (was 100, now 300)
-                mouseX = (e.clientX - window.innerWidth / 2) / 300;
-                mouseY = (e.clientY - window.innerHeight / 2) / 300;
+                // High-precision mouse project (extremely low sensitivity for deliberate feel)
+                mouseX = (e.clientX - window.innerWidth / 2) / 1000;
+                mouseY = (e.clientY - window.innerHeight / 2) / 1000;
             });
 
-            window.addEventListener('scroll', () => {
-                scrollY = window.scrollY;
-            });
+            window.addEventListener('scroll', () => { scrollY = window.scrollY; });
 
             function animate() {
                 requestAnimationFrame(animate);
-                targetX += (mouseX - targetX) * 0.05;
-                targetY += (mouseY - targetY) * 0.05;
+                // Damping logic: much slower interpolation (0.02) for heavy, deliberate feel
+                targetX += (mouseX - targetX) * 0.02;
+                targetY += (mouseY - targetY) * 0.02;
                 
-                points.rotation.y += 0.0003;
-                points.rotation.x = targetY * 0.1; // Reduced rotation factor
-                points.rotation.y += targetX * 0.1; // Reduced rotation factor
+                // Absolute rotation limits (+/- 0.15 radians)
+                points.rotation.x = Math.max(-0.15, Math.min(0.15, targetY));
+                points.rotation.y = Math.max(-0.15, Math.min(0.15, targetX + (scrollY * 0.0001)));
                 
-                // Add scroll parallax: subtle vertical movement
-                points.position.y = scrollY * 0.002;
+                // Smooth vertical parallax strictly tied to scroll
+                points.position.y = scrollY * 0.001;
                 
                 renderer.render(scene, camera);
             }
@@ -247,7 +244,6 @@
         }
         init();
 
-        // SCROLL REVEAL
         function reveal() {
             var reveals = document.querySelectorAll(".reveal");
             reveals.forEach(r => {
