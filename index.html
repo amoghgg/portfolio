@@ -18,8 +18,8 @@
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
-        #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1); }
-        #cursor.active { width: 75px; height: 65px; background: rgba(26, 26, 26, 0.98); }
+        #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1); text-align: center; padding: 10px; overflow: hidden; }
+        #cursor.active { width: 85px; height: 75px; background: rgba(26, 26, 26, 0.98); }
         #cursor.active::after { content: attr(data-label); }
 
         #progress-bar { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); width: 1px; height: 100px; background: rgba(26, 26, 26, 0.1); z-index: 100; }
@@ -28,6 +28,7 @@
         #loader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
         #video-preview { position: fixed; bottom: 20px; left: 20px; width: 160px; height: 120px; border: 1px solid var(--dark); border-radius: 4px; z-index: 100; transform: scaleX(-1); display: none; background: #000; }
         .btn-ai { background: var(--dark); color: var(--lemon); padding: 14px 28px; border-radius: 2px; font-weight: bold; font-family: 'JetBrains Mono', monospace; transition: all 0.4s; border: none; cursor: pointer; }
+        .btn-ai:hover { background: #000; letter-spacing: 0.1em; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
         .grain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
@@ -36,6 +37,8 @@
 
         .status-pulse { animation: status-pulse 2s infinite; }
         @keyframes status-pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+        .glossary { cursor: help; border-bottom: 1px dotted var(--dark); }
 
         @media (max-width: 768px) { .hero-name { font-size: 4.5rem !important; line-height: 0.9 !important; } .status-ticker { display: none; } }
     </style>
@@ -53,8 +56,8 @@
 
     <main class="relative min-h-screen px-6 py-12 md:px-24 md:py-32 max-w-7xl mx-auto opacity-0" id="main-content">
         
-        <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker">
-            <span class="status-pulse text-green-600">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] | [DEPLOY: 2026.03]
+        <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
+            <span class="status-pulse text-green-600">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> [STREAM: SEMANTIC_MANIFOLDS]
         </div>
 
         <header class="mb-80 mt-20">
@@ -64,7 +67,7 @@
             </p>
             <nav class="flex flex-wrap gap-x-16 gap-y-4 text-lg font-bold lowercase tracking-tight">
                 <a href="#work" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="INDEX">Work</a>
-                <a href="#nexus" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="ABOUT">About</a>
+                <a href="#nexus" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="NEXUS">About</a>
                 <a href="#playground" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="LAB">Playground</a>
                 <a href="#contact" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="CONNECT">Contact</a>
             </nav>
@@ -83,34 +86,36 @@
                                 Real-time digital mimicry. Mapping 52 facial blendshapes to 3D morph targets on-device.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                A study in low-latency interaction. Using MediaPipe landmarks to drive Three.js influences at 60fps. Pure browser-native inference.
+                                GPU-accelerated facial inference. This experiment maps <span class="glossary hover-trigger" data-label="LANDMARKS">MediaPipe</span> landmarks directly to Three.js influences at 60fps. Pure browser-native perception.
                             </p>
                             <button id="activate-ai" class="btn-ai hover-trigger uppercase" data-label="START">[ Initialize_Mirror ]</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- PROJECT 02: SYNC ENGINE -->
+                <!-- PROJECT 02: BEHAVIORAL ANALYTICS -->
                 <div class="reveal border-t border-black/10 pt-16">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Architecture // Integrity</p>
+                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Infrastructure // Intelligence</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Recursive <br> Sync Engine</h2>
+                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Behavioral <br> Intelligence</h2>
                         <div class="pt-4 md:pt-16">
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                Architecting for 100% data fidelity in unstable API environments.
+                                A "nervous system" for detecting intent within live high-stakes monitoring.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Developed a self-healing synchronization loop to manage high-stakes biometric reporting. Integrated RAG pipelines for behavioral anomaly detection.
+                                Developed an anomaly detection system using <span class="glossary hover-trigger" data-label="RETRIEVAL">RAG</span> pipelines to analyze production logs. Optimized for real-time cheating detection in large-scale remote environments.
                             </p>
-                            <div class="border border-black/10 p-6 rounded bg-black/5 opacity-40 mono text-[8px] uppercase tracking-widest">
-                                <div class="mb-4">Sync_Flow // recursive_loop</div>
-                                <div class="flex items-center gap-4">
-                                    <div class="p-2 border border-black">API_POLL</div>
-                                    <span>→</span>
-                                    <div class="p-2 border border-black">LOOP_VALIDATE</div>
-                                    <span>→</span>
-                                    <div class="p-2 bg-black text-white italic">DB_VAULT</div>
-                                </div>
+                            <!-- Behavioral Analytics Diagram -->
+                            <div class="opacity-40 mt-8">
+                                <svg width="240" height="80" viewBox="0 0 240 80" fill="none">
+                                    <path d="M10 40H40M200 40H230" stroke="black" stroke-dasharray="2 2"/>
+                                    <rect x="40.5" y="20.5" width="50" height="40" rx="1" stroke="black"/>
+                                    <text x="48" y="42" fill="black" font-family="monospace" font-size="6">RAW_LOGS</text>
+                                    <path d="M91 40H110" stroke="black"/>
+                                    <rect x="110.5" y="10.5" width="90" height="60" rx="1" stroke="black" fill="black"/>
+                                    <text x="120" y="42" fill="white" font-family="monospace" font-size="6">RAG_ANALYZER</text>
+                                    <text x="120" y="52" fill="white" font-family="monospace" font-size="5" opacity="0.5">INTENT_VECTORS</text>
+                                </svg>
                             </div>
                         </div>
                     </div>
@@ -120,31 +125,14 @@
                 <div class="reveal border-t border-black/10 pt-16">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Precision</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Biometric <br> Precision</h2>
+                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Biometric <br> Alignment</h2>
                         <div class="pt-4 md:pt-16">
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                Converting standard web cameras into high-fidelity biometric sensors.
+                                Converting standard web cameras into high-precision biometric verification sensors.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Engineering a full-stack alignment system using OpenCV.js for real-time CLAHE enhancement. MediaPipe-driven detection gates validation load.
+                                Real-time <span class="glossary hover-trigger" data-label="CONTRAST">CLAHE</span> enhancement and alignment using <span class="glossary hover-trigger" data-label="VISION_LIB">OpenCV.js</span>. MediaPipe-driven detection gates validation loads.
                             </p>
-                            <!-- High-Fidelity Diagram -->
-                            <div class="opacity-40 mt-8">
-                                <svg width="240" height="80" viewBox="0 0 240 80" fill="none">
-                                    <rect x="0.5" y="30.5" width="45" height="20" rx="1" stroke="black" />
-                                    <text x="10" y="42" fill="black" font-family="monospace" font-size="6">RAW_IN</text>
-                                    <path d="M46 40H65" stroke="black" stroke-dasharray="2 2" />
-                                    <rect x="65.5" y="10.5" width="60" height="60" rx="1" stroke="black" />
-                                    <text x="75" y="42" fill="black" font-family="monospace" font-size="6">PRE_PROC</text>
-                                    <text x="75" y="52" fill="black" font-family="monospace" font-size="5" opacity="0.5">CLAHE + ALIGN</text>
-                                    <path d="M126 40H145" stroke="black" stroke-dasharray="2 2" />
-                                    <rect x="145.5" y="30.5" width="45" height="20" rx="1" stroke="black" />
-                                    <text x="155" y="42" fill="black" font-family="monospace" font-size="6">MP_GATE</text>
-                                    <path d="M191 40H210" stroke="black" stroke-dasharray="2 2" />
-                                    <circle cx="220" cy="40" r="10" stroke="black" fill="black" />
-                                    <text x="215" y="43" fill="white" font-family="monospace" font-size="6">VAULT</text>
-                                </svg>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -152,36 +140,36 @@
             </div>
         </section>
 
-        <!-- THE NEXUS / ABOUT -->
+        <!-- THE NEXUS / PHILOSOPHY -->
         <section id="nexus" class="mb-80 border-t-2 border-black pt-24">
             <div class="grid md:grid-cols-2 gap-24">
                 <div>
                     <h3 class="text-5xl font-black uppercase tracking-tighter mb-10 italic">The Nexus</h3>
                     <p class="text-2xl md:text-3xl leading-relaxed opacity-90 font-medium mb-12">
-                        I am an Applied ML Engineer and Creative Technologist navigating the intersection of infrastructure and human behavior.
+                        I am an Applied ML Engineer and Creative Technologist navigating the intersection of infrastructure and behavior.
                     </p>
                     <div class="space-y-8 text-lg opacity-70 leading-relaxed max-w-lg">
                         <p>
-                            My practice is rooted in the belief that software architecture is a form of dramaturgy. As a former Theatre Director, I manage systems like I manage stages—orchestrating agents, timing, and narrative intent to create seamless interaction.
+                            My practice is rooted in the belief that software architecture is a form of dramaturgy. As a former Theatre Director, I manage systems like I manage stages—orchestrating agents, timing, and narrative intent.
                         </p>
-                        <p>
-                            Whether I am architecting recursive API syncs for 10,000 centers or mapping real-time facial landmarks, the goal is to bridge the gap between technical rigor and human experience.
-                        </p>
+                        <div class="mt-8 p-6 border border-black/10 bg-black/[0.02]">
+                            <p class="mono text-[10px] uppercase mb-4 opacity-40 tracking-widest">Case Study: Blocking & Flow</p>
+                            <p class="text-sm italic">"In theatre, blocking is the precise staging of actors to facilitate narrative flow. In XR, I apply this to spatial UI—treating the user's gaze as the primary actor and the interface as the stage blocking."</p>
+                        </div>
                     </div>
                 </div>
                 <div class="space-y-16">
                     <div class="border-l border-black/10 pl-12">
-                        <p class="mono text-[10px] uppercase opacity-40 mb-8 tracking-widest italic">Research // Current Sets</p>
+                        <p class="mono text-[10px] uppercase opacity-40 mb-8 tracking-widest italic">Research // Active Sets</p>
                         <div class="space-y-6 font-bold uppercase tracking-tighter text-xs">
-                            <p class="flex justify-between border-b border-black/5 pb-2"><span>Spatial Semantics</span><span class="opacity-30">Active</span></p>
+                            <p class="flex justify-between border-b border-black/5 pb-2"><span>Semantic Manifolds</span><span class="opacity-30">Active</span></p>
                             <p class="flex justify-between border-b border-black/5 pb-2"><span>Latent Intent Analysis</span><span class="opacity-30">Active</span></p>
                             <p class="flex justify-between border-b border-black/5 pb-2"><span>Recursive Data Integrity</span><span class="opacity-30">Stable</span></p>
-                            <p class="flex justify-between border-b border-black/5 pb-2"><span>HCI Blocking Logic</span><span class="opacity-30">Experimental</span></p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-12 font-bold uppercase tracking-tighter text-xs">
                         <div><p class="opacity-30 underline mb-4 text-[10px] mono">Perception</p><p class="text-sm leading-loose italic">MediaPipe<br>TensorFlow.js<br>OpenCV.js<br>WebXR</p></div>
-                        <div><p class="opacity-30 underline mb-4 text-[10px] mono">Engine</p><p class="text-sm leading-loose italic">Django REST<br>MySQL<br>RAG Pipelines<br>Hardening</p></div>
+                        <div><p class="opacity-30 underline mb-4 text-[10px] mono">Engine Room</p><p class="text-sm leading-loose italic">Django REST<br>MySQL<br>RAG Pipelines<br>Hardening</p></div>
                     </div>
                 </div>
             </div>
@@ -192,19 +180,19 @@
             <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-widest italic">Experimental_Lab // Sketches</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-1px bg-black/5 border border-black/5">
                 <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group">
-                    <p class="mono text-[9px] mb-4 opacity-50">SKETCH_01 // TD</p>
-                    <h4 class="text-xl font-black uppercase tracking-tight">Gesture Lighting</h4>
-                    <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic">TouchDesigner research on reactive environments.</p>
+                    <p class="mono text-[9px] mb-4 opacity-50 flex justify-between"><span>SKETCH_01 // TD</span> <span class="group-hover:text-green-400">● LIVE</span></p>
+                    <h4 class="text-xl font-black uppercase tracking-tight">Gesture Light</h4>
+                    <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic font-bold">STK: TOUCHDESIGNER + KINECT</p>
                 </div>
                 <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group">
-                    <p class="mono text-[9px] mb-4 opacity-50">SKETCH_02 // P5</p>
+                    <p class="mono text-[9px] mb-4 opacity-50 flex justify-between"><span>SKETCH_02 // P5</span> <span class="group-hover:text-blue-400">● STABLE</span></p>
                     <h4 class="text-xl font-black uppercase tracking-tight">Algorithmic Zen</h4>
-                    <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic">Generative systems exploring chaos and order.</p>
+                    <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic font-bold">STK: P5.JS + WEBGL</p>
                 </div>
                 <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group">
-                    <p class="mono text-[9px] mb-4 opacity-50">SKETCH_03 // XR</p>
+                    <p class="mono text-[9px] mb-4 opacity-50 flex justify-between"><span>SKETCH_03 // XR</span> <span class="group-hover:text-purple-400">● BETA</span></p>
                     <h4 class="text-xl font-black uppercase tracking-tight">World Portal</h4>
-                    <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic">Browser-based AR experiments via AR.js.</p>
+                    <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic font-bold">STK: AR.JS + THREE.JS</p>
                 </div>
             </div>
         </section>
@@ -236,6 +224,15 @@
         const cursor = document.getElementById('cursor');
         const progressInner = document.getElementById('progress-inner');
 
+        const glossaryMap = {
+            "LANDMARKS": "478 3D spatial points tracked in real-time.",
+            "VISION": "Google's machine learning framework for perception.",
+            "RETRIEVAL": "Vector-based context loading for LLMs.",
+            "CONTRAST": "Contrast Limited Adaptive Histogram Equalization.",
+            "VISION_LIB": "High-performance computer vision library for JS.",
+            "IMAGE": "Image enhancement for biometric consistency."
+        };
+
         document.addEventListener('mousemove', e => {
             gsap.to(cursor, { left: e.clientX, top: e.clientY, duration: 0.15, ease: "power2.out" });
             mouseX = (e.clientX - window.innerWidth / 2) / 1000;
@@ -243,8 +240,15 @@
         });
 
         document.querySelectorAll('.hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => { cursor.classList.add('active'); cursor.setAttribute('data-label', el.getAttribute('data-label')); });
-            el.addEventListener('mouseleave', () => { cursor.classList.remove('active'); cursor.setAttribute('data-label', ''); });
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('active');
+                const label = el.getAttribute('data-label');
+                cursor.setAttribute('data-label', glossaryMap[label] || label);
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('active');
+                cursor.setAttribute('data-label', '');
+            });
         });
 
         function initScene() {
@@ -285,7 +289,7 @@
         activateBtn.addEventListener("click", async () => {
             if (!faceLandmarker) return;
             if (webcamRunning) {
-                webcamRunning = false; activateBtn.innerText = "[ Initialize_Mirror ]";
+                webcamRunning = false; activateBtn.innerText = "[ Activate_AI_Mirror ]";
                 video.style.display = "none"; video.srcObject.getTracks().forEach(t => t.stop());
                 gsap.to(headGroup.rotation, { x: 0, y: 0, duration: 2, ease: "power3.out" });
             } else {
