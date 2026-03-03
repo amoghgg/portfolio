@@ -5,60 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amogh Bajpai | Creative Technologist & Applied ML Engineer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --lemon: #FEF9C3;
-            --dark: #1a1a1a;
-        }
-        body {
-            background-color: var(--lemon);
-            color: var(--dark);
-            font-family: "Inter", sans-serif;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-        canvas {
-            position: fixed;
-            top: 0; left: 0;
-            z-index: -1;
-            pointer-events: none;
-        }
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        #cursor {
-            width: 20px; height: 20px;
-            border: 1px solid var(--dark);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.2s ease;
-        }
-        #loader {
-            position: fixed;
-            inset: 0;
-            background: var(--dark);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--lemon);
-            font-family: monospace;
-            font-size: 0.8rem;
-        }
-        .mono { font-family: monospace; }
+        :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
+        body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        #loader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-family: monospace; font-size: 0.8rem; }
+        #video-preview { position: fixed; bottom: 20px; left: 20px; width: 160px; height: 120px; border: 2px solid var(--dark); border-radius: 8px; z-index: 100; transform: scaleX(-1); display: none; }
+        .btn-ai { background: var(--dark); color: var(--lemon); padding: 12px 24px; border-radius: 4px; font-weight: bold; font-family: monospace; transition: all 0.3s ease; }
+        .btn-ai:hover { background: #000; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body class="selection:bg-black selection:text-white">
@@ -67,66 +27,37 @@
         <div id="loader-text">initializing_perception_engine...</div>
     </div>
 
-    <div id="cursor"></div>
+    <!-- Hidden Video for MediaPipe -->
+    <video id="video-preview" autoplay playsinline></video>
+
     <div id="canvas-container"></div>
 
     <main class="relative min-h-screen px-6 py-12 md:px-20 md:py-24 max-w-7xl mx-auto opacity-0" id="main-content">
         
-        <div class="fixed top-6 right-6 md:right-20 mono text-[10px] opacity-40 uppercase hidden md:block tracking-[0.2em]">
-            [AI_AUDITOR: ACTIVE] | [DB_INTEGRITY: 100%] | [LOC: 28.61N, 77.20E]
-        </div>
-
         <header class="mb-64 mt-20">
             <h1 class="text-7xl md:text-[13rem] font-black mb-12 uppercase leading-[0.8] tracking-tighter">
                 Amogh <br> Bajpai
             </h1>
             <p class="text-xl md:text-2xl max-w-2xl font-medium leading-tight mb-12 tracking-tight opacity-90">
-                I build systems that bridge human behavior and machine perception. From directing theatre to architecting recursive sync engines.
+                Applied ML Engineer focused on computer vision, spatial computing, and human-machine interaction.
             </p>
             <nav class="flex gap-12 text-lg font-bold lowercase tracking-tight">
-                <a href="#work" class="hover:line-through transition-all underline decoration-1 underline-offset-8">Work</a>
-                <a href="#philosophy" class="hover:line-through transition-all underline decoration-1 underline-offset-8">Philosophy</a>
-                <a href="#contact" class="hover:line-through transition-all underline decoration-1 underline-offset-8">Contact</a>
+                <a href="#work" class="underline underline-offset-8">Work</a>
+                <a href="#philosophy" class="underline underline-offset-8">Philosophy</a>
+                <a href="#contact" class="underline underline-offset-8">Contact</a>
             </nav>
         </header>
 
         <section id="work" class="mb-64">
             <div class="space-y-64">
-                
                 <div class="reveal border-t border-black/10 pt-12">
-                    <div class="flex flex-col md:flex-row justify-between items-start gap-8">
-                        <div class="max-w-3xl">
-                            <p class="mono text-[10px] uppercase mb-6 opacity-50 tracking-[0.3em]">01 / The Precision Project</p>
-                            <h2 class="text-5xl md:text-9xl font-black mb-10 group-hover:italic transition-all uppercase leading-[0.85] tracking-tighter">
-                                Biometric <br> Verification
-                            </h2>
-                            <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-8">
-                                Turning standard web hardware into a production-grade sensor through TensorFlow.js and CLAHE enhancement.
-                            </p>
-                            <div class="flex flex-wrap gap-4 mb-8 opacity-60 mono text-[10px] font-bold uppercase">
-                                <span>MediaPipe</span> <span>OpenCV.js</span> <span>Django REST</span>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="text-[10px] mono uppercase mb-6 opacity-50 tracking-widest">01 / Computer Vision</p>
+                    <h2 class="text-5xl md:text-9xl font-black mb-10 uppercase leading-[0.85] tracking-tighter">AI Mirror <br> Tracking</h2>
+                    <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-12">
+                        Real-time facial expression mapping using MediaPipe and Three.js morph targets. No data leaves the device.
+                    </p>
+                    <button id="activate-ai" class="btn-ai uppercase">[ Activate_AI_Mirror ]</button>
                 </div>
-
-                <div class="reveal border-t border-black/10 pt-12">
-                    <div class="flex flex-col md:flex-row justify-between items-start gap-8">
-                        <div class="max-w-3xl">
-                            <p class="mono text-[10px] uppercase mb-6 opacity-50 tracking-[0.3em]">02 / The Intelligence Project</p>
-                            <h2 class="text-5xl md:text-9xl font-black mb-10 group-hover:italic transition-all uppercase leading-[0.85] tracking-tighter">
-                                Anomaly <br> Detection
-                            </h2>
-                            <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-8">
-                                A nervous system for live exam monitoring using RAG pipelines and behavioral metrics to identify intent.
-                            </p>
-                            <div class="flex flex-wrap gap-4 mb-8 opacity-60 mono text-[10px] font-bold uppercase">
-                                <span>Anomaly Detection</span> <span>RAG Pipeline</span> <span>Ubuntu Remote</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </section>
 
@@ -135,50 +66,107 @@
                 <div>
                     <h3 class="text-4xl font-black uppercase tracking-tighter mb-8 italic">The Nexus</h3>
                     <p class="text-xl md:text-2xl leading-relaxed opacity-90 font-medium">
-                        Engineering is dramaturgy. Whether directing a play or architecting a database sync, I am managing agents, timing, and narrative flow. My work in Applied ML is not just about accuracy, it is about how machine intelligence integrates into the human experience.
+                        I treat machine learning as a medium for human expression. My background in theatre direction informs how I architect agentic systems—focusing on timing, intent, and narrative flow.
                     </p>
                 </div>
-                <div class="space-y-12">
-                    <div>
-                        <p class="mono text-[10px] uppercase opacity-40 mb-4 tracking-widest">Technical Arsenal</p>
-                        <div class="grid grid-cols-2 gap-8 text-sm font-bold uppercase tracking-tight">
-                            <div>
-                                <p class="opacity-40 mb-2 underline">Perception</p>
-                                <p>TensorFlow.js<br>OpenCV<br>MediaPipe<br>WebXR</p>
-                            </div>
-                            <div>
-                                <p class="opacity-40 mb-2 underline">Engine Room</p>
-                                <p>Django<br>MySQL<br>Apache<br>SSL Hardening</p>
-                            </div>
-                        </div>
+                <div>
+                    <p class="text-xs mono uppercase opacity-40 mb-6 tracking-widest">The Arsenal</p>
+                    <div class="grid grid-cols-2 gap-8 font-bold uppercase tracking-tighter">
+                        <div><p class="opacity-40 underline mb-2">Perception</p><p>MediaPipe<br>TensorFlow.js<br>OpenCV</p></div>
+                        <div><p class="opacity-40 underline mb-2">Systems</p><p>Django<br>MySQL<br>Remote Infra</p></div>
                     </div>
                 </div>
             </div>
         </section>
 
         <footer class="pb-20 border-t-2 border-black pt-12" id="contact">
-            <div class="flex flex-col md:flex-row justify-between gap-12 items-start">
-                <div class="max-w-xl">
-                    <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-8 leading-none">Let's build the <br> future of perception.</h2>
-                    <a href="mailto:hi@amoghbajpai.com" class="text-xl font-bold underline underline-offset-8 hover:italic transition-all">hi@amoghbajpai.com</a>
-                </div>
-                <div class="flex flex-col gap-4 font-black uppercase text-sm tracking-widest text-right w-full md:w-auto">
-                    <a href="https://github.com/amoghgg" class="hover:line-through">GitHub</a>
-                    <a href="#" class="hover:line-through">LinkedIn</a>
-                    <a href="#" class="hover:line-through">CV_2026.pdf</a>
+            <div class="flex justify-between items-start flex-col md:flex-row gap-12">
+                <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">hi@amoghbajpai.com</h2>
+                <div class="flex flex-col gap-2 font-black uppercase text-sm tracking-widest text-right">
+                    <a href="https://github.com/amoghgg">GitHub</a>
+                    <a href="#">LinkedIn</a>
                 </div>
             </div>
-            <p class="mt-48 mono text-[9px] opacity-30 uppercase tracking-[0.4em]">amoghbajpai_v2.0 // built_for_scale</p>
         </footer>
     </main>
 
-    <script>
-        const cursor = document.getElementById('cursor');
-        document.addEventListener('mousemove', e => {
-            gsap.to(cursor, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.1 });
+    <script type="module">
+        import { FaceLandmarker, FilesetResolver } from "https://cdn.skypack.dev/@mediapipe/tasks-vision@0.10.3";
+
+        let faceLandmarker;
+        let webcamRunning = false;
+        const video = document.getElementById("video-preview");
+        const activateBtn = document.getElementById("activate-ai");
+
+        // 1. INITIALIZE MEDIAPIPE
+        async function setupFaceLandmarker() {
+            const filesetResolver = await FilesetResolver.forVisionTasks(
+                "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
+            );
+            faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
+                baseOptions: {
+                    modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
+                    delegate: "GPU"
+                },
+                outputFaceBlendshapes: true,
+                runningMode: "VIDEO",
+                numFaces: 1
+            });
+            console.log("MediaPipe Loaded.");
+        }
+        setupFaceLandmarker();
+
+        // 2. CAMERA ACCESS
+        activateBtn.addEventListener("click", async () => {
+            if (!faceLandmarker) return alert("AI Model still loading...");
+            
+            if (webcamRunning) {
+                webcamRunning = false;
+                activateBtn.innerText = "[ Activate_AI_Mirror ]";
+                video.style.display = "none";
+                const stream = video.srcObject;
+                stream.getTracks().forEach(track => track.stop());
+            } else {
+                const constraints = { video: true };
+                navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+                    video.srcObject = stream;
+                    video.style.display = "block";
+                    webcamRunning = true;
+                    activateBtn.innerText = "[ Disable_AI_Mirror ]";
+                    renderLoop();
+                });
+            }
         });
 
-        const loaderTexts = ["initializing_perception_engine...", "loading_point_cloud...", "checking_database_integrity...", "amoghbajpai_v2.0_ready"];
+        // 3. THE AI INFERENCE LOOP
+        let lastVideoTime = -1;
+        function renderLoop() {
+            if (!webcamRunning) return;
+            
+            if (video.currentTime !== lastVideoTime) {
+                const startTimeMs = performance.now();
+                const results = faceLandmarker.detectForVideo(video, startTimeMs);
+                
+                if (results.faceBlendshapes && results.faceBlendshapes.length > 0) {
+                    const shapes = results.faceBlendshapes[0].categories;
+                    // LOGIC: Map shapes to 3D here
+                    // Example: shapes.find(s => s.categoryName === "jawOpen").score
+                    updateDigitalTwin(shapes);
+                }
+                lastVideoTime = video.currentTime;
+            }
+            requestAnimationFrame(renderLoop);
+        }
+
+        function updateDigitalTwin(blendshapes) {
+            // This is where we will control the 3D Head model influences
+            // For now, let's just log one value to prove it works
+            const jawOpen = blendshapes.find(s => s.categoryName === "jawOpen").score;
+            if(jawOpen > 0.5) console.log("User's mouth is open!");
+        }
+
+        // --- EXISTING THEME LOGIC ---
+        const loaderTexts = ["initializing_perception_engine...", "loading_vision_tasks...", "checking_gpu_acceleration...", "amoghbajpai_v2.0_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             document.getElementById('loader-text').innerText = loaderTexts[textIdx];
@@ -191,67 +179,6 @@
                 }});
             }
         }, 400);
-
-        let scene, camera, renderer, points;
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-        let scrollY = 0;
-
-        function init() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 5;
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-            const geometry = new THREE.BufferGeometry();
-            const vertices = [];
-            // Concentrated architectural point cloud
-            for (let i = 0; i < 6000; i++) {
-                vertices.push(Math.random() * 10 - 5, Math.random() * 10 - 5, Math.random() * 4 - 2);
-            }
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            const material = new THREE.PointsMaterial({ color: 0x1a1a1a, size: 0.008, transparent: true, opacity: 0.15 });
-            points = new THREE.Points(geometry, material);
-            scene.add(points);
-
-            window.addEventListener('mousemove', e => {
-                // High-precision mouse project (extremely low sensitivity for deliberate feel)
-                mouseX = (e.clientX - window.innerWidth / 2) / 1000;
-                mouseY = (e.clientY - window.innerHeight / 2) / 1000;
-            });
-
-            window.addEventListener('scroll', () => { scrollY = window.scrollY; });
-
-            function animate() {
-                requestAnimationFrame(animate);
-                // Damping logic: much slower interpolation (0.02) for heavy, deliberate feel
-                targetX += (mouseX - targetX) * 0.02;
-                targetY += (mouseY - targetY) * 0.02;
-                
-                // Absolute rotation limits (+/- 0.15 radians)
-                points.rotation.x = Math.max(-0.15, Math.min(0.15, targetY));
-                points.rotation.y = Math.max(-0.15, Math.min(0.15, targetX + (scrollY * 0.0001)));
-                
-                // Smooth vertical parallax strictly tied to scroll
-                points.position.y = scrollY * 0.001;
-                
-                renderer.render(scene, camera);
-            }
-            animate();
-        }
-        init();
-
-        function reveal() {
-            var reveals = document.querySelectorAll(".reveal");
-            reveals.forEach(r => {
-                if (r.getBoundingClientRect().top < window.innerHeight - 100) r.classList.add("active");
-            });
-        }
-        window.addEventListener("scroll", reveal);
-        window.onload = reveal;
     </script>
 </body>
 </html>
