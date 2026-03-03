@@ -16,9 +16,10 @@
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         #loader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-family: monospace; font-size: 0.8rem; }
-        #video-preview { position: fixed; bottom: 20px; left: 20px; width: 160px; height: 120px; border: 2px solid var(--dark); border-radius: 8px; z-index: 100; transform: scaleX(-1); display: none; }
-        .btn-ai { background: var(--dark); color: var(--lemon); padding: 12px 24px; border-radius: 4px; font-weight: bold; font-family: monospace; transition: all 0.3s ease; }
+        #video-preview { position: fixed; bottom: 20px; left: 20px; width: 160px; height: 120px; border: 2px solid var(--dark); border-radius: 8px; z-index: 100; transform: scaleX(-1); display: none; background: #000; }
+        .btn-ai { background: var(--dark); color: var(--lemon); padding: 12px 24px; border-radius: 4px; font-weight: bold; font-family: monospace; transition: all 0.3s ease; border: none; cursor: pointer; }
         .btn-ai:hover { background: #000; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .mono { font-family: monospace; }
     </style>
 </head>
 <body class="selection:bg-black selection:text-white">
@@ -27,19 +28,16 @@
         <div id="loader-text">initializing_perception_engine...</div>
     </div>
 
-    <!-- Hidden Video for MediaPipe -->
     <video id="video-preview" autoplay playsinline></video>
-
     <div id="canvas-container"></div>
 
     <main class="relative min-h-screen px-6 py-12 md:px-20 md:py-24 max-w-7xl mx-auto opacity-0" id="main-content">
-        
         <header class="mb-64 mt-20">
             <h1 class="text-7xl md:text-[13rem] font-black mb-12 uppercase leading-[0.8] tracking-tighter">
                 Amogh <br> Bajpai
             </h1>
             <p class="text-xl md:text-2xl max-w-2xl font-medium leading-tight mb-12 tracking-tight opacity-90">
-                Applied ML Engineer focused on computer vision, spatial computing, and human-machine interaction.
+                Applied ML Engineer & Creative Technologist bridging the gap between machine perception and human expression.
             </p>
             <nav class="flex gap-12 text-lg font-bold lowercase tracking-tight">
                 <a href="#work" class="underline underline-offset-8">Work</a>
@@ -51,10 +49,10 @@
         <section id="work" class="mb-64">
             <div class="space-y-64">
                 <div class="reveal border-t border-black/10 pt-12">
-                    <p class="text-[10px] mono uppercase mb-6 opacity-50 tracking-widest">01 / Computer Vision</p>
-                    <h2 class="text-5xl md:text-9xl font-black mb-10 uppercase leading-[0.85] tracking-tighter">AI Mirror <br> Tracking</h2>
-                    <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-12">
-                        Real-time facial expression mapping using MediaPipe and Three.js morph targets. No data leaves the device.
+                    <p class="text-[10px] mono uppercase mb-6 opacity-50 tracking-widest">Live Experiment / Applied ML</p>
+                    <h2 class="text-5xl md:text-9xl font-black mb-10 uppercase leading-[0.85] tracking-tighter">The AI <br> Mirror</h2>
+                    <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-12 max-w-3xl">
+                        A real-time digital twin powered by MediaPipe. The 3D model below will mimic your facial expressions using 52 tracked blendshapes. Processing is done locally on your GPU.
                     </p>
                     <button id="activate-ai" class="btn-ai uppercase">[ Activate_AI_Mirror ]</button>
                 </div>
@@ -64,16 +62,16 @@
         <section id="philosophy" class="mb-64 border-t-2 border-black pt-20">
             <div class="grid md:grid-cols-2 gap-20">
                 <div>
-                    <h3 class="text-4xl font-black uppercase tracking-tighter mb-8 italic">The Nexus</h3>
+                    <h3 class="text-4xl font-black uppercase tracking-tighter mb-8 italic">Technical Philosophy</h3>
                     <p class="text-xl md:text-2xl leading-relaxed opacity-90 font-medium">
-                        I treat machine learning as a medium for human expression. My background in theatre direction informs how I architect agentic systems—focusing on timing, intent, and narrative flow.
+                        I treat software architecture as dramaturgy. Whether managing 10,000 recursive API syncs or real-time facial landmarks, the goal is always to create a seamless, intentional narrative flow.
                     </p>
                 </div>
                 <div>
-                    <p class="text-xs mono uppercase opacity-40 mb-6 tracking-widest">The Arsenal</p>
+                    <p class="text-xs mono uppercase opacity-40 mb-6 tracking-widest">Core Stack</p>
                     <div class="grid grid-cols-2 gap-8 font-bold uppercase tracking-tighter">
-                        <div><p class="opacity-40 underline mb-2">Perception</p><p>MediaPipe<br>TensorFlow.js<br>OpenCV</p></div>
-                        <div><p class="opacity-40 underline mb-2">Systems</p><p>Django<br>MySQL<br>Remote Infra</p></div>
+                        <div><p class="opacity-40 underline mb-2">ML / Vision</p><p>MediaPipe<br>TensorFlow.js<br>OpenCV.js</p></div>
+                        <div><p class="opacity-40 underline mb-2">Architecture</p><p>Django REST<br>Recursive Sync<br>Cloud Infra</p></div>
                     </div>
                 </div>
             </div>
@@ -83,7 +81,7 @@
             <div class="flex justify-between items-start flex-col md:flex-row gap-12">
                 <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">hi@amoghbajpai.com</h2>
                 <div class="flex flex-col gap-2 font-black uppercase text-sm tracking-widest text-right">
-                    <a href="https://github.com/amoghgg">GitHub</a>
+                    <a href="https://github.com/amoghgg" target="_blank">GitHub</a>
                     <a href="#">LinkedIn</a>
                 </div>
             </div>
@@ -92,14 +90,57 @@
 
     <script type="module">
         import { FaceLandmarker, FilesetResolver } from "https://cdn.skypack.dev/@mediapipe/tasks-vision@0.10.3";
+        import { GLTFLoader } from "https://cdn.skypack.dev/three@0.158.0/examples/jsm/loaders/GLTFLoader.js";
 
         let faceLandmarker;
         let webcamRunning = false;
+        let scene, camera, renderer, faceMesh;
         const video = document.getElementById("video-preview");
         const activateBtn = document.getElementById("activate-ai");
 
-        // 1. INITIALIZE MEDIAPIPE
-        async function setupFaceLandmarker() {
+        // 1. THREE.JS SCENE SETUP
+        function initScene() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 0.2, 3);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            // Load the Face Model
+            const loader = new GLTFLoader();
+            // Using the official Three.js facecap model
+            loader.load('https://threejs.org/examples/models/gltf/facecap.glb', (gltf) => {
+                const mesh = gltf.scene.children[0];
+                scene.add(mesh);
+                faceMesh = mesh.getObjectByName('mesh_2'); // The actual head mesh with morph targets
+                console.log("3D Head Loaded.");
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        // 2. MEDIAPIPE AI SETUP
+        async function setupAI() {
             const filesetResolver = await FilesetResolver.forVisionTasks(
                 "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
             );
@@ -112,61 +153,57 @@
                 runningMode: "VIDEO",
                 numFaces: 1
             });
-            console.log("MediaPipe Loaded.");
+            console.log("AI Landmarker Ready.");
         }
-        setupFaceLandmarker();
 
-        // 2. CAMERA ACCESS
+        // 3. START/STOP LOGIC
         activateBtn.addEventListener("click", async () => {
             if (!faceLandmarker) return alert("AI Model still loading...");
-            
             if (webcamRunning) {
                 webcamRunning = false;
                 activateBtn.innerText = "[ Activate_AI_Mirror ]";
                 video.style.display = "none";
-                const stream = video.srcObject;
-                stream.getTracks().forEach(track => track.stop());
+                video.srcObject.getTracks().forEach(t => t.stop());
             } else {
-                const constraints = { video: true };
-                navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-                    video.srcObject = stream;
-                    video.style.display = "block";
-                    webcamRunning = true;
-                    activateBtn.innerText = "[ Disable_AI_Mirror ]";
-                    renderLoop();
-                });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.style.display = "block";
+                webcamRunning = true;
+                activateBtn.innerText = "[ Disable_AI_Mirror ]";
+                runInference();
             }
         });
 
-        // 3. THE AI INFERENCE LOOP
+        // 4. MAPPING AI DATA TO 3D MODEL
         let lastVideoTime = -1;
-        function renderLoop() {
+        function runInference() {
             if (!webcamRunning) return;
-            
             if (video.currentTime !== lastVideoTime) {
-                const startTimeMs = performance.now();
-                const results = faceLandmarker.detectForVideo(video, startTimeMs);
-                
-                if (results.faceBlendshapes && results.faceBlendshapes.length > 0) {
-                    const shapes = results.faceBlendshapes[0].categories;
-                    // LOGIC: Map shapes to 3D here
-                    // Example: shapes.find(s => s.categoryName === "jawOpen").score
-                    updateDigitalTwin(shapes);
+                const results = faceLandmarker.detectForVideo(video, performance.now());
+                if (results.faceBlendshapes && results.faceBlendshapes.length > 0 && faceMesh) {
+                    const influences = faceMesh.morphTargetInfluences;
+                    const dictionary = faceMesh.morphTargetDictionary;
+                    
+                    // Map MediaPipe shapes to Three.js morph targets
+                    results.faceBlendshapes[0].categories.forEach(shape => {
+                        const index = dictionary[shape.categoryName];
+                        if (index !== undefined) {
+                            // Smooth interpolation for stability
+                            influences[index] = shape.score;
+                        }
+                    });
                 }
                 lastVideoTime = video.currentTime;
             }
-            requestAnimationFrame(renderLoop);
+            requestAnimationFrame(runInference);
         }
 
-        function updateDigitalTwin(blendshapes) {
-            // This is where we will control the 3D Head model influences
-            // For now, let's just log one value to prove it works
-            const jawOpen = blendshapes.find(s => s.categoryName === "jawOpen").score;
-            if(jawOpen > 0.5) console.log("User's mouth is open!");
-        }
+        // INIT EVERYTHING
+        initScene();
+        setupAI();
 
-        // --- EXISTING THEME LOGIC ---
-        const loaderTexts = ["initializing_perception_engine...", "loading_vision_tasks...", "checking_gpu_acceleration...", "amoghbajpai_v2.0_ready"];
+        // LOADER UI
+        const loaderTexts = ["initializing_perception_engine...", "loading_3d_assets...", "mapping_blendshapes...", "amoghbajpai_v2.0_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             document.getElementById('loader-text').innerText = loaderTexts[textIdx];
