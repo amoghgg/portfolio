@@ -42,6 +42,14 @@
         .status-pulse { animation: status-pulse 2s infinite; }
         @keyframes status-pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
+        .flicker { animation: flicker 0.15s infinite; }
+        @keyframes flicker { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
+
+        .bios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; border: 1px solid rgba(26, 26, 26, 0.1); padding: 1.5rem; background: rgba(26, 26, 26, 0.02); }
+        .bios-item { border-left: 2px solid var(--dark); padding-left: 1rem; margin-bottom: 1.5rem; }
+        .logbook-entry { border-bottom: 1px dashed rgba(26, 26, 26, 0.2); padding: 2rem 0; }
+        .logbook-entry:last-child { border-bottom: none; }
+
         .glossary { cursor: help; border-bottom: 1px dotted var(--dark); }
 
         @media (max-width: 768px) { .hero-name { font-size: 4.5rem !important; line-height: 0.9 !important; } .status-ticker { display: none; } #cursor { display: none; } }
@@ -61,7 +69,9 @@
     <main class="relative min-h-screen px-6 py-12 md:px-24 md:py-32 max-w-7xl mx-auto opacity-0" id="main-content">
         
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
-            <span class="status-pulse text-green-600">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> [STREAM: SEMANTIC_MANIFOLDS]
+            <span class="status-pulse text-green-600">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
+            [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
+            [NETWORK: SECURE_MESH_v.2.4]
         </div>
 
         <header class="mb-80 mt-20">
@@ -147,40 +157,80 @@
                     </div>
                 </div>
                 <div class="space-y-16">
-                    <div class="border-l border-black/10 pl-12">
-                        <p class="mono text-[10px] uppercase opacity-40 mb-8 tracking-widest italic">Research // Active Sets</p>
-                        <div class="space-y-6 font-bold uppercase tracking-tighter text-xs">
-                            <p class="flex justify-between border-b border-black/5 pb-2 hover:pl-2 transition-all"><span>Spatial Semantics</span><span class="opacity-30">Active</span></p>
-                            <p class="flex justify-between border-b border-black/5 pb-2 hover:pl-2 transition-all"><span>Latent Intent Analysis</span><span class="opacity-30">Active</span></p>
-                            <p class="flex justify-between border-b border-black/5 pb-2 hover:pl-2 transition-all"><span>HCI Blocking Logic</span><span class="opacity-30">Experimental</span></p>
+                    <div class="border-t-2 border-black/10 pt-8">
+                        <p class="mono text-[10px] uppercase opacity-40 mb-8 tracking-widest italic font-bold">BIOS Diagnostic // System_Stack_v2.0</p>
+                        <div class="bios-grid mono text-[10px] uppercase">
+                            <div class="bios-item">
+                                <p class="opacity-50 mb-2">[01] PERCEPTION</p>
+                                <p class="font-bold">MediaPipe CV</p>
+                                <p class="font-bold">TensorFlow.js</p>
+                                <p class="font-bold">OpenCV.js (WASM)</p>
+                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[92%] h-full"></div></div>
+                            </div>
+                            <div class="bios-item">
+                                <p class="opacity-50 mb-2">[02] INFERENCE</p>
+                                <p class="font-bold">RAG Pipelines</p>
+                                <p class="font-bold">LangChain / LLM Ops</p>
+                                <p class="font-bold">Semantic Search</p>
+                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[88%] h-full"></div></div>
+                            </div>
+                            <div class="bios-item">
+                                <p class="opacity-50 mb-2">[03] INFRA</p>
+                                <p class="font-bold">Python / Django</p>
+                                <p class="font-bold">PostgreSQL / Redis</p>
+                                <p class="font-bold">Docker / AWS</p>
+                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[95%] h-full"></div></div>
+                            </div>
+                            <div class="bios-item">
+                                <p class="opacity-50 mb-2">[04] CORE_RECORDS</p>
+                                <p class="font-bold">Spatial Semantics</p>
+                                <p class="font-bold">HCI Blocking</p>
+                                <p class="font-bold">Latent Intent</p>
+                                <div class="w-full bg-black/5 h-[2px] mt-4 flicker"><div class="bg-green-600 w-full h-full"></div></div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-12 font-bold uppercase tracking-tighter text-xs">
-                        <div><p class="opacity-30 underline mb-4 text-[10px] mono">Perception</p><p class="text-sm leading-loose italic">MediaPipe<br>TensorFlow.js<br>OpenCV.js<br>A-Frame</p></div>
-                        <div><p class="opacity-30 underline mb-4 text-[10px] mono">Engine</p><p class="text-sm leading-loose italic">Django REST<br>MySQL<br>RAG Pipelines<br>Hardening</p></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- THE PLAYGROUND (Sketches) -->
         <section id="playground" class="mb-80 border-t border-black/10 pt-24">
-            <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-widest italic">Experimental_Lab // Sketches</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-1px bg-black/5 border border-black/5">
-                <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group">
-                    <p class="mono text-[9px] mb-4 opacity-50 flex justify-between"><span>SKETCH_01 // TD</span> <span class="group-hover:text-green-400">● LIVE</span></p>
-                    <h4 class="text-xl font-black uppercase tracking-tight">Gesture Light</h4>
-                    <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic font-bold uppercase">Tech: TouchDesigner + Gesture Control</p>
+            <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-[0.3em] italic font-bold">Logbook // Field_Notes_2026</h3>
+            <div class="space-y-0">
+                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
+                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_01_ZEPHYR ] <br> MAR.2026</div>
+                    <div class="md:col-span-3">
+                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
+                            Biometric Latency Optimization <span class="bg-black text-lemon px-2 py-0.5 text-[8px] mono">STABLE</span>
+                        </h4>
+                        <p class="text-sm opacity-70 leading-relaxed font-medium">
+                            Synthesized recursive synchronization loops to reduce reporting lag in high-stakes biometric environments. Achieved 200ms end-to-end latency across global endpoints.
+                        </p>
+                    </div>
                 </div>
-                <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group">
-                    <p class="mono text-[9px] mb-4 opacity-50 flex justify-between"><span>SKETCH_02 // OF</span> <span class="group-hover:text-blue-400">● STABLE</span></p>
-                    <h4 class="text-xl font-black uppercase tracking-tight">Kinetic Mesh</h4>
-                    <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic font-bold uppercase">Tech: openFrameworks + C++</p>
+
+                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
+                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_02_MIMIC ] <br> FEB.2026</div>
+                    <div class="md:col-span-3">
+                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
+                            Semantic Face Alignment <span class="bg-black text-lemon px-2 py-0.5 text-[8px] mono">VERIFIED</span>
+                        </h4>
+                        <p class="text-sm opacity-70 leading-relaxed font-medium">
+                            Mapped 52 blendshape indices to local mesh influences. Integrated CLAHE image enhancement for low-light biometric resilience.
+                        </p>
+                    </div>
                 </div>
-                <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group">
-                    <p class="mono text-[9px] mb-4 opacity-50 flex justify-between"><span>SKETCH_03 // P5</span> <span class="group-hover:text-purple-400">● BETA</span></p>
-                    <h4 class="text-xl font-black uppercase tracking-tight">Gaze Flow</h4>
-                    <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic font-bold uppercase">Tech: p5.js + Spatial Nav</p>
+
+                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
+                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_03_VOX ] <br> JAN.2026</div>
+                    <div class="md:col-span-3">
+                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
+                            Latent Intent Research <span class="bg-blue-600 text-white px-2 py-0.5 text-[8px] mono">EXPERIMENTAL</span>
+                        </h4>
+                        <p class="text-sm opacity-70 leading-relaxed font-medium">
+                            Prototyped intent detection from non-verbal cues using spatial semantic manifolds. Researching the bridge between perceived physical blocking and digital state.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -330,10 +380,21 @@
         window.addEventListener("scroll", () => {
             const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
             progressInner.style.height = scrollPercent + '%';
-            document.querySelectorAll(".reveal").forEach(r => {
+            document.querySelectorAll(".reveal, .logbook-entry").forEach(r => {
                 if (r.getBoundingClientRect().top < window.innerHeight - 150) r.classList.add("active");
             });
         });
+
+        // Uptime counter logic
+        const startTime = Date.now();
+        const uptimeVal = document.getElementById('uptime-val');
+        setInterval(() => {
+            const diff = Date.now() - startTime;
+            const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+            const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+            const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+            uptimeVal.innerText = `UPTIME: ${h}:${m}:${s}`;
+        }, 1000);
     </script>
 </body>
 </html>
