@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amogh Bajpai | Applied AI Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #FEF9C3;
+            color: #1a1a1a;
+            font-family: "Inter", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="selection:bg-black selection:text-white">
+    <main class="min-h-screen px-6 py-12 md:px-20 md:py-24 max-w-7xl mx-auto">
+        <header class="mb-32">
+            <h1 class="text-7xl md:text-[12rem] font-black mb-8 uppercase leading-[0.85] tracking-tighter">
+                Amogh <br> Bajpai
+            </h1>
+            <nav class="flex gap-8 text-xl font-semibold lowercase tracking-tight">
+                <a href="#work" class="hover:line-through transition-all underline decoration-1 underline-offset-4">Work</a>
+                <a href="#about" class="hover:line-through transition-all underline decoration-1 underline-offset-4">About</a>
+                <a href="#contact" class="hover:line-through transition-all underline decoration-1 underline-offset-4">Contact</a>
+            </nav>
+        </header>
+
+        <section id="work">
+            <div class="space-y-48">
+                <div class="reveal group cursor-pointer border-t border-black/10 pt-8">
+                    <p class="text-sm uppercase mb-6 opacity-50 font-bold tracking-widest">Applied AI / Enterprise</p>
+                    <h2 class="text-5xl md:text-8xl font-black mb-6 group-hover:italic transition-all uppercase leading-tight tracking-tighter">
+                        AI Data <br> Advisory Portal
+                    </h2>
+                    <p class="text-2xl md:text-3xl max-w-3xl leading-snug opacity-80 font-medium tracking-tight">
+                        Built an intelligent auditing system for mission-critical exam data, using LLMs to detect logic anomalies in real-time.
+                    </p>
+                </div>
+
+                <div class="reveal group cursor-pointer border-t border-black/10 pt-8">
+                    <p class="text-sm uppercase mb-6 opacity-50 font-bold tracking-widest">Architecture / Scale</p>
+                    <h2 class="text-5xl md:text-8xl font-black mb-6 group-hover:italic transition-all uppercase leading-tight tracking-tighter">
+                        High-Integrity <br> Sync Engine
+                    </h2>
+                    <p class="text-2xl md:text-3xl max-w-3xl leading-snug opacity-80 font-medium tracking-tight">
+                        Architected a recursive pagination system to defeat unstable external APIs, ensuring 100% data fidelity for 10k+ records.
+                    </p>
+                </div>
+
+                <div class="reveal group cursor-pointer border-t border-black/10 pt-8">
+                    <p class="text-sm uppercase mb-6 opacity-50 font-bold tracking-widest">AI Infrastructure</p>
+                    <h2 class="text-5xl md:text-8xl font-black mb-6 group-hover:italic transition-all uppercase leading-tight tracking-tighter">
+                        MCP Intelligence <br> Bridge
+                    </h2>
+                    <p class="text-2xl md:text-3xl max-w-3xl leading-snug opacity-80 font-medium tracking-tight">
+                        Developed a universal Model Context Protocol server for direct database orchestration via AI agents.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="mt-64 pt-12 border-t-2 border-black">
+            <div class="flex flex-col md:flex-row justify-between gap-8 items-start">
+                <p class="text-2xl font-bold uppercase tracking-tighter italic">Applied AI Engineer</p>
+                <div class="flex gap-12 font-bold uppercase text-sm">
+                    <a href="mailto:hi@amoghbajpai.com" class="hover:italic">Email</a>
+                    <a href="#" class="hover:italic">GitHub</a>
+                    <a href="#" class="hover:italic">LinkedIn</a>
+                </div>
+            </div>
+            <p class="mt-20 opacity-40 text-xs font-bold uppercase">© 2026 Amogh Bajpai. Designed for performance.</p>
+        </footer>
+    </main>
+
+    <script>
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        window.onload = reveal;
+    </script>
+</body>
+</html>
