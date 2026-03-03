@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amogh Bajpai | Creative Technologist & Applied ML Engineer</title>
+    <meta name="description" content="Portfolio of Amogh Bajpai - Applied ML Engineer and Creative Technologist specialized in computer vision, spatial computing, and human-machine interaction.">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Amogh Bajpai | Creative Technologist">
+    <meta property="og:description" content="Architecting machine perception through the lens of human dramaturgy.">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js"></script>
@@ -11,13 +18,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
         body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         canvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
+        
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
+        /* High-End Cursor */
         #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1); text-align: center; padding: 10px; overflow: hidden; }
         #cursor.active { width: 85px; height: 75px; background: rgba(26, 26, 26, 0.98); }
         #cursor.active::after { content: attr(data-label); }
@@ -38,9 +48,10 @@
         .status-pulse { animation: status-pulse 2s infinite; }
         @keyframes status-pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
-        .glossary { cursor: help; border-bottom: 1px dotted var(--dark); }
+        .glossary { cursor: help; border-bottom: 1px dotted var(--dark); transition: background 0.3s; }
+        .glossary:hover { background: rgba(26, 26, 26, 0.05); }
 
-        @media (max-width: 768px) { .hero-name { font-size: 4.5rem !important; line-height: 0.9 !important; } .status-ticker { display: none; } }
+        @media (max-width: 768px) { .hero-name { font-size: 4.5rem !important; line-height: 0.9 !important; } .status-ticker { display: none; } #cursor { display: none; } }
     </style>
 </head>
 <body class="selection:bg-black selection:text-white">
@@ -76,7 +87,6 @@
         <section id="work" class="mb-80">
             <div class="space-y-80">
                 
-                <!-- PROJECT 01: AI MIRROR -->
                 <div class="reveal border-t border-black/10 pt-16">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Perception</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
@@ -93,21 +103,19 @@
                     </div>
                 </div>
 
-                <!-- PROJECT 02: BEHAVIORAL ANALYTICS -->
                 <div class="reveal border-t border-black/10 pt-16">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Infrastructure // Intelligence</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
                         <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Behavioral <br> Intelligence</h2>
                         <div class="pt-4 md:pt-16">
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                A "nervous system" for detecting intent within live high-stakes monitoring.
+                                A nervous system for detecting intent within live high-stakes monitoring.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
                                 Developed an anomaly detection system using <span class="glossary hover-trigger" data-label="RETRIEVAL">RAG</span> pipelines to analyze production logs. Optimized for real-time cheating detection in large-scale remote environments.
                             </p>
-                            <!-- Behavioral Analytics Diagram -->
                             <div class="opacity-40 mt-8">
-                                <svg width="240" height="80" viewBox="0 0 240 80" fill="none">
+                                <svg width="240" height="80" viewBox="0 0 240 80" fill="none" role="img" aria-label="RAG Pipeline Diagram">
                                     <path d="M10 40H40M200 40H230" stroke="black" stroke-dasharray="2 2"/>
                                     <rect x="40.5" y="20.5" width="50" height="40" rx="1" stroke="black"/>
                                     <text x="48" y="42" fill="black" font-family="monospace" font-size="6">RAW_LOGS</text>
@@ -121,7 +129,6 @@
                     </div>
                 </div>
 
-                <!-- PROJECT 03: FINGERPRINT -->
                 <div class="reveal border-t border-black/10 pt-16">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Precision</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
@@ -140,13 +147,13 @@
             </div>
         </section>
 
-        <!-- THE NEXUS / PHILOSOPHY -->
+        <!-- THE NEXUS -->
         <section id="nexus" class="mb-80 border-t-2 border-black pt-24">
             <div class="grid md:grid-cols-2 gap-24">
                 <div>
                     <h3 class="text-5xl font-black uppercase tracking-tighter mb-10 italic">The Nexus</h3>
                     <p class="text-2xl md:text-3xl leading-relaxed opacity-90 font-medium mb-12">
-                        I am an Applied ML Engineer and Creative Technologist navigating the intersection of infrastructure and behavior.
+                        Applied ML Engineer and Creative Technologist navigating the intersection of infrastructure and behavior.
                     </p>
                     <div class="space-y-8 text-lg opacity-70 leading-relaxed max-w-lg">
                         <p>
@@ -154,7 +161,7 @@
                         </p>
                         <div class="mt-8 p-6 border border-black/10 bg-black/[0.02]">
                             <p class="mono text-[10px] uppercase mb-4 opacity-40 tracking-widest">Case Study: Blocking & Flow</p>
-                            <p class="text-sm italic">"In theatre, blocking is the precise staging of actors to facilitate narrative flow. In XR, I apply this to spatial UI—treating the user's gaze as the primary actor and the interface as the stage blocking."</p>
+                            <p class="text-sm italic leading-relaxed">"In theatre, blocking is the precise staging of actors to facilitate narrative flow. In XR, I apply this to spatial UI—treating the user's gaze as the primary actor and the interface as the stage blocking."</p>
                         </div>
                     </div>
                 </div>
@@ -162,14 +169,14 @@
                     <div class="border-l border-black/10 pl-12">
                         <p class="mono text-[10px] uppercase opacity-40 mb-8 tracking-widest italic">Research // Active Sets</p>
                         <div class="space-y-6 font-bold uppercase tracking-tighter text-xs">
-                            <p class="flex justify-between border-b border-black/5 pb-2"><span>Semantic Manifolds</span><span class="opacity-30">Active</span></p>
-                            <p class="flex justify-between border-b border-black/5 pb-2"><span>Latent Intent Analysis</span><span class="opacity-30">Active</span></p>
-                            <p class="flex justify-between border-b border-black/5 pb-2"><span>Recursive Data Integrity</span><span class="opacity-30">Stable</span></p>
+                            <p class="flex justify-between border-b border-black/5 pb-2 hover:pl-2 transition-all"><span>Semantic Manifolds</span><span class="opacity-30">Active</span></p>
+                            <p class="flex justify-between border-b border-black/5 pb-2 hover:pl-2 transition-all"><span>Latent Intent Analysis</span><span class="opacity-30">Active</span></p>
+                            <p class="flex justify-between border-b border-black/5 pb-2 hover:pl-2 transition-all"><span>Recursive Data Integrity</span><span class="opacity-30">Stable</span></p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-12 font-bold uppercase tracking-tighter text-xs">
-                        <div><p class="opacity-30 underline mb-4 text-[10px] mono">Perception</p><p class="text-sm leading-loose italic">MediaPipe<br>TensorFlow.js<br>OpenCV.js<br>WebXR</p></div>
-                        <div><p class="opacity-30 underline mb-4 text-[10px] mono">Engine Room</p><p class="text-sm leading-loose italic">Django REST<br>MySQL<br>RAG Pipelines<br>Hardening</p></div>
+                        <div class="border-t border-black/10 pt-4"><p class="opacity-30 underline mb-4 text-[10px] mono">Perception</p><p class="text-sm leading-loose italic">MediaPipe<br>TensorFlow.js<br>OpenCV.js<br>WebXR</p></div>
+                        <div class="border-t border-black/10 pt-4"><p class="opacity-30 underline mb-4 text-[10px] mono">Engine Room</p><p class="text-sm leading-loose italic">Django REST<br>MySQL<br>RAG Pipelines<br>Hardening</p></div>
                     </div>
                 </div>
             </div>
@@ -178,18 +185,18 @@
         <!-- THE PLAYGROUND -->
         <section id="playground" class="mb-80 border-t border-black/10 pt-24">
             <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-widest italic">Experimental_Lab // Sketches</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-1px bg-black/5 border border-black/5">
-                <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-1px bg-black/5 border border-black/5 overflow-hidden rounded-sm">
+                <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group relative">
                     <p class="mono text-[9px] mb-4 opacity-50 flex justify-between"><span>SKETCH_01 // TD</span> <span class="group-hover:text-green-400">● LIVE</span></p>
                     <h4 class="text-xl font-black uppercase tracking-tight">Gesture Light</h4>
                     <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic font-bold">STK: TOUCHDESIGNER + KINECT</p>
                 </div>
-                <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group">
+                <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group relative">
                     <p class="mono text-[9px] mb-4 opacity-50 flex justify-between"><span>SKETCH_02 // P5</span> <span class="group-hover:text-blue-400">● STABLE</span></p>
                     <h4 class="text-xl font-black uppercase tracking-tight">Algorithmic Zen</h4>
                     <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic font-bold">STK: P5.JS + WEBGL</p>
                 </div>
-                <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group">
+                <div class="bg-lemon p-12 hover:bg-dark hover:text-lemon transition-all cursor-pointer group relative">
                     <p class="mono text-[9px] mb-4 opacity-50 flex justify-between"><span>SKETCH_03 // XR</span> <span class="group-hover:text-purple-400">● BETA</span></p>
                     <h4 class="text-xl font-black uppercase tracking-tight">World Portal</h4>
                     <p class="mt-4 text-xs opacity-0 group-hover:opacity-70 transition-opacity italic font-bold">STK: AR.JS + THREE.JS</p>
@@ -226,13 +233,12 @@
 
         const glossaryMap = {
             "LANDMARKS": "478 3D spatial points tracked in real-time.",
-            "VISION": "Google's machine learning framework for perception.",
-            "RETRIEVAL": "Vector-based context loading for LLMs.",
+            "RETRIEVAL": "Semantic context loading for LLM inference.",
             "CONTRAST": "Contrast Limited Adaptive Histogram Equalization.",
-            "VISION_LIB": "High-performance computer vision library for JS.",
-            "IMAGE": "Image enhancement for biometric consistency."
+            "VISION_LIB": "High-performance computer vision for browser.",
         };
 
+        // SMOOTH CURSOR
         document.addEventListener('mousemove', e => {
             gsap.to(cursor, { left: e.clientX, top: e.clientY, duration: 0.15, ease: "power2.out" });
             mouseX = (e.clientX - window.innerWidth / 2) / 1000;
@@ -293,10 +299,12 @@
                 video.style.display = "none"; video.srcObject.getTracks().forEach(t => t.stop());
                 gsap.to(headGroup.rotation, { x: 0, y: 0, duration: 2, ease: "power3.out" });
             } else {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream; video.style.display = "block";
-                webcamRunning = true; activateBtn.innerText = "[ Disable_Mirror ]";
-                runInference();
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream; video.style.display = "block";
+                    webcamRunning = true; activateBtn.innerText = "[ Disable_Mirror ]";
+                    runInference();
+                } catch(e) { alert("Camera access denied or unavailable."); }
             }
         });
 
