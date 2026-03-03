@@ -37,7 +37,6 @@
             opacity: 1;
             transform: translateY(0);
         }
-        /* Custom Cursor */
         #cursor {
             width: 20px; height: 20px;
             border: 1px solid var(--dark);
@@ -47,7 +46,6 @@
             z-index: 9999;
             transition: transform 0.2s ease;
         }
-        /* Loading Overlay */
         #loader {
             position: fixed;
             inset: 0;
@@ -74,7 +72,6 @@
 
     <main class="relative min-h-screen px-6 py-12 md:px-20 md:py-24 max-w-7xl mx-auto opacity-0" id="main-content">
         
-        <!-- STATUS TICKER -->
         <div class="fixed top-6 right-6 md:right-20 mono text-[10px] opacity-40 uppercase hidden md:block tracking-[0.2em]">
             [AI_AUDITOR: ACTIVE] | [DB_INTEGRITY: 100%] | [LOC: 28.61N, 77.20E]
         </div>
@@ -84,7 +81,7 @@
                 Amogh <br> Bajpai
             </h1>
             <p class="text-xl md:text-2xl max-w-2xl font-medium leading-tight mb-12 tracking-tight opacity-90">
-                I build the systems that bridge human behavior and machine perception. From directing theatre to architecting recursive sync engines.
+                I build systems that bridge human behavior and machine perception. From directing theatre to architecting recursive sync engines.
             </p>
             <nav class="flex gap-12 text-lg font-bold lowercase tracking-tight">
                 <a href="#work" class="hover:line-through transition-all underline decoration-1 underline-offset-8">Work</a>
@@ -93,11 +90,9 @@
             </nav>
         </header>
 
-        <!-- SELECTED WORKS -->
         <section id="work" class="mb-64">
             <div class="space-y-64">
                 
-                <!-- Project 1 -->
                 <div class="reveal border-t border-black/10 pt-12">
                     <div class="flex flex-col md:flex-row justify-between items-start gap-8">
                         <div class="max-w-3xl">
@@ -115,7 +110,6 @@
                     </div>
                 </div>
 
-                <!-- Project 2 -->
                 <div class="reveal border-t border-black/10 pt-12">
                     <div class="flex flex-col md:flex-row justify-between items-start gap-8">
                         <div class="max-w-3xl">
@@ -124,7 +118,7 @@
                                 Anomaly <br> Detection
                             </h2>
                             <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-8">
-                                A "nervous system" for live exam monitoring using RAG pipelines and behavioral metrics to identify intent.
+                                A nervous system for live exam monitoring using RAG pipelines and behavioral metrics to identify intent.
                             </p>
                             <div class="flex flex-wrap gap-4 mb-8 opacity-60 mono text-[10px] font-bold uppercase">
                                 <span>Anomaly Detection</span> <span>RAG Pipeline</span> <span>Ubuntu Remote</span>
@@ -136,13 +130,12 @@
             </div>
         </section>
 
-        <!-- THE NEXUS (PHILOSOPHY) -->
         <section id="philosophy" class="mb-64 border-t-2 border-black pt-20">
             <div class="grid md:grid-cols-2 gap-20">
                 <div>
                     <h3 class="text-4xl font-black uppercase tracking-tighter mb-8 italic">The Nexus</h3>
                     <p class="text-xl md:text-2xl leading-relaxed opacity-90 font-medium">
-                        Engineering is dramaturgy. Whether directing a play or architecting a database sync, I am managing agents, timing, and narrative flow. My work in Applied ML is not just about accuracy—it's about how machine intelligence integrates into the human experience.
+                        Engineering is dramaturgy. Whether directing a play or architecting a database sync, I am managing agents, timing, and narrative flow. My work in Applied ML is not just about accuracy, it is about how machine intelligence integrates into the human experience.
                     </p>
                 </div>
                 <div class="space-y-12">
@@ -163,7 +156,6 @@
             </div>
         </section>
 
-        <!-- CONTACT -->
         <footer class="pb-20 border-t-2 border-black pt-12" id="contact">
             <div class="flex flex-col md:flex-row justify-between gap-12 items-start">
                 <div class="max-w-xl">
@@ -206,6 +198,7 @@
         let scene, camera, renderer, points;
         let mouseX = 0, mouseY = 0;
         let targetX = 0, targetY = 0;
+        let scrollY = 0;
 
         function init() {
             scene = new THREE.Scene();
@@ -227,17 +220,27 @@
             scene.add(points);
 
             window.addEventListener('mousemove', e => {
-                mouseX = (e.clientX - window.innerWidth / 2) / 100;
-                mouseY = (e.clientY - window.innerHeight / 2) / 100;
+                // Reduced sensitivity by 3x (was 100, now 300)
+                mouseX = (e.clientX - window.innerWidth / 2) / 300;
+                mouseY = (e.clientY - window.innerHeight / 2) / 300;
+            });
+
+            window.addEventListener('scroll', () => {
+                scrollY = window.scrollY;
             });
 
             function animate() {
                 requestAnimationFrame(animate);
                 targetX += (mouseX - targetX) * 0.05;
                 targetY += (mouseY - targetY) * 0.05;
+                
                 points.rotation.y += 0.0003;
-                points.rotation.x = targetY * 0.15;
-                points.rotation.y += targetX * 0.15;
+                points.rotation.x = targetY * 0.1; // Reduced rotation factor
+                points.rotation.y += targetX * 0.1; // Reduced rotation factor
+                
+                // Add scroll parallax: subtle vertical movement
+                points.position.y = scrollY * 0.002;
+                
                 renderer.render(scene, camera);
             }
             animate();
