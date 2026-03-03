@@ -18,12 +18,10 @@
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
-        /* High-End Cursor */
         #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1), background 0.4s; }
-        #cursor.active { width: 70px; height: 60px; background: rgba(26, 26, 26, 0.98); }
+        #cursor.active { width: 75px; height: 65px; background: rgba(26, 26, 26, 0.98); }
         #cursor.active::after { content: attr(data-label); }
 
-        /* Scroll Progress */
         #progress-bar { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); width: 1px; height: 100px; background: rgba(26, 26, 26, 0.1); z-index: 100; }
         #progress-inner { width: 100%; height: 0%; background: var(--dark); transition: height 0.1s; }
 
@@ -36,6 +34,8 @@
         
         .status-pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+        .tech-tag { @apply px-3 py-1 border border-black/10 rounded-full text-[10px] font-bold uppercase tracking-wider opacity-60 hover:opacity-100 transition-opacity; }
 
         @media (max-width: 768px) { .hero-name { font-size: 4.5rem !important; line-height: 0.9 !important; } .status-ticker { display: none; } }
     </style>
@@ -53,7 +53,7 @@
     <main class="relative min-h-screen px-6 py-12 md:px-24 md:py-32 max-w-7xl mx-auto opacity-0" id="main-content">
         
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker">
-            <span class="status-pulse text-green-600">●</span> [ENGINE: GHOST_V2] | [INTEGRITY: OPTIMAL] | [DEPLOYED: MAR_2026]
+            <span class="status-pulse text-green-600">●</span> [ENGINE: GHOST_V2] | [INTEGRITY: OPTIMAL] | [UPTIME: 99.9%]
         </div>
 
         <header class="mb-80 mt-20">
@@ -62,78 +62,67 @@
                 Architecting machine perception through the lens of human dramaturgy.
             </p>
             <nav class="flex flex-wrap gap-x-16 gap-y-4 text-lg font-bold lowercase tracking-tight">
-                <a href="#work" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="CASE_STUDIES">Work</a>
-                <a href="#nexus" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="PHILOSOPHY">Nexus</a>
-                <a href="#logbook" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="LEADGER">Logbook</a>
+                <a href="#work" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="INDEX">Work</a>
+                <a href="#nexus" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="NEXUS">Philosophy</a>
+                <a href="#logbook" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="LOGS">Logbook</a>
                 <a href="#contact" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="CONNECT">Contact</a>
             </nav>
         </header>
 
+        <!-- SELECTED WORKS -->
         <section id="work" class="mb-80">
             <div class="space-y-80">
                 
-                <!-- PROJECT 01 -->
+                <!-- Project 01: AI Mirror (MediaPipe + Three.js) -->
                 <div class="reveal border-t border-black/10 pt-16">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Live Experiment // Perception</p>
+                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Live Experiment // 01</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="SCAN">AI Mirror <br> Tracking</h2>
+                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="MIRROR">Digital <br> Twin</h2>
                         <div class="pt-4 md:pt-16">
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                A study in digital entrainment. Real-time expression mapping using 52 facial blendshapes.
+                                Real-time facial expression mapping using 52 blendshapes processed on-device.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Developed a browser-native inference loop mapping MediaPipe landmarks to Three.js morph targets. Optimized for GPU-accelerated perception without server-side overhead.
+                                Bridging computer vision and 3D rendering. This experiment maps MediaPipe landmarks directly to Three.js morph targets, ensuring 100% data privacy with pure GPU-accelerated inference.
                             </p>
-                            <button id="activate-ai" class="btn-ai hover-trigger uppercase" data-label="START">[ Activate_AI_Mirror ]</button>
+                            <button id="activate-ai" class="btn-ai hover-trigger uppercase" data-label="BOOT">[ Initialize_Mirror_Engine ]</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- PROJECT 02 -->
+                <!-- Project 02: Fingerprint Verification (React + OpenCV.js) -->
                 <div class="reveal border-t border-black/10 pt-16">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Architecture // Integrity</p>
+                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Computer Vision // 02</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Recursive <br> Sync Engine</h2>
+                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Biometric <br> Precision</h2>
                         <div class="pt-4 md:pt-16">
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                A nervous system for behavioral analytics and high-stakes data fidelity.
+                                Turning standard web cameras into high-fidelity biometric sensors.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Architected a recursive synchronization engine to defeat unstable external APIs. Integrated RAG pipelines for behavioral anomaly detection in live monitoring streams.
+                                Engineered a full-stack alignment system using OpenCV.js for real-time CLAHE enhancement. MediaPipe-driven detection gates high-latency Django REST validation, reducing server load by 40%.
                             </p>
-                            <div class="border-l border-black/20 pl-8 opacity-40">
-                                <svg width="140" height="50" viewBox="0 0 140 50" fill="none">
-                                    <rect x="0.5" y="0.5" width="35" height="18" rx="1" stroke="black" />
-                                    <circle cx="70" cy="9" r="10" stroke="black" />
-                                    <rect x="104.5" y="0.5" width="35" height="18" rx="1" stroke="black" />
-                                    <path d="M36 9H59M81 9H103" stroke="black" stroke-dasharray="3 3" />
-                                </svg>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tech-tag">React</span><span class="tech-tag">TensorFlow.js</span><span class="tech-tag">OpenCV.js</span><span class="tech-tag">Django</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- PROJECT 03 -->
+                <!-- Project 03: Anomaly Detection (Infrastructure + ML) -->
                 <div class="reveal border-t border-black/10 pt-16">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Precision</p>
+                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Infrastructure // 03</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Biometric <br> Alignment</h2>
+                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Behavioral <br> Analytics</h2>
                         <div class="pt-4 md:pt-16">
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                Turning standard web cameras into high-precision biometric verification sensors.
+                                An intelligent "nervous system" for live high-stakes monitoring.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Engineering a full-stack alignment system using OpenCV.js for real-time CLAHE enhancement. MediaPipe-driven detection gates high-latency cloud validation.
+                                Developed a cheating detection system using behavioral metrics and RAG pipelines. Analyzed production logs across remote Ubuntu environments to identify anomalies in real-time.
                             </p>
-                            <div class="bg-black/5 p-6 rounded-sm opacity-60 border border-black/5">
-                                <p class="mono text-[8px] uppercase mb-4 tracking-widest">Processing pipeline v1.0</p>
-                                <div class="flex gap-4 items-center">
-                                    <div class="px-3 py-1 border border-black text-[7px] mono uppercase">Input</div>
-                                    <span class="text-xs">→</span>
-                                    <div class="px-3 py-1 border border-black text-[7px] mono uppercase">Clahe</div>
-                                    <span class="text-xs">→</span>
-                                    <div class="px-3 py-1 bg-black text-white text-[7px] mono uppercase italic">Verify</div>
-                                </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tech-tag">Anomaly Detection</span><span class="tech-tag">RAG Pipeline</span><span class="tech-tag">MySQL</span><span class="tech-tag">Linux</span>
                             </div>
                         </div>
                     </div>
@@ -142,46 +131,47 @@
             </div>
         </section>
 
-        <!-- THE NEXUS -->
+        <!-- THE NEXUS: Theatre + Engineering -->
         <section id="nexus" class="mb-80 border-t-2 border-black pt-24">
             <div class="grid md:grid-cols-2 gap-24">
                 <div>
                     <h3 class="text-5xl font-black uppercase tracking-tighter mb-10 italic">The Dramaturg</h3>
                     <p class="text-2xl md:text-3xl leading-snug font-medium mb-10">
-                        My practice is rooted in the belief that software architecture is a form of dramaturgy. 
+                        Managing systems like managing stages—orchestrating agents, timing, and intent.
                     </p>
                     <p class="text-lg opacity-70 leading-relaxed max-w-md mb-8">
-                        As a former Theatre Director, I manage systems like I manage stages—orchestrating agents, timing, and narrative intent to create seamless interaction.
+                        As a former Theatre Director and President of my university's performing arts society, I approach architecture as a narrative. Every API sync is a performance; every data mismatch is a broken cue.
                     </p>
                 </div>
                 <div class="space-y-16">
                     <div class="grid grid-cols-2 gap-16 font-bold uppercase tracking-tighter text-xs">
-                        <div class="group"><p class="opacity-30 underline mb-4 text-[10px] mono">Perception</p><p class="text-sm leading-loose group-hover:pl-2 transition-all">MediaPipe<br>TensorFlow.js<br>OpenCV.js<br>WebXR</p></div>
-                        <div class="group"><p class="opacity-30 underline mb-4 text-[10px] mono">Engine Room</p><p class="text-sm leading-loose group-hover:pl-2 transition-all">Django REST<br>MySQL<br>Remote Infra<br>SSL Hardening</p></div>
-                        <div class="group"><p class="opacity-30 underline mb-4 text-[10px] mono">Canvas</p><p class="text-sm leading-loose group-hover:pl-2 transition-all">Three.js<br>p5.js<br>TouchDesigner<br>GSAP</p></div>
-                        <div class="group"><p class="opacity-30 underline mb-4 text-[10px] mono">Ship</p><p class="text-sm leading-loose group-hover:pl-2 transition-all">Vercel<br>Netlify<br>Render<br>Railway</p></div>
+                        <div class="group border-l border-black/10 pl-6"><p class="opacity-30 underline mb-4 text-[10px] mono">Perception</p><p class="text-sm leading-loose group-hover:pl-2 transition-all italic">MediaPipe<br>TensorFlow.js<br>OpenCV.js<br>A-Frame</p></div>
+                        <div class="group border-l border-black/10 pl-6"><p class="opacity-30 underline mb-4 text-[10px] mono">Engine Room</p><p class="text-sm leading-loose group-hover:pl-2 transition-all italic">Django REST<br>MySQL<br>RAG Pipelines<br>SSL Hardening</p></div>
+                        <div class="group border-l border-black/10 pl-6"><p class="opacity-30 underline mb-4 text-[10px] mono">Playground</p><p class="text-sm leading-loose group-hover:pl-2 transition-all italic">Three.js<br>p5.js<br>TouchDesigner<br>WebXR</p></div>
+                        <div class="group border-l border-black/10 pl-6"><p class="opacity-30 underline mb-4 text-[10px] mono">Ship</p><p class="text-sm leading-loose group-hover:pl-2 transition-all italic">Vercel<br>Render<br>Railway<br>Git Scanning</p></div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- LOGBOOK -->
         <section id="logbook" class="mb-80 border-t border-black/10 pt-24">
-            <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-widest">Field Notes // Systems Ledger</h3>
+            <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-widest">Field Notes // Intelligence Ledger</h3>
             <div class="grid md:grid-cols-3 gap-16">
-                <div class="reveal">
-                    <p class="mono text-[9px] opacity-40 mb-4 underline uppercase">Entry_01 // MAR 2026</p>
-                    <h4 class="text-2xl font-black uppercase mb-6 tracking-tighter italic">The 502 War</h4>
+                <div class="reveal group cursor-pointer">
+                    <p class="mono text-[9px] opacity-40 mb-4 underline uppercase">Entry_01 // ARCH</p>
+                    <h4 class="text-2xl font-black uppercase mb-6 tracking-tighter italic group-hover:underline">The 502 War</h4>
                     <p class="text-base leading-relaxed opacity-70">Stabilizing high-traffic uWSGI servers through aggressive memory recycling and Harakiri shields. Infrastructure as defense.</p>
                 </div>
-                <div class="reveal">
-                    <p class="mono text-[9px] opacity-40 mb-4 underline uppercase">Entry_02 // FEB 2026</p>
-                    <h4 class="text-2xl font-black uppercase mb-6 tracking-tighter italic">Latent Intent</h4>
-                    <p class="text-base leading-relaxed opacity-70">Exploring behavioral anomaly detection in live data streams—detecting patterns before they manifest as failure.</p>
+                <div class="reveal group cursor-pointer">
+                    <p class="mono text-[9px] opacity-40 mb-4 underline uppercase">Entry_02 // VISION</p>
+                    <h4 class="text-2xl font-black uppercase mb-6 tracking-tighter italic group-hover:underline">Semantic Image Alignment</h4>
+                    <p class="text-base leading-relaxed opacity-70">Overcoming standard camera limitations with real-time CLAHE and edge detection for biometric consistency.</p>
                 </div>
-                <div class="reveal">
-                    <p class="mono text-[9px] opacity-40 mb-4 underline uppercase">Entry_03 // JAN 2026</p>
-                    <h4 class="text-2xl font-black uppercase mb-6 tracking-tighter italic">Spatial Flow</h4>
-                    <p class="text-base leading-relaxed opacity-70">How theatre blocking informs user flow in augmented reality. Architecture as a living, spatial performance.</p>
+                <div class="reveal group cursor-pointer">
+                    <p class="mono text-[9px] opacity-40 mb-4 underline uppercase">Entry_03 // HCI</p>
+                    <h4 class="text-2xl font-black uppercase mb-6 tracking-tighter italic group-hover:underline">Spatial Blocking</h4>
+                    <p class="text-base leading-relaxed opacity-70">How theatre blocking informs user flow in augmented reality. Visualizing interaction as a living, spatial performance.</p>
                 </div>
             </div>
         </section>
@@ -193,8 +183,8 @@
                     <p class="mono text-[11px] opacity-50 uppercase tracking-[0.3em] italic">Architecting the future of human-machine interaction.</p>
                 </div>
                 <div class="flex flex-col gap-4 font-black uppercase text-sm tracking-widest text-right w-full md:w-auto">
-                    <a href="https://github.com/amoghgg" target="_blank" class="hover-trigger underline underline-offset-4 decoration-1" data-label="GITHUB">GitHub</a>
-                    <a href="#" class="hover-trigger underline underline-offset-4 decoration-1" data-label="LINKEDIN">LinkedIn</a>
+                    <a href="https://github.com/amoghgg" target="_blank" class="hover-trigger underline underline-offset-4" data-label="GITHUB">GitHub</a>
+                    <a href="#" class="hover-trigger underline underline-offset-4" data-label="RESUME">CV_2026.pdf</a>
                 </div>
             </div>
         </footer>
