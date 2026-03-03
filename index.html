@@ -30,10 +30,15 @@
         .btn-ai { background: var(--dark); color: var(--lemon); padding: 14px 28px; border-radius: 2px; font-weight: bold; font-family: 'JetBrains Mono', monospace; transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1); border: none; cursor: pointer; }
         .btn-ai:hover { background: #000; letter-spacing: 0.1em; }
         .mono { font-family: 'JetBrains Mono', monospace; }
+        
         .grain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         
-        .status-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        /* Organic Background Pulse */
+        .bg-pulse { position: fixed; inset: 0; z-index: -2; opacity: 0.15; background: radial-gradient(circle at 50% 50%, #fff700 0%, transparent 70%); filter: blur(100px); animation: pulse-motion 20s infinite alternate; }
+        @keyframes pulse-motion { 0% { transform: scale(1) translate(-10%, -10%); } 100% { transform: scale(1.5) translate(10%, 10%); } }
+
+        .status-pulse { animation: status-pulse 2s infinite; }
+        @keyframes status-pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
         .tech-tag { @apply px-3 py-1 border border-black/10 rounded-full text-[10px] font-bold uppercase tracking-wider opacity-60 hover:opacity-100 transition-opacity; }
 
@@ -43,7 +48,8 @@
 <body class="selection:bg-black selection:text-white">
 
     <div class="grain"></div>
-    <div id="loader"><div id="loader-text">initializing_perception_engine...</div></div>
+    <div class="bg-pulse"></div>
+    <div id="loader"><div id="loader-text">0x00FF // initializing_perception_engine...</div></div>
     <div id="cursor" data-label=""></div>
     <div id="progress-bar"><div id="progress-inner"></div></div>
     
@@ -53,7 +59,7 @@
     <main class="relative min-h-screen px-6 py-12 md:px-24 md:py-32 max-w-7xl mx-auto opacity-0" id="main-content">
         
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker">
-            <span class="status-pulse text-green-600">●</span> [ENGINE: GHOST_V2] | [INTEGRITY: OPTIMAL] | [UPTIME: 99.9%]
+            <span class="status-pulse text-green-600">●</span> [ENGINE: GHOST_V2] | [INTEGRITY: OPTIMAL] | [DEPLOYED: MAR_2026]
         </div>
 
         <header class="mb-80 mt-20">
@@ -69,11 +75,9 @@
             </nav>
         </header>
 
-        <!-- SELECTED WORKS -->
         <section id="work" class="mb-80">
             <div class="space-y-80">
                 
-                <!-- Project 01: AI Mirror (MediaPipe + Three.js) -->
                 <div class="reveal border-t border-black/10 pt-16">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Live Experiment // 01</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
@@ -90,7 +94,6 @@
                     </div>
                 </div>
 
-                <!-- Project 02: Fingerprint Verification (React + OpenCV.js) -->
                 <div class="reveal border-t border-black/10 pt-16">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Computer Vision // 02</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
@@ -109,7 +112,6 @@
                     </div>
                 </div>
 
-                <!-- Project 03: Anomaly Detection (Infrastructure + ML) -->
                 <div class="reveal border-t border-black/10 pt-16">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Infrastructure // 03</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
@@ -131,7 +133,6 @@
             </div>
         </section>
 
-        <!-- THE NEXUS: Theatre + Engineering -->
         <section id="nexus" class="mb-80 border-t-2 border-black pt-24">
             <div class="grid md:grid-cols-2 gap-24">
                 <div>
@@ -154,28 +155,6 @@
             </div>
         </section>
 
-        <!-- LOGBOOK -->
-        <section id="logbook" class="mb-80 border-t border-black/10 pt-24">
-            <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-widest">Field Notes // Intelligence Ledger</h3>
-            <div class="grid md:grid-cols-3 gap-16">
-                <div class="reveal group cursor-pointer">
-                    <p class="mono text-[9px] opacity-40 mb-4 underline uppercase">Entry_01 // ARCH</p>
-                    <h4 class="text-2xl font-black uppercase mb-6 tracking-tighter italic group-hover:underline">The 502 War</h4>
-                    <p class="text-base leading-relaxed opacity-70">Stabilizing high-traffic uWSGI servers through aggressive memory recycling and Harakiri shields. Infrastructure as defense.</p>
-                </div>
-                <div class="reveal group cursor-pointer">
-                    <p class="mono text-[9px] opacity-40 mb-4 underline uppercase">Entry_02 // VISION</p>
-                    <h4 class="text-2xl font-black uppercase mb-6 tracking-tighter italic group-hover:underline">Semantic Image Alignment</h4>
-                    <p class="text-base leading-relaxed opacity-70">Overcoming standard camera limitations with real-time CLAHE and edge detection for biometric consistency.</p>
-                </div>
-                <div class="reveal group cursor-pointer">
-                    <p class="mono text-[9px] opacity-40 mb-4 underline uppercase">Entry_03 // HCI</p>
-                    <h4 class="text-2xl font-black uppercase mb-6 tracking-tighter italic group-hover:underline">Spatial Blocking</h4>
-                    <p class="text-base leading-relaxed opacity-70">How theatre blocking informs user flow in augmented reality. Visualizing interaction as a living, spatial performance.</p>
-                </div>
-            </div>
-        </section>
-
         <footer class="pb-32 border-t-2 border-black pt-16" id="contact">
             <div class="flex justify-between items-start flex-col md:flex-row gap-16">
                 <div>
@@ -184,7 +163,7 @@
                 </div>
                 <div class="flex flex-col gap-4 font-black uppercase text-sm tracking-widest text-right w-full md:w-auto">
                     <a href="https://github.com/amoghgg" target="_blank" class="hover-trigger underline underline-offset-4" data-label="GITHUB">GitHub</a>
-                    <a href="#" class="hover-trigger underline underline-offset-4" data-label="RESUME">CV_2026.pdf</a>
+                    <a href="#" class="hover-trigger underline underline-offset-4" data-label="LINKEDIN">LinkedIn</a>
                 </div>
             </div>
         </footer>
@@ -277,7 +256,7 @@
 
         initScene(); setupAI();
 
-        const loaderTexts = ["initializing_perception_engine...", "architecting_narrative...", "amoghbajpai_v2.0_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // loading_dramaturgy...", "0xFF21 // amoghbajpai_v2.0_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             document.getElementById('loader-text').innerText = loaderTexts[textIdx++];
