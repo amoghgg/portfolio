@@ -18,17 +18,26 @@
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: monospace; font-weight: bold; transition: width 0.3s, height 0.3s, background 0.3s; transform: translate(-50%, -50%); }
-        #cursor.active { width: 60px; height: 50px; background: rgba(26, 26, 26, 0.95); }
+        #cursor.active { width: 65px; height: 55px; background: rgba(26, 26, 26, 0.98); }
         #cursor.active::after { content: attr(data-label); }
         #loader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-family: monospace; font-size: 0.8rem; }
         #video-preview { position: fixed; bottom: 20px; left: 20px; width: 160px; height: 120px; border: 2px solid var(--dark); border-radius: 8px; z-index: 100; transform: scaleX(-1); display: none; background: #000; }
         .btn-ai { background: var(--dark); color: var(--lemon); padding: 12px 24px; border-radius: 4px; font-weight: bold; font-family: monospace; transition: all 0.3s ease; border: none; cursor: pointer; }
         .mono { font-family: monospace; }
-        @media (max-width: 768px) { .hero-name { font-size: 5rem !important; line-height: 0.9 !important; } }
+        
+        /* Cinematic Grain Overlay */
+        .grain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 999; pointer-events: none; opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        @media (max-width: 768px) { .hero-name { font-size: 4.5rem !important; line-height: 0.9 !important; } }
     </style>
 </head>
 <body class="selection:bg-black selection:text-white">
 
+    <div class="grain"></div>
     <div id="loader"><div id="loader-text">initializing_perception_engine...</div></div>
     <div id="cursor" data-label=""></div>
     <video id="video-preview" autoplay playsinline></video>
@@ -36,8 +45,8 @@
 
     <main class="relative min-h-screen px-6 py-12 md:px-20 md:py-24 max-w-7xl mx-auto opacity-0" id="main-content">
         
-        <div class="fixed top-6 right-6 md:right-20 mono text-[10px] opacity-40 uppercase hidden md:block tracking-[0.2em]">
-            [AI_AUDITOR: ACTIVE] | [DB_INTEGRITY: 100%] | [LOC: 28.61N, 77.20E]
+        <div class="fixed top-6 right-6 md:right-20 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em]">
+            [ENGINE: GHOST_V2] | [INTEGRITY: OPTIMAL] | [UPTIME: 99.9%]
         </div>
 
         <header class="mb-64 mt-20">
@@ -46,64 +55,78 @@
                 Architecting machine perception through the lens of human dramaturgy.
             </p>
             <nav class="flex gap-12 text-lg font-bold lowercase tracking-tight">
-                <a href="#work" class="hover-trigger underline underline-offset-8" data-label="VIEW">Work</a>
-                <a href="#nexus" class="hover-trigger underline underline-offset-8" data-label="READ">Nexus</a>
-                <a href="#logbook" class="hover-trigger underline underline-offset-8" data-label="EXPLORE">Logbook</a>
+                <a href="#work" class="hover-trigger underline underline-offset-8" data-label="CASE_STUDIES">Work</a>
+                <a href="#nexus" class="hover-trigger underline underline-offset-8" data-label="PHILOSOPHY">Nexus</a>
+                <a href="#playground" class="hover-trigger underline underline-offset-8" data-label="SKETCHES">Playground</a>
                 <a href="#contact" class="hover-trigger underline underline-offset-8" data-label="TALK">Contact</a>
             </nav>
         </header>
 
+        <!-- PROJECT 01: BIOMETRIC MIRROR -->
         <section id="work" class="mb-64">
             <div class="space-y-64">
                 <div class="reveal border-t border-black/10 pt-12">
-                    <p class="mono text-[10px] uppercase mb-6 opacity-50 tracking-widest">01 / Applied ML</p>
-                    <h2 class="text-5xl md:text-9xl font-black mb-10 uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="SCAN">AI Mirror <br> Tracking</h2>
-                    <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-12 max-w-3xl">
-                        A real-time digital twin experiment. Mimics your facial expressions using 52 tracked blendshapes processed on-device.
-                    </p>
-                    <button id="activate-ai" class="btn-ai hover-trigger uppercase" data-label="ON">[ Activate_AI_Mirror ]</button>
+                    <p class="mono text-[10px] uppercase mb-6 opacity-50 tracking-widest italic">Live Experiment // 01</p>
+                    <div class="grid md:grid-cols-2 gap-12 items-start">
+                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="SCAN">AI Mirror <br> Tracking</h2>
+                        <div class="pt-2 md:pt-12">
+                            <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-8">
+                                A study in digital entrainment. Real-time expression mapping using 52 facial blendshapes.
+                            </p>
+                            <p class="text-base opacity-70 mb-8 max-w-md">
+                                Developed a browser-native inference loop that maps MediaPipe landmarks to Three.js morph target influences. No server-side processing, ensuring 100% data privacy.
+                            </p>
+                            <button id="activate-ai" class="btn-ai hover-trigger uppercase" data-label="ON">[ Activate_AI_Mirror ]</button>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- PROJECT 02: SYNC ENGINE -->
                 <div class="reveal border-t border-black/10 pt-12">
-                    <p class="mono text-[10px] uppercase mb-6 opacity-50 tracking-widest">02 / Infrastructure</p>
-                    <h2 class="text-5xl md:text-9xl font-black mb-10 uppercase leading-[0.85] tracking-tighter">Recursive <br> Sync Engine</h2>
-                    <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-12 max-w-3xl">
-                        Defeating unstable APIs with recursive pagination logic. Built to ensure 100% data fidelity for high-stakes biometric reporting.
-                    </p>
-                    <div class="opacity-40">
-                        <svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="0.5" y="0.5" width="40" height="20" rx="1.5" stroke="black" />
-                            <text x="10" y="14" fill="black" font-family="monospace" font-size="6">API</text>
-                            <path d="M41 10H60" stroke="black" stroke-dasharray="2 2" />
-                            <rect x="60.5" y="0.5" width="60" height="40" rx="1.5" stroke="black" />
-                            <text x="65" y="14" fill="black" font-family="monospace" font-size="6">SYNC_LOOP</text>
-                            <path d="M121 10H140" stroke="black" stroke-dasharray="2 2" />
-                            <rect x="140.5" y="0.5" width="40" height="20" rx="1.5" stroke="black" />
-                            <text x="148" y="14" fill="black" font-family="monospace" font-size="6">DB</text>
-                        </svg>
+                    <p class="mono text-[10px] uppercase mb-6 opacity-50 tracking-widest italic">Architecture // 02</p>
+                    <div class="grid md:grid-cols-2 gap-12 items-start">
+                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">Integrity <br> Sync Engine</h2>
+                        <div class="pt-2 md:pt-12">
+                            <p class="text-2xl md:text-3xl leading-snug font-medium tracking-tight mb-8">
+                                Defeating unstable APIs with recursive pagination logic. 
+                            </p>
+                            <p class="text-base opacity-70 mb-8 max-w-md">
+                                Re-architected a high-stakes biometric reporting system. Implemented a database-first delivery model and a recursive sync engine to manage 10k+ daily records with zero loss.
+                            </p>
+                            <div class="flex gap-4 opacity-40">
+                                <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="0.5" y="0.5" width="30" height="15" rx="1" stroke="black" />
+                                    <path d="M31 8H45" stroke="black" stroke-dasharray="2 2" />
+                                    <circle cx="60" cy="8" r="8" stroke="black" />
+                                    <path d="M75 8H89" stroke="black" stroke-dasharray="2 2" />
+                                    <rect x="90.5" y="0.5" width="28" height="15" rx="1" stroke="black" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- NEW: LOGBOOK SECTION -->
-        <section id="logbook" class="mb-64 border-t border-black/10 pt-20">
-            <h3 class="text-xs mono uppercase opacity-40 mb-12 tracking-widest">Technical Logbook // Field Notes</h3>
-            <div class="grid md:grid-cols-3 gap-12">
-                <div class="reveal">
-                    <p class="mono text-[9px] opacity-40 mb-2 underline">MAR 2026</p>
-                    <h4 class="text-xl font-black uppercase mb-4 tracking-tighter">The 502 War</h4>
-                    <p class="text-sm leading-relaxed opacity-70">How we stabilized a high-traffic uWSGI server by implementing aggressive memory recycling and Harakiri shields.</p>
+        <!-- THE PLAYGROUND (CREATIVE CODING) -->
+        <section id="playground" class="mb-64 border-t border-black/10 pt-20">
+            <h3 class="text-xs mono uppercase opacity-40 mb-12 tracking-widest">The Playground // Sketches</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="reveal group cursor-pointer border border-black/5 p-6 hover:bg-black/5 transition-all">
+                    <p class="mono text-[9px] opacity-40 mb-2 underline">TOUCHDESIGNER</p>
+                    <h4 class="text-sm font-black uppercase tracking-widest">Gesture Light</h4>
                 </div>
-                <div class="reveal">
-                    <p class="mono text-[9px] opacity-40 mb-2 underline">FEB 2026</p>
-                    <h4 class="text-xl font-black uppercase mb-4 tracking-tighter">Latent Intent</h4>
-                    <p class="text-sm leading-relaxed opacity-70">Exploring behavioral anomaly detection in live data streams—detecting cheating patterns before they manifest.</p>
+                <div class="reveal group cursor-pointer border border-black/5 p-6 hover:bg-black/5 transition-all">
+                    <p class="mono text-[9px] opacity-40 mb-2 underline">P5.JS</p>
+                    <h4 class="text-sm font-black uppercase tracking-widest">Algorithmic Zen</h4>
                 </div>
-                <div class="reveal">
-                    <p class="mono text-[9px] opacity-40 mb-2 underline">JAN 2026</p>
-                    <h4 class="text-xl font-black uppercase mb-4 tracking-tighter">Spatial Dramaturgy</h4>
-                    <p class="text-sm leading-relaxed opacity-70">Reflecting on how theatre blocking informs the user flow in augmented reality environments.</p>
+                <div class="reveal group cursor-pointer border border-black/5 p-6 hover:bg-black/5 transition-all">
+                    <p class="mono text-[9px] opacity-40 mb-2 underline">WEBXR</p>
+                    <h4 class="text-sm font-black uppercase tracking-widest">Spatial UI 01</h4>
+                </div>
+                <div class="reveal group cursor-pointer border border-black/5 p-6 hover:bg-black/5 transition-all">
+                    <p class="mono text-[9px] opacity-40 mb-2 underline">AR.JS</p>
+                    <h4 class="text-sm font-black uppercase tracking-widest">World Portal</h4>
                 </div>
             </div>
         </section>
@@ -113,33 +136,28 @@
                 <div>
                     <h3 class="text-4xl font-black uppercase tracking-tighter mb-8 italic">The Dramaturg</h3>
                     <p class="text-xl md:text-2xl leading-relaxed opacity-90 font-medium">
-                        As a former Theatre Director, I see systems as performances. Every API response has a timing, every data point has an intent, and every architecture has a narrative. I bridge the gap between technical rigor and human-centric storytelling.
+                        Engineering is performance management. Whether directing a play or architecting a database, I manage timing, intent, and narrative flow. 
                     </p>
                 </div>
                 <div class="space-y-8">
                     <p class="text-xs mono uppercase opacity-40 tracking-widest">Technical Arsenal</p>
-                    <div class="grid grid-cols-2 gap-8 font-bold uppercase tracking-tighter">
-                        <div><p class="opacity-40 underline mb-2 text-[9px]">Perception</p><p class="text-sm">MediaPipe<br>TensorFlow.js<br>OpenCV.js<br>WebXR</p></div>
-                        <div><p class="opacity-40 underline mb-2 text-[9px]">Engine Room</p><p class="text-sm">Django REST<br>MySQL<br>Remote Infra<br>SSL Hardening</p></div>
+                    <div class="grid grid-cols-2 gap-8 font-bold uppercase tracking-tighter text-sm">
+                        <div><p class="opacity-40 underline mb-2 text-[9px]">Perception</p><p>MediaPipe<br>TensorFlow.js<br>OpenCV.js</p></div>
+                        <div><p class="opacity-40 underline mb-2 text-[9px]">Infrastructure</p><p>Django REST<br>MySQL<br>SSL Hardening</p></div>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- FUTURE VISION -->
-        <section class="mb-64 text-center">
-            <h2 class="text-4xl md:text-7xl font-black uppercase tracking-tighter opacity-20">The future of computing is spatial, perceived, and agentic.</h2>
         </section>
 
         <footer class="pb-20 border-t-2 border-black pt-12" id="contact">
             <div class="flex justify-between items-start flex-col md:flex-row gap-12">
                 <div>
                     <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none mb-4 hover-trigger" data-label="MAIL">hi@amoghbajpai.com</h2>
-                    <p class="mono text-[10px] opacity-50 uppercase tracking-widest">Available for Q3 2026 Collaboration</p>
+                    <p class="mono text-[10px] opacity-50 uppercase tracking-widest italic">Available for Applied AI & XR Research in Q3 2026</p>
                 </div>
                 <div class="flex flex-col gap-2 font-black uppercase text-sm tracking-widest text-right w-full md:w-auto">
                     <a href="https://github.com/amoghgg" target="_blank" class="hover-trigger" data-label="GITHUB">GitHub</a>
-                    <a href="#" class="hover-trigger" data-label="LINK">LinkedIn</a>
+                    <a href="#" class="hover-trigger" data-label="LINKEDIN">LinkedIn</a>
                 </div>
             </div>
         </footer>
@@ -169,7 +187,7 @@
         function initScene() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 0.2, 3);
+            camera.position.set(0, 0.2, 3.5);
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -184,8 +202,9 @@
             function animate() {
                 requestAnimationFrame(animate);
                 if (!webcamRunning) {
-                    targetX += (mouseX - targetX) * 0.05; targetY += (mouseY - targetY) * 0.05;
-                    headGroup.rotation.y = targetX * 0.5; headGroup.rotation.x = targetY * 0.5;
+                    targetX += (mouseX - targetX) * 0.02; targetY += (mouseY - targetY) * 0.02;
+                    headGroup.rotation.y = Math.max(-0.2, Math.min(0.2, targetX * 0.8)); 
+                    headGroup.rotation.x = Math.max(-0.2, Math.min(0.2, targetY * 0.8));
                 }
                 renderer.render(scene, camera);
             }
@@ -205,7 +224,7 @@
             if (webcamRunning) {
                 webcamRunning = false; activateBtn.innerText = "[ Activate_AI_Mirror ]";
                 video.style.display = "none"; video.srcObject.getTracks().forEach(t => t.stop());
-                gsap.to(headGroup.rotation, { x: 0, y: 0, duration: 1 });
+                gsap.to(headGroup.rotation, { x: 0, y: 0, duration: 1.5, ease: "power2.out" });
             } else {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 video.srcObject = stream; video.style.display = "block";
@@ -230,7 +249,7 @@
 
         initScene(); setupAI();
 
-        const loaderTexts = ["initializing_perception_engine...", "architecting_narrative...", "amoghbajpai_v2.0_ready"];
+        const loaderTexts = ["initializing_perception_engine...", "loading_dramaturgy...", "amoghbajpai_v2.0_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             document.getElementById('loader-text').innerText = loaderTexts[textIdx++];
