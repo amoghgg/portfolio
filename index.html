@@ -16,14 +16,17 @@
         :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
         body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         
-        #canvas-container { width: 100%; height: 500px; position: relative; background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); overflow: hidden; border-radius: 12px; }
+        #canvas-container { width: 100%; height: 500px; position: relative; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); overflow: hidden; border-radius: 4px; }
         canvas { display: block; width: 100% !important; height: 100% !important; }
         
         #main-content { z-index: 1; position: relative; }
         
-        .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
+        .hover-trigger { transition: all 0.3s ease; cursor: pointer; }
+        .hover-trigger:hover { font-style: italic !important; }
+
         #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1); text-align: center; padding: 10px; overflow: hidden; }
         #cursor.active { width: 85px; height: 75px; background: rgba(26, 26, 26, 0.98); }
         #cursor.active::after { content: attr(data-label); }
@@ -55,7 +58,7 @@
 
         .glossary { cursor: help; border-bottom: 1px dotted var(--dark); }
 
-        @media (max-width: 768px) { .hero-name { font-size: 4.5rem !important; line-height: 0.9 !important; } .status-ticker { display: none; } #cursor { display: none; } }
+        @media (max-width: 768px) { .hero-name { font-size: 4rem !important; line-height: 0.9 !important; } .status-ticker { display: none; } #cursor { display: none; } #canvas-container { height: 350px; } }
     </style>
 </head>
 <body class="selection:bg-black selection:text-white">
@@ -73,11 +76,11 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.2.4]
+            [NETWORK: SECURE_MESH_v.2.5]
         </div>
 
-        <header class="mb-48 mt-20">
-            <h1 class="hero-name text-7xl md:text-[14rem] font-black mb-12 uppercase leading-[0.8] tracking-tighter">Amogh <br> Bajpai</h1>
+        <header class="mb-32 mt-10">
+            <h1 class="hero-name text-7xl md:text-[12rem] font-black mb-12 uppercase leading-[0.8] tracking-tighter">Amogh <br> Bajpai</h1>
             <p class="text-xl md:text-3xl max-w-2xl font-medium leading-tight mb-16 tracking-tight opacity-90 italic">
                 Engineering machine perception through the lens of human dramaturgy.
             </p>
@@ -89,15 +92,15 @@
             </nav>
         </header>
 
-        <section id="work" class="mb-48">
-            <div class="space-y-48">
+        <section id="work" class="mb-32">
+            <div class="space-y-32">
                 
                 <!-- Project 01 -->
                 <div class="reveal border-t border-black/10 pt-16" id="project-01">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Perception</p>
                     <div class="grid md:grid-cols-2 gap-16 items-center">
                         <div>
-                            <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger mb-10" data-label="SCAN">AI Mirror <br> Tracking</h2>
+                            <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger mb-10" data-label="SCAN">AI Mirror <br> Tracking</h2>
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
                                 Real-time digital mimicry. Mapping 52 facial blendshapes to 3D morph targets on-device.
                             </p>
@@ -106,7 +109,7 @@
                             </p>
                             <button id="activate-ai" class="btn-ai hover-trigger uppercase" data-label="START">[ Initialize_Mirror ]</button>
                         </div>
-                        <div id="canvas-container" class="rounded-lg shadow-inner"></div>
+                        <div id="canvas-container"></div>
                     </div>
                 </div>
 
@@ -114,8 +117,8 @@
                 <div class="reveal border-t border-black/10 pt-16">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Infrastructure // Intelligence</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="SYNC">Integrity <br> Sync Engine</h2>
-                        <div class="pt-4 md:pt-16">
+                        <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="SYNC">Integrity <br> Sync Engine</h2>
+                        <div class="pt-4">
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
                                 Self-healing synchronization loops for high-stakes biometric reporting.
                             </p>
@@ -130,8 +133,8 @@
                 <div class="reveal border-t border-black/10 pt-16">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Precision</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="PRECISION">Biometric <br> Alignment</h2>
-                        <div class="pt-4 md:pt-16">
+                        <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="PRECISION">Biometric <br> Alignment</h2>
+                        <div class="pt-4">
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
                                 Turning web cameras into high-precision biometric verification sensors.
                             </p>
@@ -146,7 +149,7 @@
         </section>
 
         <!-- LONG-FORM ABOUT / PHILOSOPHY -->
-        <section id="about" class="mb-48 border-t-2 border-black pt-24">
+        <section id="about" class="mb-32 border-t-2 border-black pt-24">
             <div class="grid md:grid-cols-2 gap-24">
                 <div>
                     <h3 class="text-5xl font-black uppercase tracking-tighter mb-10 italic">The Dramaturg</h3>
@@ -197,7 +200,7 @@
             </div>
         </section>
 
-        <section id="playground" class="mb-48 border-t border-black/10 pt-24">
+        <section id="playground" class="mb-32 border-t border-black/10 pt-24">
             <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-[0.3em] italic font-bold">Logbook // Field_Notes_2026</h3>
             <div class="space-y-0">
                 <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
@@ -239,7 +242,7 @@
         </section>
 
         <!-- FUTURE VISION -->
-        <section class="mb-48">
+        <section class="mb-32">
             <div class="border-t-2 border-black pt-24">
                 <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-tight mb-12">The future of computing is spatial, perceived, and agentic.</h2>
                 <p class="text-xl md:text-2xl opacity-60 font-medium max-w-3xl">
@@ -276,7 +279,7 @@
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
         // Critical Loader Logic
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.4_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.5_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -289,12 +292,12 @@
                     gsap.to(loader, { opacity: 0, duration: 1.2, delay: 0.5, onComplete: () => {
                         loader.style.display = 'none';
                         gsap.to(main, { opacity: 1, duration: 2 });
-                        sysLog("GUI_READY: CONTENT_REVEALED_v2.4");
+                        sysLog("GUI_READY: CONTENT_REVEALED_v2.5");
                     }});
                 } else {
                     loader.style.display = 'none';
                     main.style.opacity = 1;
-                    sysLog("GUI_READY: FALLBACK_REVEAL_v2.4");
+                    sysLog("GUI_READY: FALLBACK_REVEAL_v2.5");
                 }
             }
         }, 600);
@@ -323,8 +326,8 @@
             const container = document.getElementById('canvas-container');
             if (container) {
                 const rect = container.getBoundingClientRect();
-                mouseX = (e.clientX - (rect.left + rect.width / 2)) / 500;
-                mouseY = (e.clientY - (rect.top + rect.height / 2)) / 500;
+                mouseX = (e.clientX - (rect.left + rect.width / 2)) / 250;
+                mouseY = (e.clientY - (rect.top + rect.height / 2)) / 250;
             }
         });
 
@@ -356,37 +359,39 @@
                 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                 container.appendChild(renderer.domElement);
                 
-                scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-                const dl = new THREE.DirectionalLight(0xffffff, 1.5); 
+                scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+                const dl = new THREE.DirectionalLight(0xffffff, 1.8); 
                 dl.position.set(1, 1, 2); scene.add(dl);
 
                 headGroup = new THREE.Group(); scene.add(headGroup);
                 
-                // FALLBACK: Wireframe Sphere
+                // FALLBACK: Wireframe Sphere (Transparent)
                 fallback = new THREE.Mesh(
                     new THREE.SphereGeometry(1.2, 32, 32),
-                    new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true, transparent: true, opacity: 0.1 })
+                    new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true, transparent: true, opacity: 0.05 })
                 );
                 headGroup.add(fallback);
                 
                 const loader = new GLTFLoader();
-                loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@r158/examples/models/gltf/facecap.glb', 
+                // Attempting multiple CDNs for reliability
+                const modelUrl = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r158/examples/models/gltf/facecap.glb';
+                loader.load(modelUrl, 
                     (gltf) => {
                         const mesh = gltf.scene.children[0]; 
-                        mesh.scale.set(4, 4, 4); 
-                        mesh.position.y = -1.5; 
+                        mesh.scale.set(4.5, 4.5, 4.5); 
+                        mesh.position.y = -1.2; 
                         headGroup.remove(fallback);
                         headGroup.add(mesh);
                         faceMesh = mesh.getObjectByName('mesh_2');
-                        sysLog("MODEL_LOADED: FACECAP_GLB");
+                        sysLog("MODEL_LOADED: FACECAP_GLB_SUCCESS");
                     },
                     undefined,
                     (err) => {
-                        sysLog(`MODEL_ERR: ${err.message}`);
-                        fallback.material.opacity = 0.4;
+                        sysLog(`MODEL_ERR: ${err.message}. USING_FALLBACK.`);
+                        fallback.material.opacity = 0.2;
                     }
                 );
-                sysLog("3D_ENGINE: INLINE_INITIALIZED");
+                sysLog("3D_ENGINE: INLINE_ACTIVE");
             } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
 
             window.addEventListener('resize', () => {
@@ -400,9 +405,9 @@
             function animate() {
                 requestAnimationFrame(animate);
                 if (headGroup) {
-                    targetX += (mouseX - targetX) * 0.03; targetY += (mouseY - targetY) * 0.03;
-                    headGroup.rotation.y = Math.max(-0.4, Math.min(0.4, targetX * 1.2)); 
-                    headGroup.rotation.x = Math.max(-0.3, Math.min(0.3, targetY * 1.2));
+                    targetX += (mouseX - targetX) * 0.05; targetY += (mouseY - targetY) * 0.05;
+                    headGroup.rotation.y = Math.max(-0.5, Math.min(0.5, targetX)); 
+                    headGroup.rotation.x = Math.max(-0.4, Math.min(0.4, targetY));
                 }
                 renderer.render(scene, camera);
             }
@@ -462,7 +467,6 @@
                         if (index !== undefined) influences[index] = shape.score;
                     });
                 } else if (fallback) {
-                    // Reactive fallback: pulse sphere based on jawOpen/mouthSmile
                     const blend = results.faceBlendshapes[0].categories;
                     const jawOpen = blend.find(s => s.categoryName === 'jawOpen')?.score || 0;
                     const mouthSmile = blend.find(s => s.categoryName === 'mouthSmileLeft')?.score || 0;
@@ -480,7 +484,6 @@
             if (progress) progress.style.height = scrollPercent + '%';
         });
 
-        // Intersection Observer for performance
         const obs = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -490,7 +493,6 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal, .logbook-entry').forEach(el => obs.observe(el));
 
-        // Uptime counter logic
         const startTime = Date.now();
         const uptimeVal = document.getElementById('uptime-val');
         setInterval(() => {
