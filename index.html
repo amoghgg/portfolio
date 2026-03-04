@@ -15,8 +15,10 @@
     <style>
         :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
         body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-        canvas { width: 100% !important; height: 100% !important; }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: var(--lemon); }
+        
+        #main-content { z-index: 10; position: relative; pointer-events: auto; }
         
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
@@ -352,24 +354,29 @@
                 headGroup = new THREE.Group(); scene.add(headGroup);
                 sysLog("3D_ENGINE: INITIALIZED");
 
-                const testCube = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.2), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
-                scene.add(testCube);
+                // FALLBACK: Wireframe Sphere
+                const fallback = new THREE.Mesh(
+                    new THREE.SphereGeometry(1, 32, 32),
+                    new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true, transparent: true, opacity: 0.1 })
+                );
+                headGroup.add(fallback);
                 
                 const loader = new GLTFLoader();
-                loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/models/gltf/facecap.glb', 
+                // Using a more robust CDN with explicit tag
+                loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@r158/examples/models/gltf/facecap.glb', 
                     (gltf) => {
                         const mesh = gltf.scene.children[0]; 
-                        mesh.scale.set(4, 4, 4); 
-                        mesh.position.y = -1.5; 
+                        mesh.scale.set(4.5, 4.5, 4.5); 
+                        mesh.position.y = -1.2; 
+                        headGroup.remove(fallback); // Remove sphere once model is live
                         headGroup.add(mesh);
                         faceMesh = mesh.getObjectByName('mesh_2');
-                        scene.remove(testCube);
                         sysLog("MODEL_LOADED: FACECAP_GLB");
                     },
                     undefined,
                     (err) => {
                         sysLog(`MODEL_ERR: ${err.message}`);
-                        testCube.material.color.set(0x0000ff);
+                        fallback.material.opacity = 0.3; // Make fallback more visible if model fails
                     }
                 );
             } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
