@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amogh Bajpai | Creative Technologist & Applied ML Engineer</title>
-    <meta name="description" content="Portfolio of Amogh Bajpai - Applied ML Engineer and Creative Technologist specialized in computer vision, spatial computing, and human-machine interaction.">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -16,7 +15,7 @@
         :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
         body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         
-        #canvas-container { width: 100%; height: 600px; position: relative; background: #000; overflow: hidden; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        #canvas-container { width: 100%; height: 600px; position: relative; background: #050505; overflow: hidden; border-radius: 4px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
         canvas { display: block; width: 100% !important; height: 100% !important; }
         
         #main-content { z-index: 1; position: relative; }
@@ -25,14 +24,11 @@
         .reveal.active { opacity: 1; transform: translateY(0); }
         
         .hover-trigger { transition: all 0.2s ease; cursor: pointer; display: inline-block; }
-        .hover-trigger:hover { font-style: italic !important; transform: translateX(4px); }
+        .hover-trigger:hover { font-style: italic !important; }
 
         #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1); text-align: center; padding: 10px; overflow: hidden; }
         #cursor.active { width: 85px; height: 75px; background: rgba(26, 26, 26, 0.98); }
         #cursor.active::after { content: attr(data-label); }
-
-        #progress-bar { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); width: 1px; height: 100px; background: rgba(26, 26, 26, 0.1); z-index: 100; }
-        #progress-inner { width: 100%; height: 0%; background: var(--dark); }
 
         #loader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
         #video-preview { position: fixed; bottom: 20px; left: 20px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -40,18 +36,11 @@
         .btn-ai:hover { background: #000; letter-spacing: 0.1em; font-style: italic; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        .grain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+        .grain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         
-        .status-pulse { animation: status-pulse 2s infinite; }
-        @keyframes status-pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
-
         .bios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; border: 1px solid rgba(26, 26, 26, 0.1); padding: 1.5rem; background: rgba(26, 26, 26, 0.02); }
-        .bios-item { border-left: 2px solid var(--dark); padding-left: 1rem; margin-bottom: 1.5rem; }
         .logbook-entry { border-bottom: 1px dashed rgba(26, 26, 26, 0.2); padding: 2rem 0; opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
         .logbook-entry.active { opacity: 1; transform: translateY(0); }
-        .logbook-entry:last-child { border-bottom: none; }
-
-        .glossary { cursor: help; border-bottom: 1px dotted var(--dark); }
 
         @media (max-width: 768px) { .hero-name { font-size: 4rem !important; line-height: 0.9 !important; } .status-ticker { display: none; } #cursor { display: none; } #canvas-container { height: 400px; } }
     </style>
@@ -61,7 +50,6 @@
     <div class="grain"></div>
     <div id="loader"><div id="loader-text">0x00FF // initializing_perception_engine...</div></div>
     <div id="cursor" data-label=""></div>
-    <div id="progress-bar"><div id="progress-inner"></div></div>
     
     <video id="video-preview" autoplay playsinline class="hidden"></video>
 
@@ -70,7 +58,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.2.7]
+            [NETWORK: SECURE_MESH_v.2.8]
         </div>
 
         <header class="mb-32 mt-10">
@@ -88,7 +76,6 @@
 
         <section id="work" class="mb-32">
             <div class="space-y-32">
-                
                 <!-- Project 01 -->
                 <div class="reveal border-t border-black/10 pt-16" id="project-01">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Perception</p>
@@ -99,156 +86,25 @@
                                 Real-time digital mimicry. Mapping facial blendshapes to a reflected 3D agent.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                GPU-accelerated facial inference using <span class="glossary hover-trigger" data-label="LANDMARKS">MediaPipe</span> landmarks. Integration of <span class="glossary hover-trigger" data-label="REFLECTOR">Reflector.js</span> for real-time scene depth.
+                                Integration of <span class="glossary hover-trigger" data-label="REFLECTOR">Reflector.js</span> for real-time scene depth and MediaPipe inference.
                             </p>
                             <button id="activate-ai" class="btn-ai hover-trigger uppercase" data-label="START">[ Initialize_Mirror ]</button>
                         </div>
                         <div id="canvas-container"></div>
                     </div>
                 </div>
-
-                <!-- Project 02 -->
+                
+                <!-- Project 02 & 03 truncated for focus -->
                 <div class="reveal border-t border-black/10 pt-16">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Infrastructure // Intelligence</p>
-                    <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="SYNC">Integrity <br> Sync Engine</h2>
-                        <div class="pt-4">
-                            <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                Self-healing synchronization loops for high-stakes biometric reporting.
-                            </p>
-                            <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Architected recursive fetching to defeat unstable APIs. Integrated <span class="glossary hover-trigger" data-label="RETRIEVAL">RAG</span> pipelines for behavioral anomaly detection in live monitoring.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project 03 -->
-                <div class="reveal border-t border-black/10 pt-16">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Precision</p>
-                    <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="PRECISION">Biometric <br> Alignment</h2>
-                        <div class="pt-4">
-                            <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                Turning web cameras into high-precision biometric verification sensors.
-                            </p>
-                            <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Real-time <span class="glossary hover-trigger" data-label="CONTRAST">CLAHE</span> enhancement and image stabilization using <span class="glossary hover-trigger" data-label="VISION_LIB">OpenCV.js</span>.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- LONG-FORM ABOUT / PHILOSOPHY -->
-        <section id="about" class="mb-32 border-t-2 border-black pt-24">
-            <div class="grid md:grid-cols-2 gap-24">
-                <div>
-                    <h3 class="text-5xl font-black uppercase tracking-tighter mb-10 italic">The Dramaturg</h3>
-                    <div class="space-y-8 text-xl md:text-2xl leading-relaxed opacity-90 font-medium max-w-lg">
-                        <p>
-                            My background as a Theatre Director informs every line of code I write. In theatre, blocking is the precise staging of agents to facilitate narrative flow. In software, I apply this to system architecture.
-                        </p>
-                        <p>
-                            Whether I am managing 10,000 recursive API syncs or real-time facial landmarks, the goal is always to manage timing, intent, and agency. I treat machine learning not as a black box, but as a medium for human expression.
-                        </p>
-                    </div>
-                </div>
-                <div class="space-y-16">
-                    <div class="border-t-2 border-black/10 pt-8">
-                        <p class="mono text-[10px] uppercase opacity-40 mb-8 tracking-widest italic font-bold">BIOS Diagnostic // System_Stack_v2.0</p>
-                        <div class="bios-grid mono text-[10px] uppercase">
-                            <div class="bios-item">
-                                <p class="opacity-50 mb-2">[01] PERCEPTION</p>
-                                <p class="font-bold">MediaPipe CV</p>
-                                <p class="font-bold">TensorFlow.js</p>
-                                <p class="font-bold">OpenCV.js (WASM)</p>
-                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[92%] h-full"></div></div>
-                            </div>
-                            <div class="bios-item">
-                                <p class="opacity-50 mb-2">[02] INFERENCE</p>
-                                <p class="font-bold">RAG Pipelines</p>
-                                <p class="font-bold">LangChain / LLM Ops</p>
-                                <p class="font-bold">Semantic Search</p>
-                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[88%] h-full"></div></div>
-                            </div>
-                            <div class="bios-item">
-                                <p class="opacity-50 mb-2">[03] INFRA</p>
-                                <p class="font-bold">Python / Django</p>
-                                <p class="font-bold">PostgreSQL / Redis</p>
-                                <p class="font-bold">Docker / AWS</p>
-                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[95%] h-full"></div></div>
-                            </div>
-                            <div class="bios-item">
-                                <p class="opacity-50 mb-2">[04] CORE_RECORDS</p>
-                                <p class="font-bold">Spatial Semantics</p>
-                                <p class="font-bold">HCI Blocking</p>
-                                <p class="font-bold">Latent Intent</p>
-                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-green-600 w-full h-full"></div></div>
-                            </div>
-                        </div>
-                    </div>
+                    <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter hover-trigger" data-label="SYNC">Integrity Sync</h2>
                 </div>
             </div>
         </section>
 
-        <section id="playground" class="mb-32 border-t border-black/10 pt-24">
-            <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-[0.3em] italic font-bold">Logbook // Field_Notes_2026</h3>
-            <div class="space-y-0">
-                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
-                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_01_ZEPHYR ] <br> MAR.2026</div>
-                    <div class="md:col-span-3">
-                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
-                            Biometric Latency Optimization <span class="bg-black text-lemon px-2 py-0.5 text-[8px] mono">STABLE</span>
-                        </h4>
-                        <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Synthesized recursive synchronization loops to reduce reporting lag in high-stakes biometric environments. Achieved 200ms end-to-end latency across global endpoints.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
-                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_02_MIMIC ] <br> FEB.2026</div>
-                    <div class="md:col-span-3">
-                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
-                            Semantic Face Alignment <span class="bg-black text-lemon px-2 py-0.5 text-[8px] mono">VERIFIED</span>
-                        </h4>
-                        <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Mapped 52 blendshape indices to local mesh influences. Integrated CLAHE image enhancement for low-light biometric resilience.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
-                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_03_VOX ] <br> JAN.2026</div>
-                    <div class="md:col-span-3">
-                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
-                            Latent Intent Research <span class="bg-blue-600 text-white px-2 py-0.5 text-[8px] mono">EXPERIMENTAL</span>
-                        </h4>
-                        <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Prototyped intent detection from non-verbal cues using spatial semantic manifolds. Researching the bridge between perceived physical blocking and digital state.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+        <!-- Diagnostics Footer -->
         <footer class="pb-32 border-t-2 border-black pt-16" id="contact">
-            <div class="flex justify-between items-start flex-col md:flex-row gap-16">
-                <div>
-                    <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-6 hover-trigger" data-label="MAIL">hi@amoghbajpai.com</h2>
-                    <div class="flex gap-8 mono text-[9px] opacity-50 uppercase tracking-[0.2em] italic">
-                        <span>[RES: ACTIVE]</span> <span>[LOC: 28.61N, 77.20E]</span> <span>[SET: Q3_2026]</span>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-4 font-black uppercase text-sm tracking-widest text-right w-full md:w-auto">
-                    <a href="https://github.com/amoghgg" target="_blank" class="hover-trigger underline underline-offset-4 decoration-1" data-label="CODE">GitHub</a>
-                    <a href="#" class="hover-trigger underline underline-offset-4 decoration-1" data-label="PROFILE">LinkedIn</a>
-                </div>
-            </div>
-            <div id="sys-log" class="mt-20 mono text-[8px] opacity-20 uppercase tracking-widest border-t border-black/5 pt-8 overflow-hidden max-h-20">
+            <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-6 hover-trigger" data-label="MAIL">hi@amoghbajpai.com</h2>
+            <div id="sys-log" class="mt-20 mono text-[8px] opacity-20 uppercase tracking-widest border-t border-black/5 pt-8 overflow-hidden max-h-40">
                 [SYSTEM_DIAGNOSTICS: INITIALIZING...]
             </div>
         </footer>
@@ -261,25 +117,16 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.7_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.8_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
             if (el) el.innerText = loaderTexts[Math.min(textIdx++, loaderTexts.length - 1)];
             if(textIdx >= loaderTexts.length + 1) {
                 clearInterval(loaderInterval);
-                const loader = document.getElementById('loader');
-                const main = document.getElementById('main-content');
-                if (window.gsap) {
-                    gsap.to(loader, { opacity: 0, duration: 1.2, delay: 0.5, onComplete: () => {
-                        loader.style.display = 'none';
-                        gsap.to(main, { opacity: 1, duration: 2 });
-                        sysLog("GUI_READY: CONTENT_REVEALED_v2.7");
-                    }});
-                } else {
-                    loader.style.display = 'none';
-                    main.style.opacity = 1;
-                }
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('main-content').style.opacity = 1;
+                sysLog("GUI_READY: CONTENT_REVEALED_v2.8");
             }
         }, 600);
     </script>
@@ -296,33 +143,14 @@
         const activateBtn = document.getElementById("activate-ai");
         const cursor = document.getElementById('cursor');
 
-        const glossaryMap = {
-            "LANDMARKS": "478 3D spatial points tracked in real-time.",
-            "RETRIEVAL": "Semantic context loading for LLM inference.",
-            "CONTRAST": "Contrast Limited Adaptive Histogram Equalization.",
-            "REFLECTOR": "Planar reflection for real-time scene depth.",
-        };
-
         document.addEventListener('mousemove', e => {
-            gsap.to(cursor, { left: e.clientX, top: e.clientY, duration: 0.15, ease: "power2.out" });
+            gsap.to(cursor, { left: e.clientX, top: e.clientY, duration: 0.15 });
             const container = document.getElementById('canvas-container');
             if (container) {
                 const rect = container.getBoundingClientRect();
-                mouseX = (e.clientX - (rect.left + rect.width / 2)) / 250;
-                mouseY = (e.clientY - (rect.top + rect.height / 2)) / 250;
+                mouseX = (e.clientX - (rect.left + rect.width / 2)) / 300;
+                mouseY = (e.clientY - (rect.top + rect.height / 2)) / 300;
             }
-        });
-
-        document.querySelectorAll('.hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursor.classList.add('active');
-                const label = el.getAttribute('data-label');
-                cursor.setAttribute('data-label', glossaryMap[label] || label);
-            });
-            el.addEventListener('mouseleave', () => {
-                cursor.classList.remove('active');
-                cursor.setAttribute('data-label', '');
-            });
         });
 
         function initScene() {
@@ -347,50 +175,39 @@
 
                 headGroup = new THREE.Group(); scene.add(headGroup);
                 
-                // MIRROR
-                const geometry = new THREE.PlaneGeometry(10, 10);
-                const groundMirror = new Reflector(geometry, {
-                    clipBias: 0.003,
-                    textureWidth: width * window.devicePixelRatio,
-                    textureHeight: height * window.devicePixelRatio,
-                    color: 0x889999
+                // Optimized Mirror
+                const groundMirror = new Reflector(new THREE.PlaneGeometry(10, 10), {
+                    clipBias: 0.003, textureWidth: 512, textureHeight: 512, color: 0x777777
                 });
-                groundMirror.position.y = -2;
-                groundMirror.rotateX(-Math.PI / 2);
+                groundMirror.position.y = -2; groundMirror.rotateX(-Math.PI / 2);
                 scene.add(groundMirror);
 
-                // FALLBACK
                 fallback = new THREE.Mesh(
-                    new THREE.SphereGeometry(1.2, 32, 32),
-                    new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.15 })
+                    new THREE.SphereGeometry(1.2, 24, 24),
+                    new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.1 })
                 );
                 headGroup.add(fallback);
                 
                 const loader = new GLTFLoader();
-                loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/models/gltf/facecap.glb', 
+                const modelUrl = 'https://raw.githack.com/mrdoob/three.js/master/examples/models/gltf/facecap.glb';
+                
+                loader.load(modelUrl, 
                     (gltf) => {
                         const model = gltf.scene;
-                        model.scale.set(4.5, 4.5, 4.5); 
-                        model.position.y = -1.5; 
-                        headGroup.remove(fallback);
-                        headGroup.add(model);
+                        model.scale.set(4.5, 4.5, 4.5); model.position.y = -1.5;
+                        headGroup.remove(fallback); headGroup.add(model);
                         faceMesh = model.getObjectByName('mesh_2');
                         sysLog("MODEL_LOADED: FACECAP_SUCCESS");
                     },
-                    undefined,
-                    (err) => {
-                        sysLog(`MODEL_ERR: ${err.message}. FALLBACK_ACTIVE.`);
-                    }
+                    (xhr) => {
+                        if (xhr.lengthComputable) {
+                            const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                            if (percent % 25 === 0) sysLog(`MODEL_LOADING: ${percent}%`);
+                        }
+                    },
+                    (err) => sysLog(`MODEL_ERR: ${err.message}`)
                 );
             } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
-
-            window.addEventListener('resize', () => {
-                const container = document.getElementById('canvas-container');
-                if (!container) return;
-                camera.aspect = container.clientWidth / container.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth, container.clientHeight);
-            });
 
             function animate() {
                 requestAnimationFrame(animate);
@@ -426,13 +243,12 @@
                     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                     video.srcObject = stream;
                     video.onloadeddata = () => {
-                        video.play();
-                        webcamRunning = true; 
+                        video.play(); webcamRunning = true; 
                         activateBtn.innerText = "[ Disable_Mirror ]";
                         gsap.to(headGroup.position, { z: 1.5, duration: 1.5, ease: "power2.inOut" });
                         runInference();
                     };
-                } catch(e) { alert("Camera access denied."); }
+                } catch(e) { sysLog(`CAMERA_ERR: ${e.message}`); }
             }
         });
 
@@ -448,15 +264,12 @@
                     const influences = faceMesh.morphTargetInfluences;
                     const dictionary = faceMesh.morphTargetDictionary;
                     blend.forEach(shape => {
-                        const name = shape.categoryName;
-                        const score = shape.score;
-                        const index = dictionary[name] || dictionary[name.charAt(0).toUpperCase() + name.slice(1)];
-                        if (index !== undefined) influences[index] = score;
+                        const index = dictionary[shape.categoryName] || dictionary[shape.categoryName.charAt(0).toUpperCase() + shape.categoryName.slice(1)];
+                        if (index !== undefined) influences[index] = shape.score;
                     });
                 } else if (fallback) {
-                    const jawOpen = blend.find(s => s.categoryName === 'jawOpen')?.score || 0;
-                    const mouthSmile = blend.find(s => s.categoryName === 'mouthSmileLeft')?.score || 0;
-                    fallback.scale.set(1 + jawOpen * 0.8, 1 + mouthSmile * 0.3, 1 + jawOpen * 0.2);
+                    const jaw = blend.find(s => s.categoryName === 'jawOpen')?.score || 0;
+                    fallback.scale.set(1 + jaw, 1 + jaw * 0.2, 1);
                 }
             }
             requestAnimationFrame(runInference);
