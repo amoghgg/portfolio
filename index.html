@@ -23,7 +23,6 @@
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
-        /* Reinforced Italics Hover */
         .hover-trigger, a, button, h1, h2, h3 { transition: all 0.2s ease; cursor: pointer; }
         .hover-trigger:hover, a:hover, button:hover, h2:hover, h1:hover { font-style: italic !important; }
 
@@ -56,7 +55,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.4.0]
+            [NETWORK: SECURE_MESH_v.4.1]
         </div>
 
         <header class="mb-32 mt-10">
@@ -83,7 +82,13 @@
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
                                 Everybody is made of pixels. Real-time bitmapping of facial geometry into interactive particles.
                             </p>
-                            <button id="activate-ai" class="btn-ai uppercase" data-label="START">[ Initialize_Perception ]</button>
+                            <div class="flex gap-4 flex-wrap">
+                                <button id="activate-ai" class="btn-ai uppercase" data-label="LIVE">[ Initialize_Mirror ]</button>
+                                <label class="btn-ai uppercase flex items-center cursor-pointer" data-label="UPLOAD">
+                                    [ Upload_Identity ]
+                                    <input type="file" id="upload-identity" class="hidden" accept="image/*">
+                                </label>
+                            </div>
                         </div>
                         <div id="canvas-container"></div>
                     </div>
@@ -110,7 +115,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.0_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.1_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -119,7 +124,7 @@
                 clearInterval(loaderInterval);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v4.0");
+                sysLog("GUI_READY: CONTENT_REVEALED_v4.1");
             }
         }, 600);
     </script>
@@ -132,6 +137,7 @@
         let mouseX = 0, mouseY = 0;
         const video = document.getElementById("video-preview");
         const activateBtn = document.getElementById("activate-ai");
+        const uploadInput = document.getElementById("upload-identity");
         const cursor = document.getElementById('cursor');
 
         document.addEventListener('mousemove', e => {
@@ -162,40 +168,28 @@
                 
                 // Particle System for "Bitmapped Face"
                 const geometry = new THREE.BufferGeometry();
-                const count = 2000;
+                const count = 478; // Exactly matching MediaPipe landmark count
                 const positions = new Float32Array(count * 3);
-                for (let i = 0; i < count * 3; i++) positions[i] = (Math.random() - 0.5) * 10;
+                for (let i = 0; i < count * 3; i++) positions[i] = (Math.random() - 0.5) * 5;
                 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
                 
                 const material = new THREE.PointsMaterial({
                     color: 0xffffff,
-                    size: 0.03,
+                    size: 0.04,
                     transparent: true,
-                    opacity: 0.8
+                    opacity: 0.9
                 });
                 
                 particles = new THREE.Points(geometry, material);
                 scene.add(particles);
                 
-                sysLog("3D_ENGINE: BITMAP_MODE_ACTIVE");
+                sysLog("3D_ENGINE: PERCEPTION_CONTAINER_READY");
             } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
 
             function animate() {
                 requestAnimationFrame(animate);
-                if (particles) {
-                    particles.rotation.y += 0.002;
-                    // Simple interaction: particles react to mouse proximity
-                    const pos = particles.geometry.attributes.position.array;
-                    for (let i = 0; i < pos.length; i += 3) {
-                        const x = pos[i];
-                        const y = pos[i+1];
-                        const dist = Math.sqrt((x - mouseX*5)**2 + (y - mouseY*5)**2);
-                        if (dist < 0.5) {
-                            pos[i] += (Math.random() - 0.5) * 0.1;
-                            pos[i+1] += (Math.random() - 0.5) * 0.1;
-                        }
-                    }
-                    particles.geometry.attributes.position.needsUpdate = true;
+                if (particles && !webcamRunning) {
+                    particles.rotation.y += 0.005;
                 }
                 renderer.render(scene, camera);
             }
@@ -209,14 +203,14 @@
                     baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`, delegate: "GPU" },
                     outputFaceBlendshapes: true, runningMode: "VIDEO", numFaces: 1
                 });
-                sysLog("AI_ENGINE: READY");
+                sysLog("AI_ENGINE: PERCEPTION_READY");
             } catch (e) { sysLog(`AI_ERR: ${e.message}`); }
         }
 
         activateBtn.addEventListener("click", async () => {
             if (!faceLandmarker) return;
             if (webcamRunning) {
-                webcamRunning = false; activateBtn.innerText = "[ Initialize_Perception ]";
+                webcamRunning = false; activateBtn.innerText = "[ Initialize_Mirror ]";
                 if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
             } else {
                 try {
@@ -231,29 +225,66 @@
             }
         });
 
+        uploadInput.addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file || !faceLandmarker) return;
+            sysLog("IMAGE_UPLOADED: ANALYZING...");
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = async () => {
+                const results = await faceLandmarker.detect(img);
+                if (results.faceLandmarks && results.faceLandmarks.length > 0) {
+                    applyLandmarksToParticles(results.faceLandmarks[0]);
+                    sysLog("IMAGE_BITMAP: SUCCESS");
+                } else {
+                    sysLog("IMAGE_ERR: NO_FACE_DETECTED");
+                }
+            };
+        });
+
+        function applyLandmarksToParticles(landmarks) {
+            const pos = particles.geometry.attributes.position.array;
+            landmarks.forEach((lm, i) => {
+                if (i < pos.length / 3) {
+                    const targetX = (lm.x - 0.5) * 8;
+                    const targetY = -(lm.y - 0.5) * 8;
+                    const targetZ = -lm.z * 10;
+                    
+                    gsap.to(pos, {
+                        [i*3]: targetX,
+                        [i*3+1]: targetY,
+                        [i*3+2]: targetZ,
+                        duration: 1.5,
+                        ease: "power2.out",
+                        onUpdate: () => { particles.geometry.attributes.position.needsUpdate = true; }
+                    });
+                }
+            });
+        }
+
         function runInference() {
             if (!webcamRunning || video.readyState < 2) {
                 if (webcamRunning) requestAnimationFrame(runInference);
                 return;
             }
             const results = faceLandmarker.detectForVideo(video, performance.now());
-            if (results.faceLandmarks && results.faceLandmarker && results.faceLandmarks.length > 0) {
+            if (results.faceLandmarks && results.faceLandmarks.length > 0) {
                 const landmarks = results.faceLandmarks[0];
                 const pos = particles.geometry.attributes.position.array;
                 
-                // Map left half of face to particles (Indices 0 to 478)
-                // Focusing on "Left Half" (indices are scattered, but we'll use x-coordinate filter)
-                let pIdx = 0;
                 landmarks.forEach((lm, i) => {
-                    if (lm.x < 0.5 && pIdx < pos.length / 3) {
+                    if (i < pos.length / 3) {
                         const targetX = (lm.x - 0.5) * 8;
                         const targetY = -(lm.y - 0.5) * 8;
                         const targetZ = -lm.z * 10;
                         
-                        pos[pIdx*3] += (targetX - pos[pIdx*3]) * 0.2;
-                        pos[pIdx*3+1] += (targetY - pos[pIdx*3+1]) * 0.2;
-                        pos[pIdx*3+2] += (targetZ - pos[pIdx*3+2]) * 0.2;
-                        pIdx++;
+                        // Interaction: Repel pixels from mouse
+                        const dist = Math.sqrt((targetX - mouseX*4)**2 + (targetY - mouseY*4)**2);
+                        const repel = dist < 0.8 ? (0.8 - dist) * 2 : 0;
+                        
+                        pos[i*3] = targetX + (Math.random() - 0.5) * repel;
+                        pos[i*3+1] = targetY + (Math.random() - 0.5) * repel;
+                        pos[i*3+2] = targetZ;
                     }
                 });
                 particles.geometry.attributes.position.needsUpdate = true;
