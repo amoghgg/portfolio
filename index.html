@@ -24,7 +24,7 @@
         .reveal.active { opacity: 1; transform: translateY(0); }
         
         .hover-trigger { transition: all 0.2s ease; cursor: pointer; display: inline-block; }
-        .hover-trigger:hover { font-style: italic !important; opacity: 0.7; }
+        .hover-trigger:hover { font-style: italic !important; opacity: 0.8; }
 
         #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1); text-align: center; padding: 10px; overflow: hidden; }
         #cursor.active { width: 85px; height: 75px; background: rgba(26, 26, 26, 0.98); }
@@ -55,7 +55,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.2.9]
+            [NETWORK: SECURE_MESH_v.3.0]
         </div>
 
         <header class="mb-32 mt-10">
@@ -109,7 +109,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.9_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v3.0_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -118,7 +118,7 @@
                 clearInterval(loaderInterval);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v2.9");
+                sysLog("GUI_READY: CONTENT_REVEALED_v3.0");
             }
         }, 600);
     </script>
@@ -181,8 +181,8 @@
                 headGroup.add(fallback);
                 
                 const loader = new GLTFLoader();
-                // Pinning to a known stable version of the model to avoid KTX2 errors
-                const modelUrl = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r147/examples/models/gltf/facecap.glb';
+                // FORCE CACHE BUST: Added ?v=3.0 to model URL
+                const modelUrl = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r147/examples/models/gltf/facecap.glb?v=3.0';
                 
                 loader.load(modelUrl, 
                     (gltf) => {
@@ -190,7 +190,7 @@
                         model.scale.set(4.5, 4.5, 4.5); model.position.y = -1.5;
                         headGroup.remove(fallback); headGroup.add(model);
                         faceMesh = model.getObjectByName('mesh_2');
-                        sysLog("MODEL_LOADED: FACECAP_STABLE_SUCCESS");
+                        sysLog("MODEL_LOADED: FACECAP_V3_SUCCESS");
                     },
                     (xhr) => {
                         if (xhr.lengthComputable) {
@@ -257,10 +257,7 @@
                     const influences = faceMesh.morphTargetInfluences;
                     const dictionary = faceMesh.morphTargetDictionary;
                     blend.forEach(shape => {
-                        // Advanced Mapping: Map MediaPipe naming to facecap.glb naming
-                        const name = shape.categoryName
-                            .replace('Left', '_L')
-                            .replace('Right', '_R');
+                        const name = shape.categoryName.replace('Left', '_L').replace('Right', '_R');
                         const index = dictionary[name] || dictionary[shape.categoryName];
                         if (index !== undefined) influences[index] = shape.score;
                     });
