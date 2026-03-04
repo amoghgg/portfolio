@@ -67,7 +67,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.4.6]
+            [NETWORK: SECURE_MESH_v.4.8]
         </div>
 
         <header class="mb-32 mt-10">
@@ -174,10 +174,13 @@
                             I came to engineering through theatre. For years I directed performances, thinking about how bodies move through space, how timing shapes emotion, and how small interactions create meaning on stage.
                         </p>
                         <p>
-                            That way of thinking never left. It simply moved into the systems I build. In theatre, <span class="glossary hover-trigger" data-label="BLOCKING">blocking</span> is the choreography of actors within a scene. In software, I think about architecture in a similar way: coordinating agents, managing timing, and shaping how information moves through a system.
+                            That way of thinking never left. It simply moved into the systems I build. My discovery of <span class="glossary hover-trigger" data-label="TOUCHDESIGNER">TouchDesigner</span> was the catalyst—it showed me that code could be as plastic and expressive as lighting or movement on a stage.
                         </p>
                         <p>
-                            Today my work lives at the intersection of machine learning, computer vision, and interactive media. Whether I am working with real-time vision models or distributed APIs, I approach technology as a medium for designing experiences, not just solving problems.
+                            In theatre, <span class="glossary hover-trigger" data-label="BLOCKING">blocking</span> is the choreography of actors within a scene. In software, I think about architecture in a similar way: coordinating agents, managing timing, and shaping how information moves through a system.
+                        </p>
+                        <p>
+                            Today my work lives at the intersection of machine learning, computer vision, and interactive media. I approach technology as a medium for designing experiences, not just solving problems.
                         </p>
                     </div>
                 </div>
@@ -200,10 +203,10 @@
                                 <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[88%] h-full"></div></div>
                             </div>
                             <div class="bios-item">
-                                <p class="opacity-50 mb-2">[03] INFRA</p>
-                                <p class="font-bold">Python / Django</p>
-                                <p class="font-bold">PostgreSQL / Redis</p>
-                                <p class="font-bold">Docker / AWS</p>
+                                <p class="opacity-50 mb-2">[03] VISUALS</p>
+                                <p class="font-bold">TouchDesigner</p>
+                                <p class="font-bold">GLSL Shaders</p>
+                                <p class="font-bold">Three.js / WebGL</p>
                                 <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[95%] h-full"></div></div>
                             </div>
                             <div class="bios-item">
@@ -245,6 +248,17 @@
                         </p>
                     </div>
                 </div>
+                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
+                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_03_FLUX ] <br> JAN.2026</div>
+                    <div class="md:col-span-3">
+                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
+                            Generative Visual Synthesis <span class="bg-blue-600 text-white px-2 py-0.5 text-[8px] mono">EXPERIMENTAL</span>
+                        </h4>
+                        <p class="text-sm opacity-70 leading-relaxed font-medium">
+                            Explored real-time particle displacement using TouchDesigner and GLSL shaders. Mapped skeletal data to dynamic fluid simulations for immersive spatial performances.
+                        </p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -263,7 +277,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.6_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.8_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -272,7 +286,7 @@
                 clearInterval(loaderInterval);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v4.6");
+                sysLog("GUI_READY: CONTENT_REVEALED_v4.8");
             }
         }, 600);
     </script>
@@ -290,6 +304,14 @@
         const activateBtn = document.getElementById("activate-ai");
         const cursor = document.getElementById('cursor');
         const calibUI = document.getElementById('calibration-controls');
+
+        const glossaryMap = {
+            "BLOCKING": "The precise staging of agents to facilitate narrative flow.",
+            "TOUCHDESIGNER": "Node-based visual development platform for real-time media.",
+            "LANDMARKS": "478 3D spatial points tracked in real-time.",
+            "RETRIEVAL": "Semantic context loading for LLM inference.",
+            "REFLECTOR": "Planar reflection for real-time scene depth.",
+        };
 
         document.getElementById('cal-left').onclick = () => offsetX -= 0.1;
         document.getElementById('cal-right').onclick = () => offsetX += 0.1;
@@ -310,6 +332,18 @@
                 mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
                 mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
             }
+        });
+
+        document.querySelectorAll('.hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('active');
+                const label = el.getAttribute('data-label');
+                cursor.setAttribute('data-label', glossaryMap[label] || label);
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('active');
+                cursor.setAttribute('data-label', '');
+            });
         });
 
         function initScene() {
