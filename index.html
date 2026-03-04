@@ -36,7 +36,7 @@
         .btn-ai { background: var(--dark); color: var(--lemon); padding: 14px 28px; border-radius: 2px; font-weight: bold; font-family: 'JetBrains Mono', monospace; transition: all 0.4s; border: none; cursor: pointer; }
         .btn-ai:hover { background: #000; letter-spacing: 0.1em; font-style: italic !important; }
         
-        .calib-btn { background: rgba(255,255,255,0.1); color: #fff; width: 32px; height: 32px; border-radius: 2px; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.2); }
+        .calib-btn { background: rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 2px; font-family: 'JetBrains Mono', monospace; font-size: 10px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s; }
         .calib-btn:hover { background: #fff; color: #000; }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -67,7 +67,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.4.4]
+            [NETWORK: SECURE_MESH_v.4.5]
         </div>
 
         <header class="mb-32 mt-10">
@@ -95,7 +95,7 @@
                                 Everybody is made of pixels. Real-time bitmapping of facial geometry into interactive particles.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                <span class="block mb-4">BLINK DETECTION: Pixels grow and cycle through the spectrum when you blink. Keep them closed to trigger a particle burst.</span>
+                                <span class="block mb-4">DEFAULT: Face-to-Face orientation. Use [ Flip_POV ] to mirror or reverse perspective.</span>
                                 GPU-accelerated facial inference using <span class="glossary hover-trigger" data-label="LANDMARKS">MediaPipe</span> landmarks.
                             </p>
                             <div class="flex gap-4 flex-wrap">
@@ -103,9 +103,11 @@
                             </div>
                         </div>
                         <div id="canvas-container" class="group">
-                            <!-- Calibration Overlay -->
-                            <div id="calibration-controls" class="absolute bottom-6 right-6 z-20 flex flex-col gap-2 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto">
-                                <p class="mono text-[8px] text-white opacity-50 mb-2 uppercase tracking-widest">Manual_Calibration</p>
+                            <div id="calibration-controls" class="absolute bottom-6 right-6 z-20 flex flex-col gap-2 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto bg-black/40 backdrop-blur-sm p-4 rounded border border-white/10">
+                                <p class="mono text-[8px] text-white opacity-50 mb-4 uppercase tracking-widest">POV_Calibration</p>
+                                <div class="flex gap-2 justify-end mb-4">
+                                    <button class="calib-btn w-full" id="cal-flip">[ Flip_POV ]</button>
+                                </div>
                                 <div class="flex gap-2 justify-end">
                                     <button class="calib-btn" id="cal-up">^</button>
                                 </div>
@@ -220,7 +222,7 @@
                             Biometric Latency Optimization <span class="bg-black text-lemon px-2 py-0.5 text-[8px] mono">STABLE</span>
                         </h4>
                         <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Synthesized recursive synchronization loops to reduce reporting lag in high-stakes biometric environments. Achieved 200ms end-to-end latency across global endpoints.
+                            Synthesized recursive synchronization loops to reduce reporting lag in high-stakes biometric environments.
                         </p>
                     </div>
                 </div>
@@ -253,7 +255,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.4_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.5_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -262,7 +264,7 @@
                 clearInterval(loaderInterval);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v4.4");
+                sysLog("GUI_READY: CONTENT_REVEALED_v4.5");
             }
         }, 600);
     </script>
@@ -275,7 +277,7 @@
         let mouseX = 0, mouseY = 0, blinkScore = 0, burstActive = false;
         
         // Calibration values
-        let offsetX = 0, offsetY = 0, scaleFactor = 8;
+        let offsetX = 0, offsetY = 0, scaleFactor = 8, mirrorX = -1; // MirrorX = -1 for face-to-face default
 
         const video = document.getElementById("video-preview");
         const activateBtn = document.getElementById("activate-ai");
@@ -283,12 +285,16 @@
         const calibUI = document.getElementById('calibration-controls');
 
         // CALIBRATION LOGIC
-        document.getElementById('cal-left').onclick = () => offsetX -= 0.2;
-        document.getElementById('cal-right').onclick = () => offsetX += 0.2;
-        document.getElementById('cal-up').onclick = () => offsetY += 0.2;
-        document.getElementById('cal-down').onclick = () => offsetY -= 0.2;
+        document.getElementById('cal-left').onclick = () => offsetX -= 0.1;
+        document.getElementById('cal-right').onclick = () => offsetX += 0.1;
+        document.getElementById('cal-up').onclick = () => offsetY += 0.1;
+        document.getElementById('cal-down').onclick = () => offsetY -= 0.1;
         document.getElementById('cal-plus').onclick = () => scaleFactor += 0.5;
         document.getElementById('cal-minus').onclick = () => scaleFactor -= 0.5;
+        document.getElementById('cal-flip').onclick = () => {
+            mirrorX *= -1;
+            sysLog(`POV_MIRROR: ${mirrorX === -1 ? 'FACE_TO_FACE' : 'REVERSED'}`);
+        };
 
         document.addEventListener('mousemove', e => {
             gsap.to(cursor, { left: e.clientX, top: e.clientY, duration: 0.1 });
@@ -339,7 +345,7 @@
                 particles = new THREE.Points(geometry, material);
                 scene.add(particles);
                 
-                sysLog("3D_ENGINE: PERCEPTION_ACTIVE");
+                sysLog("3D_ENGINE: POV_ACTIVE");
             } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
 
             function animate() {
@@ -435,7 +441,8 @@
 
                 landmarks.forEach((lm, i) => {
                     if (i < pos.length / 3) {
-                        const tx = (lm.x - 0.5 + offsetX) * scaleFactor;
+                        // Apply MirrorX and Offset
+                        const tx = (lm.x * mirrorX - 0.5 * mirrorX + offsetX) * scaleFactor;
                         const ty = (-(lm.y - 0.5) + offsetY) * scaleFactor;
                         const tz = -lm.z * scaleFactor;
                         pos[i*3] += (tx - pos[i*3]) * 0.3;
