@@ -15,10 +15,9 @@
     <style>
         :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
         body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-        canvas { position: fixed; top: 0; left: 0; z-index: 5; pointer-events: none; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        canvas { width: 100% !important; height: 100% !important; }
         
-        #main-content { z-index: 10; position: relative; }
-
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
@@ -30,7 +29,7 @@
         #progress-inner { width: 100%; height: 0%; background: var(--dark); }
 
         #loader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
-        #video-preview { position: fixed; bottom: 20px; left: 20px; width: 1px; height: 1px; opacity: 0; pointer-events: none; z-index: -100; }
+        #video-preview { position: fixed; bottom: 20px; left: 20px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
         .btn-ai { background: var(--dark); color: var(--lemon); padding: 14px 28px; border-radius: 2px; font-weight: bold; font-family: 'JetBrains Mono', monospace; transition: all 0.4s; border: none; cursor: pointer; }
         .btn-ai:hover { background: #000; letter-spacing: 0.1em; }
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -47,7 +46,8 @@
 
         .bios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; border: 1px solid rgba(26, 26, 26, 0.1); padding: 1.5rem; background: rgba(26, 26, 26, 0.02); }
         .bios-item { border-left: 2px solid var(--dark); padding-left: 1rem; margin-bottom: 1.5rem; }
-        .logbook-entry { border-bottom: 1px dashed rgba(26, 26, 26, 0.2); padding: 2rem 0; }
+        .logbook-entry { border-bottom: 1px dashed rgba(26, 26, 26, 0.2); padding: 2rem 0; opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
+        .logbook-entry.active { opacity: 1; transform: translateY(0); }
         .logbook-entry:last-child { border-bottom: none; }
 
         .glossary { cursor: help; border-bottom: 1px dotted var(--dark); }
@@ -258,12 +258,22 @@
                     <a href="#" class="hover-trigger underline underline-offset-4 decoration-1" data-label="PROFILE">LinkedIn</a>
                 </div>
             </div>
+            <div id="sys-log" class="mt-20 mono text-[8px] opacity-20 uppercase tracking-widest border-t border-black/5 pt-8 overflow-hidden max-h-20">
+                [SYSTEM_DIAGNOSTICS: INITIALIZING...]
+            </div>
         </footer>
     </main>
 
     <script>
-        // Critical Loader Logic - Separated from Module for reliability
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.1_ready"];
+        // Diagnostic Logger
+        const sysLog = (msg) => {
+            const el = document.getElementById('sys-log');
+            if (el) el.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}<br>` + el.innerHTML;
+        };
+        window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
+
+        // Critical Loader Logic
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.2_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -276,10 +286,12 @@
                     gsap.to(loader, { opacity: 0, duration: 1.2, delay: 0.5, onComplete: () => {
                         loader.style.display = 'none';
                         gsap.to(main, { opacity: 1, duration: 2 });
+                        sysLog("GUI_READY: CONTENT_REVEALED");
                     }});
                 } else {
                     loader.style.display = 'none';
                     main.style.opacity = 1;
+                    sysLog("GUI_READY: FALLBACK_REVEAL");
                 }
             }
         }, 600);
@@ -323,52 +335,44 @@
         });
 
         function initScene() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 0, 4.5); // Adjusted camera
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
-            
-            // Enhanced Lighting
-            scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-            const dl = new THREE.DirectionalLight(0xffffff, 1.5); 
-            dl.position.set(1, 1, 2); 
-            scene.add(dl);
+            try {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera.position.set(0, 0, 4.5);
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                const container = document.getElementById('canvas-container');
+                if (container) container.appendChild(renderer.domElement);
+                
+                scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+                const dl = new THREE.DirectionalLight(0xffffff, 1.5); 
+                dl.position.set(1, 1, 2); scene.add(dl);
 
-            headGroup = new THREE.Group(); 
-            scene.add(headGroup);
+                headGroup = new THREE.Group(); scene.add(headGroup);
+                sysLog("3D_ENGINE: INITIALIZED");
 
-            // DIAGNOSTIC CUBE: If you see a red cube, the 3D engine is active.
-            const testCube = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.2), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
-            testCube.position.set(0, 0, 0);
-            scene.add(testCube);
-            
-            const loader = new GLTFLoader();
-            // Using a more stable direct URL with explicit versioning
-            loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/models/gltf/facecap.glb', 
-                (gltf) => {
-                    const mesh = gltf.scene.children[0]; 
-                    mesh.scale.set(5, 5, 5); // Scaled up even more
-                    mesh.position.y = -1.5; 
-                    headGroup.add(mesh);
-                    faceMesh = mesh.getObjectByName('mesh_2');
-                    
-                    // Update status ticker
-                    const ticker = document.querySelector('.status-ticker');
-                    if (ticker) {
-                        ticker.innerHTML += '<br> [3D_ENGINE: LOADED]';
+                const testCube = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.2), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+                scene.add(testCube);
+                
+                const loader = new GLTFLoader();
+                loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/models/gltf/facecap.glb', 
+                    (gltf) => {
+                        const mesh = gltf.scene.children[0]; 
+                        mesh.scale.set(4, 4, 4); 
+                        mesh.position.y = -1.5; 
+                        headGroup.add(mesh);
+                        faceMesh = mesh.getObjectByName('mesh_2');
+                        scene.remove(testCube);
+                        sysLog("MODEL_LOADED: FACECAP_GLB");
+                    },
+                    undefined,
+                    (err) => {
+                        sysLog(`MODEL_ERR: ${err.message}`);
+                        testCube.material.color.set(0x0000ff);
                     }
-                    console.log("3D Model Loaded Successfully");
-                    scene.remove(testCube); // Remove diagnostic cube once model is live
-                },
-                undefined,
-                (error) => {
-                    console.error("Error loading 3D model:", error);
-                    testCube.material.color.set(0x0000ff); // Turn blue if load fails
-                }
-            );
+                );
+            } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -378,7 +382,7 @@
 
             function animate() {
                 requestAnimationFrame(animate);
-                if (!webcamRunning) {
+                if (!webcamRunning && headGroup) {
                     targetX += (mouseX - targetX) * 0.03; targetY += (mouseY - targetY) * 0.03;
                     headGroup.rotation.y = Math.max(-0.25, Math.min(0.25, targetX * 0.8)); 
                     headGroup.rotation.x = Math.max(-0.2, Math.min(0.2, targetY * 0.8));
@@ -389,11 +393,14 @@
         }
 
         async function setupAI() {
-            const filesetResolver = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
-            faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
-                baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`, delegate: "GPU" },
-                outputFaceBlendshapes: true, runningMode: "VIDEO", numFaces: 1
-            });
+            try {
+                const filesetResolver = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
+                faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
+                    baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`, delegate: "GPU" },
+                    outputFaceBlendshapes: true, runningMode: "VIDEO", numFaces: 1
+                });
+                sysLog("AI_ENGINE: READY");
+            } catch (e) { sysLog(`AI_ERR: ${e.message}`); }
         }
 
         activateBtn.addEventListener("click", async () => {
@@ -432,11 +439,19 @@
 
         window.addEventListener("scroll", () => {
             const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-            progressInner.style.height = scrollPercent + '%';
-            document.querySelectorAll(".reveal, .logbook-entry").forEach(r => {
-                if (r.getBoundingClientRect().top < window.innerHeight - 150) r.classList.add("active");
-            });
+            const progress = document.getElementById('progress-inner');
+            if (progress) progress.style.height = scrollPercent + '%';
         });
+
+        // Intersection Observer for performance
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal, .logbook-entry').forEach(el => obs.observe(el));
 
         // Uptime counter logic
         const startTime = Date.now();
@@ -446,7 +461,7 @@
             const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
             const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
             const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-            uptimeVal.innerText = `UPTIME: ${h}:${m}:${s}`;
+            if (uptimeVal) uptimeVal.innerText = `UPTIME: ${h}:${m}:${s}`;
         }, 1000);
     </script>
 </body>
