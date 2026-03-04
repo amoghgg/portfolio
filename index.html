@@ -15,10 +15,10 @@
     <style>
         :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
         body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: var(--lemon); }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; overflow: hidden; }
+        canvas { display: block; width: 100%; height: 100%; }
         
-        #main-content { z-index: 10; position: relative; pointer-events: auto; }
+        #main-content { z-index: 1; position: relative; pointer-events: auto; }
         
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
@@ -413,23 +413,36 @@
         activateBtn.addEventListener("click", async () => {
             if (!faceLandmarker) return;
             if (webcamRunning) {
-                webcamRunning = false; activateBtn.innerText = "[ Initialize_Mirror ]";
-                video.srcObject.getTracks().forEach(t => t.stop());
+                webcamRunning = false; 
+                activateBtn.innerText = "[ Initialize_Mirror ]";
+                if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
                 gsap.to(headGroup.rotation, { x: 0, y: 0, duration: 2, ease: "power3.out" });
-                gsap.to(headGroup.position, { y: -1.5, z: 0, duration: 1.5 });
+                gsap.to(headGroup.position, { y: -1.2, z: 0, duration: 1.5 });
+                sysLog("AI_MIRROR: DISABLED");
             } else {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                     video.srcObject = stream;
-                    webcamRunning = true; activateBtn.innerText = "[ Disable_Mirror ]";
-                    gsap.to(headGroup.position, { y: 0, z: 1.5, duration: 1.5, ease: "power2.inOut" });
-                    runInference();
-                } catch(e) { alert("Camera access denied."); }
+                    video.onloadeddata = () => {
+                        video.play();
+                        webcamRunning = true; 
+                        activateBtn.innerText = "[ Disable_Mirror ]";
+                        gsap.to(headGroup.position, { y: 0, z: 1.5, duration: 1.5, ease: "power2.inOut" });
+                        runInference();
+                        sysLog("AI_MIRROR: ACTIVE");
+                    };
+                } catch(e) { 
+                    sysLog(`CAMERA_ERR: ${e.message}`);
+                    alert("Camera access denied."); 
+                }
             }
         });
 
         function runInference() {
-            if (!webcamRunning) return;
+            if (!webcamRunning || video.readyState < 2) {
+                if (webcamRunning) requestAnimationFrame(runInference);
+                return;
+            }
             const results = faceLandmarker.detectForVideo(video, performance.now());
             if (results.faceBlendshapes && results.faceBlendshapes.length > 0 && faceMesh) {
                 const influences = faceMesh.morphTargetInfluences;
