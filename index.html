@@ -15,7 +15,7 @@
     <style>
         :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
         body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-        canvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
+        canvas { position: fixed; top: 0; left: 0; z-index: 5; pointer-events: none; }
         
         #main-content { z-index: 10; position: relative; }
 
@@ -339,14 +339,19 @@
 
             headGroup = new THREE.Group(); 
             scene.add(headGroup);
+
+            // DIAGNOSTIC CUBE: If you see a red cube, the 3D engine is active.
+            const testCube = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.2), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+            testCube.position.set(0, 0, 0);
+            scene.add(testCube);
             
             const loader = new GLTFLoader();
-            // Using a more stable direct URL
-            loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/facecap.glb', 
+            // Using a more stable direct URL with explicit versioning
+            loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/models/gltf/facecap.glb', 
                 (gltf) => {
                     const mesh = gltf.scene.children[0]; 
-                    mesh.scale.set(4, 4, 4); // Scaled up significantly
-                    mesh.position.y = -1.5; // Adjusted position
+                    mesh.scale.set(5, 5, 5); // Scaled up even more
+                    mesh.position.y = -1.5; 
                     headGroup.add(mesh);
                     faceMesh = mesh.getObjectByName('mesh_2');
                     
@@ -355,10 +360,13 @@
                     if (ticker) {
                         ticker.innerHTML += '<br> [3D_ENGINE: LOADED]';
                     }
+                    console.log("3D Model Loaded Successfully");
+                    scene.remove(testCube); // Remove diagnostic cube once model is live
                 },
                 undefined,
                 (error) => {
                     console.error("Error loading 3D model:", error);
+                    testCube.material.color.set(0x0000ff); // Turn blue if load fails
                 }
             );
 
