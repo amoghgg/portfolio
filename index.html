@@ -23,8 +23,9 @@
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
-        .hover-trigger { transition: all 0.2s ease; cursor: pointer; display: inline-block; }
-        .hover-trigger:hover { font-style: italic !important; opacity: 0.8; text-decoration: underline; }
+        /* Reinforced Italics Hover */
+        .hover-trigger, a, button, h1, h2, h3 { transition: all 0.2s ease; cursor: pointer; }
+        .hover-trigger:hover, a:hover, button:hover, h2:hover { font-style: italic !important; }
 
         #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1); text-align: center; padding: 10px; overflow: hidden; }
         #cursor.active { width: 85px; height: 75px; background: rgba(26, 26, 26, 0.98); }
@@ -55,7 +56,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.3.1]
+            [NETWORK: SECURE_MESH_v.3.2]
         </div>
 
         <header class="mb-32 mt-10">
@@ -64,10 +65,10 @@
                 Engineering machine perception through the lens of human dramaturgy.
             </p>
             <nav class="flex flex-wrap gap-x-16 gap-y-4 text-lg font-bold lowercase tracking-tight">
-                <a href="#work" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="INDEX">Work</a>
-                <a href="#about" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="ABOUT">About</a>
-                <a href="#playground" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="LAB">Playground</a>
-                <a href="#contact" class="hover-trigger underline underline-offset-[12px] decoration-[0.5px]" data-label="CONNECT">Contact</a>
+                <a href="#work" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="INDEX">Work</a>
+                <a href="#about" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="ABOUT">About</a>
+                <a href="#playground" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="LAB">Playground</a>
+                <a href="#contact" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="CONNECT">Contact</a>
             </nav>
         </header>
 
@@ -78,24 +79,24 @@
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Perception</p>
                     <div class="grid md:grid-cols-2 gap-16 items-center">
                         <div>
-                            <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger mb-10" data-label="SCAN">AI Mirror <br> Tracking</h2>
+                            <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter mb-10" data-label="SCAN">AI Mirror <br> Tracking</h2>
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
                                 Real-time digital mimicry. Mapping facial blendshapes to a reflected 3D agent.
                             </p>
-                            <button id="activate-ai" class="btn-ai hover-trigger uppercase" data-label="START">[ Initialize_Mirror ]</button>
+                            <button id="activate-ai" class="btn-ai uppercase" data-label="START">[ Initialize_Mirror ]</button>
                         </div>
                         <div id="canvas-container"></div>
                     </div>
                 </div>
                 
                 <div class="reveal border-t border-black/10 pt-16">
-                    <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter hover-trigger" data-label="SYNC">Integrity Sync Engine</h2>
+                    <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter" data-label="SYNC">Integrity Sync Engine</h2>
                 </div>
             </div>
         </section>
 
         <footer class="pb-32 border-t-2 border-black pt-16" id="contact">
-            <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-6 hover-trigger" data-label="MAIL">hi@amoghbajpai.com</h2>
+            <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-6" data-label="MAIL">hi@amoghbajpai.com</h2>
             <div id="sys-log" class="mt-20 mono text-[8px] opacity-20 uppercase tracking-widest border-t border-black/5 pt-8 overflow-hidden max-h-40">
                 [SYSTEM_DIAGNOSTICS: INITIALIZING...]
             </div>
@@ -109,7 +110,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v3.1_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v3.2_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -118,7 +119,7 @@
                 clearInterval(loaderInterval);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v3.1");
+                sysLog("GUI_READY: CONTENT_REVEALED_v3.2");
             }
         }, 600);
     </script>
@@ -136,7 +137,7 @@
         const cursor = document.getElementById('cursor');
 
         document.addEventListener('mousemove', e => {
-            gsap.to(cursor, { left: e.clientX, top: e.clientY, duration: 0.15 });
+            gsap.to(cursor, { left: e.clientX, top: e.clientY, duration: 0.1 });
             const container = document.getElementById('canvas-container');
             if (container) {
                 const rect = container.getBoundingClientRect();
@@ -181,23 +182,16 @@
                 headGroup.add(fallback);
                 
                 const loader = new GLTFLoader();
-                // LOCAL LOADING: Using the file we just downloaded to bypass CDN issues
-                const modelUrl = './facecap.glb';
-                
-                loader.load(modelUrl, 
+                // DEFINITIVE FIX: Loading local model file we just downloaded
+                loader.load('./facecap.glb', 
                     (gltf) => {
                         const model = gltf.scene;
                         model.scale.set(4.5, 4.5, 4.5); model.position.y = -1.5;
                         headGroup.remove(fallback); headGroup.add(model);
                         faceMesh = model.getObjectByName('mesh_2');
-                        sysLog("MODEL_LOADED: LOCAL_FACECAP_SUCCESS");
+                        sysLog("MODEL_LOADED: LOCAL_SUCCESS_V3.2");
                     },
-                    (xhr) => {
-                        if (xhr.lengthComputable) {
-                            const percent = Math.round((xhr.loaded / xhr.total) * 100);
-                            if (percent % 25 === 0) sysLog(`MODEL_LOADING: ${percent}%`);
-                        }
-                    },
+                    undefined,
                     (err) => sysLog(`MODEL_ERR: ${err.message}`)
                 );
             } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
@@ -257,6 +251,7 @@
                     const influences = faceMesh.morphTargetInfluences;
                     const dictionary = faceMesh.morphTargetDictionary;
                     blend.forEach(shape => {
+                        // High-precision mapping for stable model
                         const name = shape.categoryName.replace('Left', '_L').replace('Right', '_R');
                         const index = dictionary[name] || dictionary[shape.categoryName];
                         if (index !== undefined) influences[index] = shape.score;
@@ -280,7 +275,7 @@
         const obs = new IntersectionObserver((entries) => {
             entries.forEach(entry => { entry.isIntersecting && entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal, .logbook-entry').forEach(el => obs.observe(el));
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
         const startTime = Date.now();
         const uptimeVal = document.getElementById('uptime-val');
