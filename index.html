@@ -16,7 +16,7 @@
         :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
         body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         
-        #canvas-container { width: 100%; height: 600px; position: relative; background: #000; overflow: hidden; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        #canvas-container { width: 100%; height: 600px; position: relative; background: #000; overflow: hidden; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
         canvas { display: block; width: 100% !important; height: 100% !important; }
         
         #main-content { z-index: 1; position: relative; }
@@ -24,8 +24,8 @@
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
-        .hover-trigger { transition: all 0.3s ease; cursor: pointer; }
-        .hover-trigger:hover { font-style: italic !important; }
+        .hover-trigger { transition: all 0.2s ease; cursor: pointer; display: inline-block; }
+        .hover-trigger:hover { font-style: italic !important; transform: translateX(4px); }
 
         #cursor { width: 12px; height: 12px; background: var(--dark); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-size: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1); text-align: center; padding: 10px; overflow: hidden; }
         #cursor.active { width: 85px; height: 75px; background: rgba(26, 26, 26, 0.98); }
@@ -37,16 +37,13 @@
         #loader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
         #video-preview { position: fixed; bottom: 20px; left: 20px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
         .btn-ai { background: var(--dark); color: var(--lemon); padding: 14px 28px; border-radius: 2px; font-weight: bold; font-family: 'JetBrains Mono', monospace; transition: all 0.4s; border: none; cursor: pointer; }
-        .btn-ai:hover { background: #000; letter-spacing: 0.1em; }
+        .btn-ai:hover { background: #000; letter-spacing: 0.1em; font-style: italic; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
         .grain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         
         .status-pulse { animation: status-pulse 2s infinite; }
         @keyframes status-pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
-
-        .flicker { animation: flicker 0.15s infinite; }
-        @keyframes flicker { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
 
         .bios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; border: 1px solid rgba(26, 26, 26, 0.1); padding: 1.5rem; background: rgba(26, 26, 26, 0.02); }
         .bios-item { border-left: 2px solid var(--dark); padding-left: 1rem; margin-bottom: 1.5rem; }
@@ -73,7 +70,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.2.6]
+            [NETWORK: SECURE_MESH_v.2.7]
         </div>
 
         <header class="mb-32 mt-10">
@@ -189,7 +186,7 @@
                                 <p class="font-bold">Spatial Semantics</p>
                                 <p class="font-bold">HCI Blocking</p>
                                 <p class="font-bold">Latent Intent</p>
-                                <div class="w-full bg-black/5 h-[2px] mt-4 flicker"><div class="bg-green-600 w-full h-full"></div></div>
+                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-green-600 w-full h-full"></div></div>
                             </div>
                         </div>
                     </div>
@@ -264,7 +261,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.6_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v2.7_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -277,7 +274,7 @@
                     gsap.to(loader, { opacity: 0, duration: 1.2, delay: 0.5, onComplete: () => {
                         loader.style.display = 'none';
                         gsap.to(main, { opacity: 1, duration: 2 });
-                        sysLog("GUI_READY: CONTENT_REVEALED_v2.6");
+                        sysLog("GUI_READY: CONTENT_REVEALED_v2.7");
                     }});
                 } else {
                     loader.style.display = 'none';
@@ -350,7 +347,7 @@
 
                 headGroup = new THREE.Group(); scene.add(headGroup);
                 
-                // MIRROR (from webgl_mirror.html)
+                // MIRROR
                 const geometry = new THREE.PlaneGeometry(10, 10);
                 const groundMirror = new Reflector(geometry, {
                     clipBias: 0.003,
@@ -365,25 +362,24 @@
                 // FALLBACK
                 fallback = new THREE.Mesh(
                     new THREE.SphereGeometry(1.2, 32, 32),
-                    new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.1 })
+                    new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.15 })
                 );
                 headGroup.add(fallback);
                 
                 const loader = new GLTFLoader();
-                loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@r158/examples/models/gltf/facecap.glb', 
+                loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/models/gltf/facecap.glb', 
                     (gltf) => {
-                        const mesh = gltf.scene.children[0]; 
-                        mesh.scale.set(4.5, 4.5, 4.5); 
-                        mesh.position.y = -1.5; 
+                        const model = gltf.scene;
+                        model.scale.set(4.5, 4.5, 4.5); 
+                        model.position.y = -1.5; 
                         headGroup.remove(fallback);
-                        headGroup.add(mesh);
-                        faceMesh = mesh.getObjectByName('mesh_2');
+                        headGroup.add(model);
+                        faceMesh = model.getObjectByName('mesh_2');
                         sysLog("MODEL_LOADED: FACECAP_SUCCESS");
                     },
                     undefined,
                     (err) => {
-                        sysLog(`MODEL_ERR: ${err.message}. USING_FALLBACK.`);
-                        fallback.material.opacity = 0.4;
+                        sysLog(`MODEL_ERR: ${err.message}. FALLBACK_ACTIVE.`);
                     }
                 );
             } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
@@ -447,22 +443,20 @@
             }
             const results = faceLandmarker.detectForVideo(video, performance.now());
             if (results.faceBlendshapes && results.faceBlendshapes.length > 0) {
+                const blend = results.faceBlendshapes[0].categories;
                 if (faceMesh) {
                     const influences = faceMesh.morphTargetInfluences;
                     const dictionary = faceMesh.morphTargetDictionary;
-                    results.faceBlendshapes[0].categories.forEach(shape => {
-                        // ROBUST MAPPING: MediaPipe name cleanup
+                    blend.forEach(shape => {
                         const name = shape.categoryName;
                         const score = shape.score;
-                        const index = dictionary[name] || 
-                                      dictionary[name.charAt(0).toUpperCase() + name.slice(1)] ||
-                                      dictionary[name.replace('Left', '_L').replace('Right', '_R')];
+                        const index = dictionary[name] || dictionary[name.charAt(0).toUpperCase() + name.slice(1)];
                         if (index !== undefined) influences[index] = score;
                     });
                 } else if (fallback) {
-                    const blend = results.faceBlendshapes[0].categories;
                     const jawOpen = blend.find(s => s.categoryName === 'jawOpen')?.score || 0;
-                    fallback.scale.set(1 + jawOpen * 0.5, 1 + jawOpen * 0.2, 1);
+                    const mouthSmile = blend.find(s => s.categoryName === 'mouthSmileLeft')?.score || 0;
+                    fallback.scale.set(1 + jawOpen * 0.8, 1 + mouthSmile * 0.3, 1 + jawOpen * 0.2);
                 }
             }
             requestAnimationFrame(runInference);
