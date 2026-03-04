@@ -67,7 +67,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.4.5]
+            [NETWORK: SECURE_MESH_v.4.6]
         </div>
 
         <header class="mb-32 mt-10">
@@ -94,10 +94,15 @@
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
                                 Everybody is made of pixels. Real-time bitmapping of facial geometry into interactive particles.
                             </p>
-                            <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                <span class="block mb-4">DEFAULT: Face-to-Face orientation. Use [ Flip_POV ] to mirror or reverse perspective.</span>
-                                GPU-accelerated facial inference using <span class="glossary hover-trigger" data-label="LANDMARKS">MediaPipe</span> landmarks.
-                            </p>
+                            <div class="space-y-4 mb-12">
+                                <p class="mono text-[10px] uppercase opacity-50 tracking-widest">[ Perception_Manual ]</p>
+                                <ul class="mono text-[11px] opacity-70 space-y-2 uppercase leading-relaxed">
+                                    <li>01. Initialize Perception to scan facial landmarks.</li>
+                                    <li>02. Default POV is configured Face-to-Face.</li>
+                                    <li>03. Toggle [ Flip_POV ] to reverse horizontal mapping.</li>
+                                    <li>04. Hold blink to trigger particle burst interaction.</li>
+                                </ul>
+                            </div>
                             <div class="flex gap-4 flex-wrap">
                                 <button id="activate-ai" class="btn-ai uppercase" data-label="LIVE">[ Initialize_Perception ]</button>
                             </div>
@@ -222,7 +227,7 @@
                             Biometric Latency Optimization <span class="bg-black text-lemon px-2 py-0.5 text-[8px] mono">STABLE</span>
                         </h4>
                         <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Synthesized recursive synchronization loops to reduce reporting lag in high-stakes biometric environments.
+                            Synthesized recursive synchronization loops to reduce reporting lag in high-stakes biometric environments. Achieved 200ms end-to-end latency across global endpoints.
                         </p>
                     </div>
                 </div>
@@ -255,7 +260,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.5_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.6_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -264,7 +269,7 @@
                 clearInterval(loaderInterval);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v4.5");
+                sysLog("GUI_READY: CONTENT_REVEALED_v4.6");
             }
         }, 600);
     </script>
@@ -276,15 +281,13 @@
         let faceLandmarker, webcamRunning = false, scene, camera, renderer, particles;
         let mouseX = 0, mouseY = 0, blinkScore = 0, burstActive = false;
         
-        // Calibration values
-        let offsetX = 0, offsetY = 0, scaleFactor = 8, mirrorX = -1; // MirrorX = -1 for face-to-face default
+        let offsetX = 0, offsetY = 0, scaleFactor = 8, mirrorX = -1;
 
         const video = document.getElementById("video-preview");
         const activateBtn = document.getElementById("activate-ai");
         const cursor = document.getElementById('cursor');
         const calibUI = document.getElementById('calibration-controls');
 
-        // CALIBRATION LOGIC
         document.getElementById('cal-left').onclick = () => offsetX -= 0.1;
         document.getElementById('cal-right').onclick = () => offsetX += 0.1;
         document.getElementById('cal-up').onclick = () => offsetY += 0.1;
@@ -441,7 +444,6 @@
 
                 landmarks.forEach((lm, i) => {
                     if (i < pos.length / 3) {
-                        // Apply MirrorX and Offset
                         const tx = (lm.x * mirrorX - 0.5 * mirrorX + offsetX) * scaleFactor;
                         const ty = (-(lm.y - 0.5) + offsetY) * scaleFactor;
                         const tz = -lm.z * scaleFactor;
