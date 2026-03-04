@@ -324,22 +324,36 @@
         function initScene() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 0.2, 3.8);
+            camera.position.set(0, 0, 4.5); // Adjusted camera
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             document.getElementById('canvas-container').appendChild(renderer.domElement);
-            scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-            const dl = new THREE.DirectionalLight(0xffffff, 1.2); dl.position.set(5, 5, 5); scene.add(dl);
-            headGroup = new THREE.Group(); scene.add(headGroup);
+            
+            // Enhanced Lighting
+            scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+            const dl = new THREE.DirectionalLight(0xffffff, 1.5); 
+            dl.position.set(1, 1, 2); 
+            scene.add(dl);
+
+            headGroup = new THREE.Group(); 
+            scene.add(headGroup);
             
             const loader = new GLTFLoader();
-            loader.load('https://threejs.org/examples/models/gltf/facecap.glb', 
+            // Using a more stable direct URL
+            loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/facecap.glb', 
                 (gltf) => {
                     const mesh = gltf.scene.children[0]; 
+                    mesh.scale.set(4, 4, 4); // Scaled up significantly
+                    mesh.position.y = -1.5; // Adjusted position
                     headGroup.add(mesh);
                     faceMesh = mesh.getObjectByName('mesh_2');
-                    console.log("3D Model Loaded Successfully");
+                    
+                    // Update status ticker
+                    const ticker = document.querySelector('.status-ticker');
+                    if (ticker) {
+                        ticker.innerHTML += '<br> [3D_ENGINE: LOADED]';
+                    }
                 },
                 undefined,
                 (error) => {
