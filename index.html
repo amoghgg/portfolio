@@ -15,8 +15,10 @@
     <style>
         :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
         body { background-color: var(--lemon); color: var(--dark); font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
+        canvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
         
+        #main-content { z-index: 10; position: relative; }
+
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.215, 0.61, 0.355, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
@@ -28,7 +30,7 @@
         #progress-inner { width: 100%; height: 0%; background: var(--dark); }
 
         #loader { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; color: var(--lemon); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
-        #video-preview { position: fixed; bottom: 20px; left: 20px; width: 160px; height: 120px; border: 1px solid var(--dark); border-radius: 4px; z-index: 100; transform: scaleX(-1); display: none; background: #000; }
+        #video-preview { position: fixed; bottom: 20px; left: 20px; width: 1px; height: 1px; opacity: 0; pointer-events: none; z-index: -100; }
         .btn-ai { background: var(--dark); color: var(--lemon); padding: 14px 28px; border-radius: 2px; font-weight: bold; font-family: 'JetBrains Mono', monospace; transition: all 0.4s; border: none; cursor: pointer; }
         .btn-ai:hover { background: #000; letter-spacing: 0.1em; }
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -389,14 +391,16 @@
         activateBtn.addEventListener("click", async () => {
             if (!faceLandmarker) return;
             if (webcamRunning) {
-                webcamRunning = false; activateBtn.innerText = "[ Activate_AI_Mirror ]";
-                video.style.display = "none"; video.srcObject.getTracks().forEach(t => t.stop());
+                webcamRunning = false; activateBtn.innerText = "[ Initialize_Mirror ]";
+                video.srcObject.getTracks().forEach(t => t.stop());
                 gsap.to(headGroup.rotation, { x: 0, y: 0, duration: 2, ease: "power3.out" });
+                gsap.to(headGroup.position, { y: -1.5, z: 0, duration: 1.5 });
             } else {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    video.srcObject = stream; video.style.display = "block";
+                    video.srcObject = stream;
                     webcamRunning = true; activateBtn.innerText = "[ Disable_Mirror ]";
+                    gsap.to(headGroup.position, { y: 0, z: 1.5, duration: 1.5, ease: "power2.inOut" });
                     runInference();
                 } catch(e) { alert("Camera access denied."); }
             }
