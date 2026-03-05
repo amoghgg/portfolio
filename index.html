@@ -9,7 +9,7 @@
     <title>Amogh Bajpai | Creative Technologist & Applied ML Engineer</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js?v=5.1"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js?v=5.2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -43,8 +43,8 @@
         .calib-btn:hover { background: #fff; color: #000; }
 
         #intensity-meter { position: absolute; bottom: 6px; left: 6px; width: calc(100% - 12px); height: 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; display: none; }
-        #intensity-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #fff 0%, #fff 100%); transition: background 0.3s; }
-        #intensity-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: #fff; mix-blend-mode: difference; text-transform: uppercase; letter-spacing: 0.2em; }
+        #intensity-fill { height: 100%; width: 0%; background: #fff; transition: width 0.1s linear; }
+        #intensity-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: #fff; mix-blend-mode: difference; text-transform: uppercase; letter-spacing: 0.2em; pointer-events: none; }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
         .grain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
@@ -73,7 +73,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.5.1]
+            [NETWORK: SECURE_MESH_v.5.2]
         </div>
 
         <header class="mb-32 mt-10">
@@ -91,6 +91,7 @@
 
         <section id="work" class="mb-32">
             <div class="space-y-32">
+                <!-- Project 01 -->
                 <div class="reveal border-t border-black/10 pt-16" id="project-01">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Perception</p>
                     <div class="grid md:grid-cols-2 gap-16 items-center">
@@ -105,7 +106,7 @@
                                     <li>01. Initialize Perception to scan facial landmarks.</li>
                                     <li>02. Maintain blink for 3s to charge color-shift.</li>
                                     <li>03. Sustain blink for 6s total to trigger burst.</li>
-                                    <li>04. Watch the Intensity Meter for status feedback.</li>
+                                    <li>04. Watch Intensity Meter for high-precision feedback.</li>
                                 </ul>
                             </div>
                             <div class="flex gap-4 flex-wrap">
@@ -113,10 +114,12 @@
                             </div>
                         </div>
                         <div id="canvas-container" class="group">
+                            <!-- Intensity Meter -->
                             <div id="intensity-meter">
                                 <div id="intensity-fill"></div>
                                 <div id="intensity-label">Standby</div>
                             </div>
+                            <!-- Calibration Overlay -->
                             <div id="calibration-controls" class="absolute top-6 right-6 z-20 flex flex-col gap-2 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto bg-black/40 backdrop-blur-sm p-4 rounded border border-white/10">
                                 <p class="mono text-[8px] text-white opacity-50 mb-4 uppercase tracking-widest">POV_Calibration</p>
                                 <div class="flex gap-2 justify-end mb-4">
@@ -171,6 +174,7 @@
             </div>
         </section>
 
+        <!-- ABOUT -->
         <section id="about" class="mb-32 border-t-2 border-black pt-24">
             <div class="grid md:grid-cols-2 gap-24">
                 <div>
@@ -228,6 +232,7 @@
             </div>
         </section>
 
+        <!-- LOGBOOK -->
         <section id="playground" class="mb-32 border-t border-black/10 pt-24">
             <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-[0.3em] italic font-bold">Logbook // Field_Notes_2026</h3>
             <div class="space-y-0">
@@ -282,7 +287,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v5.1_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v5.2_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -291,20 +296,24 @@
                 clearInterval(loaderInterval);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v5.1");
+                sysLog("GUI_READY: CONTENT_REVEALED_v5.2");
             }
         }, 600);
     </script>
 
     <script type="module">
-        import * as THREE from "https://esm.sh/three@0.158.0?v=5.1";
-        import { FaceLandmarker, FilesetResolver } from "https://esm.sh/@mediapipe/tasks-vision@0.10.3?v=5.1";
+        import * as THREE from "https://esm.sh/three@0.158.0?v=5.2";
+        import { FaceLandmarker, FilesetResolver } from "https://esm.sh/@mediapipe/tasks-vision@0.10.3?v=5.2";
 
         let faceLandmarker, webcamRunning = false, scene, camera, renderer, particles;
         let mouseX = 0, mouseY = 0, burstActive = false;
         
         let blinkStartTime = 0;
         let colorModeActive = false;
+        let lastBlinkFrame = 0;
+        let blinkPersistenceBuffer = 0; // Robustness buffer
+        const MAX_BUFFER = 10; // Allow 10 frames of tracking loss
+
         let offsetX = 0, offsetY = 0, scaleFactor = 8, mirrorX = -1;
 
         const video = document.getElementById("video-preview");
@@ -384,7 +393,7 @@
                 const material = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, transparent: true, opacity: 0.9 });
                 particles = new THREE.Points(geometry, material);
                 scene.add(particles);
-                sysLog("3D_ENGINE: PERCEPTION_READY_v5.1");
+                sysLog("3D_ENGINE: PERCEPTION_READY_v5.2");
             } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
 
             function animate() {
@@ -402,7 +411,7 @@
                     baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`, delegate: "GPU" },
                     outputFaceBlendshapes: true, runningMode: "VIDEO", numFaces: 1
                 });
-                sysLog("AI_ENGINE: READY_v5.1");
+                sysLog("AI_ENGINE: READY_v5.2");
             } catch (e) { sysLog(`AI_ERR: ${e.message}`); }
         }
 
@@ -448,6 +457,7 @@
                 burstActive = false;
                 blinkStartTime = 0;
                 colorModeActive = false;
+                blinkPersistenceBuffer = 0;
                 particles.material.size = 0.05;
                 for(let i=0; i<col.length; i++) col[i] = 1;
                 particles.geometry.attributes.color.needsUpdate = true;
@@ -473,7 +483,9 @@
                 const rightBlink = blend.find(s => s.categoryName === 'eyeBlinkRight')?.score || 0;
                 const blinkScore = (leftBlink + rightBlink) / 2;
 
-                if (blinkScore > 0.8) {
+                // Robust Blink Detection (Lower threshold 0.4 + Buffer)
+                if (blinkScore > 0.4) {
+                    blinkPersistenceBuffer = MAX_BUFFER;
                     if (blinkStartTime === 0) blinkStartTime = performance.now();
                     const elapsed = performance.now() - blinkStartTime;
                     
@@ -498,15 +510,19 @@
                     if (elapsed > 6000) triggerBurst();
                     particles.material.size = 0.05 + (elapsed / 6000) * 0.4;
                 } else {
-                    blinkStartTime = 0;
-                    if (colorModeActive) {
-                        for(let i=0; i<col.length; i++) col[i] = 1;
-                        particles.geometry.attributes.color.needsUpdate = true;
-                        colorModeActive = false;
+                    if (blinkPersistenceBuffer > 0) {
+                        blinkPersistenceBuffer--;
+                    } else {
+                        blinkStartTime = 0;
+                        if (colorModeActive) {
+                            for(let i=0; i<col.length; i++) col[i] = 1;
+                            particles.geometry.attributes.color.needsUpdate = true;
+                            colorModeActive = false;
+                        }
+                        meterFill.style.width = '0%';
+                        meterLabel.innerText = "System_Active";
+                        particles.material.size = 0.05 + blinkScore * 0.25;
                     }
-                    meterFill.style.width = '0%';
-                    meterLabel.innerText = "System_Active";
-                    particles.material.size = 0.05 + blinkScore * 0.25;
                 }
 
                 landmarks.forEach((lm, i) => {
