@@ -514,13 +514,10 @@
                         blinkPersistenceBuffer--;
                     } else {
                         if (colorModeActive) {
-                            // PERSISTENCE: If we are in colorful stage, don't reset to 0. 
-                            // Hold at 3s mark (50% meter).
                             blinkStartTime = performance.now() - 3001; 
                             meterFill.style.width = '50%';
                             meterFill.style.background = 'linear-gradient(90deg, #ff0000, #ff00ff, #0000ff)';
                             meterLabel.innerText = "[ Colorful_Mode: LOCKED ]";
-                            // Keep particles colorful
                             for (let i = 0; i < col.length; i++) { if(col[i] === 1) col[i] = Math.random(); }
                             particles.geometry.attributes.color.needsUpdate = true;
                         } else {
