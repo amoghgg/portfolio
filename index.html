@@ -67,7 +67,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.4.8]
+            [NETWORK: SECURE_MESH_v.4.9]
         </div>
 
         <header class="mb-32 mt-10">
@@ -98,9 +98,9 @@
                                 <p class="mono text-[10px] uppercase opacity-50 tracking-widest">[ Perception_Manual ]</p>
                                 <ul class="mono text-[11px] opacity-70 space-y-2 uppercase leading-relaxed">
                                     <li>01. Initialize Perception to scan facial landmarks.</li>
-                                    <li>02. Default POV is configured Face-to-Face.</li>
-                                    <li>03. Toggle [ Flip_POV ] to reverse horizontal mapping.</li>
-                                    <li>04. Hold blink to trigger particle burst interaction.</li>
+                                    <li>02. Maintain blink for 3s to activate color-shift.</li>
+                                    <li>03. Sustain blink for 5s to trigger particle burst.</li>
+                                    <li>04. Use Calibration panel to refine POV alignment.</li>
                                 </ul>
                             </div>
                             <div class="flex gap-4 flex-wrap">
@@ -140,7 +140,7 @@
                                 Self-healing synchronization loops for high-stakes biometric reporting.
                             </p>
                             <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Architected recursive fetching to defeat unstable APIs. Integrated <span class="glossary hover-trigger" data-label="RETRIEVAL">RAG</span> pipelines for behavioral anomaly detection in live monitoring.
+                                Architected recursive fetching to defeat unstable APIs. Integrated <span class="glossary hover-trigger" data-label="RETRIEVAL">RAG</span> pipelines for behavioral anomaly detection.
                             </p>
                         </div>
                     </div>
@@ -164,7 +164,7 @@
             </div>
         </section>
 
-        <!-- ABOUT / PHILOSOPHY -->
+        <!-- ABOUT -->
         <section id="about" class="mb-32 border-t-2 border-black pt-24">
             <div class="grid md:grid-cols-2 gap-24">
                 <div>
@@ -233,7 +233,7 @@
                             Biometric Latency Optimization <span class="bg-black text-lemon px-2 py-0.5 text-[8px] mono">STABLE</span>
                         </h4>
                         <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Synthesized recursive synchronization loops to reduce reporting lag in high-stakes biometric environments. Achieved 200ms end-to-end latency across global endpoints.
+                            Synthesized recursive synchronization loops to reduce reporting lag in high-stakes biometric environments.
                         </p>
                     </div>
                 </div>
@@ -255,7 +255,7 @@
                             Generative Visual Synthesis <span class="bg-blue-600 text-white px-2 py-0.5 text-[8px] mono">EXPERIMENTAL</span>
                         </h4>
                         <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Explored real-time particle displacement using TouchDesigner and GLSL shaders. Mapped skeletal data to dynamic fluid simulations for immersive spatial performances.
+                            Explored real-time particle displacement using TouchDesigner and GLSL shaders.
                         </p>
                     </div>
                 </div>
@@ -277,7 +277,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.8_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.9_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -286,7 +286,7 @@
                 clearInterval(loaderInterval);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v4.8");
+                sysLog("GUI_READY: CONTENT_REVEALED_v4.9");
             }
         }, 600);
     </script>
@@ -296,8 +296,10 @@
         import { FaceLandmarker, FilesetResolver } from "https://esm.sh/@mediapipe/tasks-vision@0.10.3";
 
         let faceLandmarker, webcamRunning = false, scene, camera, renderer, particles;
-        let mouseX = 0, mouseY = 0, blinkScore = 0, burstActive = false;
+        let mouseX = 0, mouseY = 0, burstActive = false;
         
+        let blinkStartTime = 0;
+        let colorModeActive = false;
         let offsetX = 0, offsetY = 0, scaleFactor = 8, mirrorX = -1;
 
         const video = document.getElementById("video-preview");
@@ -310,7 +312,6 @@
             "TOUCHDESIGNER": "Node-based visual development platform for real-time media.",
             "LANDMARKS": "478 3D spatial points tracked in real-time.",
             "RETRIEVAL": "Semantic context loading for LLM inference.",
-            "REFLECTOR": "Planar reflection for real-time scene depth.",
         };
 
         document.getElementById('cal-left').onclick = () => offsetX -= 0.1;
@@ -319,10 +320,7 @@
         document.getElementById('cal-down').onclick = () => offsetY -= 0.1;
         document.getElementById('cal-plus').onclick = () => scaleFactor += 0.5;
         document.getElementById('cal-minus').onclick = () => scaleFactor -= 0.5;
-        document.getElementById('cal-flip').onclick = () => {
-            mirrorX *= -1;
-            sysLog(`POV_MIRROR: ${mirrorX === -1 ? 'FACE_TO_FACE' : 'REVERSED'}`);
-        };
+        document.getElementById('cal-flip').onclick = () => { mirrorX *= -1; sysLog(`POV_MIRROR: ${mirrorX === -1 ? 'FACE_TO_FACE' : 'REVERSED'}`); };
 
         document.addEventListener('mousemove', e => {
             gsap.to(cursor, { left: e.clientX, top: e.clientY, duration: 0.1 });
@@ -375,24 +373,15 @@
                 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
                 geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
                 
-                const material = new THREE.PointsMaterial({
-                    size: 0.05,
-                    vertexColors: true,
-                    transparent: true,
-                    opacity: 0.9
-                });
-                
+                const material = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, transparent: true, opacity: 0.9 });
                 particles = new THREE.Points(geometry, material);
                 scene.add(particles);
-                
-                sysLog("3D_ENGINE: POV_ACTIVE");
+                sysLog("3D_ENGINE: PERCEPTION_READY");
             } catch (e) { sysLog(`SCENE_ERR: ${e.message}`); }
 
             function animate() {
                 requestAnimationFrame(animate);
-                if (particles && !webcamRunning && !burstActive) {
-                    particles.rotation.y += 0.005;
-                }
+                if (particles && !webcamRunning && !burstActive) { particles.rotation.y += 0.005; }
                 renderer.render(scene, camera);
             }
             animate();
@@ -440,13 +429,14 @@
                     [i*3]: (Math.random() - 0.5) * 20,
                     [i*3+1]: (Math.random() - 0.5) * 20,
                     [i*3+2]: (Math.random() - 0.5) * 20,
-                    duration: 2,
-                    ease: "expo.out",
+                    duration: 2, ease: "expo.out",
                     onUpdate: () => { particles.geometry.attributes.position.needsUpdate = true; }
                 });
             }
             setTimeout(() => { 
                 burstActive = false;
+                blinkStartTime = 0;
+                colorModeActive = false;
                 particles.material.size = 0.05;
                 for(let i=0; i<col.length; i++) col[i] = 1;
                 particles.geometry.attributes.color.needsUpdate = true;
@@ -468,16 +458,32 @@
                 
                 const leftBlink = blend.find(s => s.categoryName === 'eyeBlinkLeft')?.score || 0;
                 const rightBlink = blend.find(s => s.categoryName === 'eyeBlinkRight')?.score || 0;
-                blinkScore = (leftBlink + rightBlink) / 2;
+                const blinkScore = (leftBlink + rightBlink) / 2;
 
                 if (blinkScore > 0.8) {
-                    particles.material.size += 0.005;
-                    for (let i = 0; i < col.length; i++) col[i] = Math.random();
-                    if (particles.material.size > 0.35) triggerBurst();
+                    if (blinkStartTime === 0) blinkStartTime = performance.now();
+                    const elapsed = performance.now() - blinkStartTime;
+                    
+                    // Constraint: 3s for color change
+                    if (elapsed > 3000) {
+                        colorModeActive = true;
+                        for (let i = 0; i < col.length; i++) col[i] = Math.random();
+                        particles.geometry.attributes.color.needsUpdate = true;
+                    }
+                    
+                    // Constraint: 5s total for burst
+                    if (elapsed > 5000) triggerBurst();
+                    
+                    particles.material.size = 0.05 + (elapsed / 5000) * 0.3;
                 } else {
+                    blinkStartTime = 0;
+                    if (colorModeActive) {
+                        for(let i=0; i<col.length; i++) col[i] = 1;
+                        particles.geometry.attributes.color.needsUpdate = true;
+                        colorModeActive = false;
+                    }
                     particles.material.size = 0.05 + blinkScore * 0.25;
                 }
-                particles.geometry.attributes.color.needsUpdate = true;
 
                 landmarks.forEach((lm, i) => {
                     if (i < pos.length / 3) {
