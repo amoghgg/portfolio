@@ -39,8 +39,12 @@
         .calib-btn { background: rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 2px; font-family: 'JetBrains Mono', monospace; font-size: 10px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s; }
         .calib-btn:hover { background: #fff; color: #000; }
 
+        /* Intensity Meter Styling */
+        #intensity-meter { position: absolute; bottom: 6px; left: 6px; width: calc(100% - 12px); height: 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; display: none; }
+        #intensity-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #fff 0%, #fff 100%); transition: background 0.3s; }
+        #intensity-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: #fff; mix-blend-mode: difference; text-transform: uppercase; letter-spacing: 0.2em; }
+
         .mono { font-family: 'JetBrains Mono', monospace; }
-        
         .grain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         
         .bios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; border: 1px solid rgba(26, 26, 26, 0.1); padding: 1.5rem; background: rgba(26, 26, 26, 0.02); }
@@ -67,7 +71,7 @@
         <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
             <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
             [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.4.9]
+            [NETWORK: SECURE_MESH_v.5.0]
         </div>
 
         <header class="mb-32 mt-10">
@@ -98,9 +102,9 @@
                                 <p class="mono text-[10px] uppercase opacity-50 tracking-widest">[ Perception_Manual ]</p>
                                 <ul class="mono text-[11px] opacity-70 space-y-2 uppercase leading-relaxed">
                                     <li>01. Initialize Perception to scan facial landmarks.</li>
-                                    <li>02. Maintain blink for 3s to activate color-shift.</li>
-                                    <li>03. Sustain blink for 5s to trigger particle burst.</li>
-                                    <li>04. Use Calibration panel to refine POV alignment.</li>
+                                    <li>02. Maintain blink for 3s to charge color-shift.</li>
+                                    <li>03. Sustain blink for 6s total to trigger burst.</li>
+                                    <li>04. Watch the Intensity Meter for status feedback.</li>
                                 </ul>
                             </div>
                             <div class="flex gap-4 flex-wrap">
@@ -108,7 +112,13 @@
                             </div>
                         </div>
                         <div id="canvas-container" class="group">
-                            <div id="calibration-controls" class="absolute bottom-6 right-6 z-20 flex flex-col gap-2 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto bg-black/40 backdrop-blur-sm p-4 rounded border border-white/10">
+                            <!-- Intensity Meter -->
+                            <div id="intensity-meter">
+                                <div id="intensity-fill"></div>
+                                <div id="intensity-label">Standby</div>
+                            </div>
+                            <!-- Calibration Overlay -->
+                            <div id="calibration-controls" class="absolute top-6 right-6 z-20 flex flex-col gap-2 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto bg-black/40 backdrop-blur-sm p-4 rounded border border-white/10">
                                 <p class="mono text-[8px] text-white opacity-50 mb-4 uppercase tracking-widest">POV_Calibration</p>
                                 <div class="flex gap-2 justify-end mb-4">
                                     <button class="calib-btn w-full" id="cal-flip">[ Flip_POV ]</button>
@@ -277,7 +287,7 @@
         };
         window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
 
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v4.9_ready"];
+        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v5.0_ready"];
         let textIdx = 0;
         const loaderInterval = setInterval(() => {
             const el = document.getElementById('loader-text');
@@ -286,7 +296,7 @@
                 clearInterval(loaderInterval);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v4.9");
+                sysLog("GUI_READY: CONTENT_REVEALED_v5.0");
             }
         }, 600);
     </script>
@@ -306,6 +316,9 @@
         const activateBtn = document.getElementById("activate-ai");
         const cursor = document.getElementById('cursor');
         const calibUI = document.getElementById('calibration-controls');
+        const meter = document.getElementById('intensity-meter');
+        const meterFill = document.getElementById('intensity-fill');
+        const meterLabel = document.getElementById('intensity-label');
 
         const glossaryMap = {
             "BLOCKING": "The precise staging of agents to facilitate narrative flow.",
@@ -403,6 +416,7 @@
             if (webcamRunning) {
                 webcamRunning = false; activateBtn.innerText = "[ Initialize_Perception ]";
                 calibUI.classList.add('opacity-0', 'pointer-events-none');
+                meter.style.display = 'none';
                 if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
             } else {
                 try {
@@ -412,6 +426,7 @@
                         video.play(); webcamRunning = true; 
                         activateBtn.innerText = "[ Disable_Perception ]";
                         calibUI.classList.remove('opacity-0', 'pointer-events-none');
+                        meter.style.display = 'block';
                         runInference();
                     };
                 } catch(e) { sysLog(`CAMERA_ERR: ${e.message}`); }
@@ -422,6 +437,7 @@
             if (burstActive) return;
             burstActive = true;
             sysLog("PARTICLE_BURST: IDENTITY_DISPERSED");
+            meterLabel.innerText = "[ SYSTEM_OVERLOAD: BURST ]";
             const pos = particles.geometry.attributes.position.array;
             const col = particles.geometry.attributes.color.array;
             for (let i = 0; i < pos.length / 3; i++) {
@@ -440,6 +456,8 @@
                 particles.material.size = 0.05;
                 for(let i=0; i<col.length; i++) col[i] = 1;
                 particles.geometry.attributes.color.needsUpdate = true;
+                meterFill.style.width = '0%';
+                meterLabel.innerText = "Ready";
                 sysLog("PARTICLE_BURST: REFORMED");
             }, 3000);
         }
@@ -464,17 +482,28 @@
                     if (blinkStartTime === 0) blinkStartTime = performance.now();
                     const elapsed = performance.now() - blinkStartTime;
                     
-                    // Constraint: 3s for color change
-                    if (elapsed > 3000) {
-                        colorModeActive = true;
+                    if (elapsed <= 3000) {
+                        // Stage 1: 0-3s Color Charge
+                        const p = (elapsed / 3000) * 100;
+                        meterFill.style.width = `${p}%`;
+                        meterFill.style.background = '#fff';
+                        meterLabel.innerText = `[ Charging_Color: ${Math.round(p)}% ]`;
+                    } else if (elapsed <= 6000) {
+                        // Stage 2: 3-6s Burst Prime
+                        if (!colorModeActive) {
+                            colorModeActive = true;
+                            sysLog("INTENSITY_THRESHOLD: COLOR_SHIFT_ACTIVE");
+                        }
+                        const p = ((elapsed - 3000) / 3000) * 100;
+                        meterFill.style.width = `${p}%`;
+                        meterFill.style.background = 'linear-gradient(90deg, #ff0000, #ff00ff, #0000ff)';
+                        meterLabel.innerText = `[ Priming_Burst: ${Math.round(p)}% ]`;
                         for (let i = 0; i < col.length; i++) col[i] = Math.random();
                         particles.geometry.attributes.color.needsUpdate = true;
                     }
                     
-                    // Constraint: 5s total for burst
-                    if (elapsed > 5000) triggerBurst();
-                    
-                    particles.material.size = 0.05 + (elapsed / 5000) * 0.3;
+                    if (elapsed > 6000) triggerBurst();
+                    particles.material.size = 0.05 + (elapsed / 6000) * 0.4;
                 } else {
                     blinkStartTime = 0;
                     if (colorModeActive) {
@@ -482,6 +511,8 @@
                         particles.geometry.attributes.color.needsUpdate = true;
                         colorModeActive = false;
                     }
+                    meterFill.style.width = '0%';
+                    meterLabel.innerText = "System_Active";
                     particles.material.size = 0.05 + blinkScore * 0.25;
                 }
 
