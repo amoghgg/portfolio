@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Amogh Bajpai | Creative Technologist & Applied ML Engineer</title>
+    <title>Amogh Bajpai</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js?v=5.3"></script>
@@ -49,43 +49,30 @@
         .mono { font-family: 'JetBrains Mono', monospace; }
         .grain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         
-        .bios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; border: 1px solid rgba(26, 26, 26, 0.1); padding: 1.5rem; background: rgba(26, 26, 26, 0.02); }
-        .bios-item { border-left: 2px solid var(--dark); padding-left: 1rem; margin-bottom: 1.5rem; }
-        .logbook-entry { border-bottom: 1px dashed rgba(26, 26, 26, 0.2); padding: 2rem 0; opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
-        .logbook-entry.active { opacity: 1; transform: translateY(0); }
-        .logbook-entry:last-child { border-bottom: none; }
-
         .glossary { cursor: help; border-bottom: 1px dotted var(--dark); }
 
-        @media (max-width: 768px) { .hero-name { font-size: 4rem !important; line-height: 0.9 !important; } .status-ticker { display: none; } #cursor { display: none; } #canvas-container { height: 400px; } }
+        @media (max-width: 768px) { .hero-name { font-size: 4rem !important; line-height: 0.9 !important; } #cursor { display: none; } #canvas-container { height: 400px; } }
     </style>
 </head>
 <body class="selection:bg-black selection:text-white">
 
     <div class="grain"></div>
-    <div id="loader"><div id="loader-text">0x00FF // initializing_perception_engine...</div></div>
+    <div id="loader"><div id="loader-text">amoghbajpai.com</div></div>
     <div id="cursor" data-label=""></div>
     
     <video id="video-preview" autoplay playsinline class="hidden"></video>
 
     <main class="relative min-h-screen px-6 py-12 md:px-24 md:py-32 max-w-7xl mx-auto opacity-0" id="main-content">
         
-        <div class="fixed top-8 right-8 md:right-24 mono text-[9px] opacity-40 uppercase hidden md:block tracking-[0.2em] status-ticker text-right">
-            <span class="status-pulse text-green-600 text-[12px]">●</span> [SYS: ACTIVE] | [INTEGRITY: OPTIMAL] <br> 
-            [STREAM: SEMANTIC_MANIFOLDS] | <span id="uptime-val">UPTIME: 00:00:00</span> <br>
-            [NETWORK: SECURE_MESH_v.5.3]
-        </div>
-
         <header class="mb-32 mt-10">
             <h1 class="hero-name text-7xl md:text-[12rem] font-black mb-12 uppercase leading-[0.8] tracking-tighter">Amogh <br> Bajpai</h1>
             <p class="text-xl md:text-3xl max-w-2xl font-medium leading-tight mb-16 tracking-tight opacity-90 italic">
                 Engineering machine perception through the lens of human dramaturgy.
             </p>
             <nav class="flex flex-wrap gap-x-16 gap-y-4 text-lg font-bold lowercase tracking-tight">
-                <a href="#work" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="INDEX">Work</a>
-                <a href="#about" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="ABOUT">About</a>
-                <a href="#playground" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="LAB">Playground</a>
-                <a href="#contact" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="CONNECT">Contact</a>
+                <a href="#work" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="Work">Work</a>
+                <a href="#about" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="About">About</a>
+                <a href="#contact" class="underline underline-offset-[12px] decoration-[0.5px]" data-label="Contact">Contact</a>
             </nav>
         </header>
 
@@ -101,7 +88,7 @@
                                 Everybody is made of pixels. Real-time bitmapping of facial geometry into interactive particles.
                             </p>
                             <div class="space-y-4 mb-12">
-                                <p class="mono text-[10px] uppercase opacity-50 tracking-widest">[ Perception_Manual ]</p>
+                                <p class="mono text-[10px] uppercase opacity-50 tracking-widest">How to use</p>
                                 <ul class="mono text-[11px] opacity-70 space-y-2 uppercase leading-relaxed">
                                     <li>01. Initialize Perception to scan facial landmarks.</li>
                                     <li>02. Maintain blink for 3s to charge color-shift (Persists).</li>
@@ -152,7 +139,7 @@
                                 Translating the visual world into high-fidelity narrative descriptions.
                             </p>
                             <div class="space-y-4 mb-12">
-                                <p class="mono text-[10px] uppercase opacity-50 tracking-widest">[ Perception_Manual ]</p>
+                                <p class="mono text-[10px] uppercase opacity-50 tracking-widest">How to use</p>
                                 <ul class="mono text-[11px] opacity-70 space-y-2 uppercase leading-relaxed">
                                     <li>01. Initialize Stream to start multimodal inference.</li>
                                     <li>02. Present objects or perform actions in the frame.</li>
@@ -178,34 +165,21 @@
                     </div>
                 </div>
 
-                <!-- Project 03 (Renumbered from 02) -->
+                <!-- Project 03: Lores -->
                 <div class="reveal border-t border-black/10 pt-16">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Infrastructure // Intelligence</p>
+                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Tool // Browser</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="SYNC">Integrity <br> Sync Engine</h2>
+                        <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="OPEN">Lores</h2>
                         <div class="pt-4">
                             <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                Self-healing synchronization loops for high-stakes biometric reporting.
+                                Drop an image, get authentic 8-bit output. Palettes, dithering, no upload.
                             </p>
-                            <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Architected recursive fetching to defeat unstable APIs. Integrated <span class="glossary hover-trigger" data-label="RETRIEVAL">RAG</span> pipelines for behavioral anomaly detection.
+                            <p class="text-lg opacity-70 mb-8 max-w-md leading-relaxed">
+                                A browser-only pixel art tool. Game Boy, PICO-8, C64, and seven other palettes. Floyd-Steinberg and Bayer dithering. Everything runs in your browser; nothing is uploaded.
                             </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project 03 -->
-                <div class="reveal border-t border-black/10 pt-16">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">Inference // Precision</p>
-                    <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <h2 class="text-5xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter hover-trigger" data-label="PRECISION">Biometric <br> Alignment</h2>
-                        <div class="pt-4">
-                            <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                Turning web cameras into high-precision biometric verification sensors.
-                            </p>
-                            <p class="text-lg opacity-70 mb-12 max-w-md leading-relaxed">
-                                Real-time image stabilization and contrast enhancement using custom WASM modules.
-                            </p>
+                            <div class="flex gap-4 flex-wrap">
+                                <a href="https://pixel.amoghbajpai.com" target="_blank" rel="noopener" class="btn-ai uppercase inline-block" data-label="LIVE">[ pixel.amoghbajpai.com ]</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -230,80 +204,41 @@
                         <p>
                             Today my work lives at the intersection of machine learning, computer vision, and interactive media. I approach technology as a medium for designing experiences, not just solving problems.
                         </p>
+                        <p class="text-base opacity-60 italic pt-4">
+                            By day I build production biometric systems at <a href="https://innovatiview.com" target="_blank" rel="noopener" class="underline">Innovatiview</a>. The personal work above is where the rest of me lives.
+                        </p>
                     </div>
                 </div>
                 <div class="space-y-16">
                     <div class="border-t-2 border-black/10 pt-8">
-                        <p class="mono text-[10px] uppercase opacity-40 mb-8 tracking-widest italic font-bold">BIOS Diagnostic // System_Stack_v2.0</p>
-                        <div class="bios-grid mono text-[10px] uppercase">
-                            <div class="bios-item">
-                                <p class="opacity-50 mb-2">[01] PERCEPTION</p>
-                                <p class="font-bold">MediaPipe CV</p>
-                                <p class="font-bold">TensorFlow.js</p>
-                                <p class="font-bold">OpenCV.js (WASM)</p>
-                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[92%] h-full"></div></div>
+                        <p class="mono text-[10px] uppercase opacity-40 mb-8 tracking-widest font-bold">Tools</p>
+                        <div class="grid grid-cols-2 gap-x-10 gap-y-6 mono text-[11px] uppercase">
+                            <div>
+                                <p class="opacity-50 mb-2">Perception</p>
+                                <p>MediaPipe</p>
+                                <p>TensorFlow.js</p>
+                                <p>OpenCV.js</p>
                             </div>
-                            <div class="bios-item">
-                                <p class="opacity-50 mb-2">[02] INFERENCE</p>
-                                <p class="font-bold">RAG Pipelines</p>
-                                <p class="font-bold">LangChain / LLM Ops</p>
-                                <p class="font-bold">Semantic Search</p>
-                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[88%] h-full"></div></div>
+                            <div>
+                                <p class="opacity-50 mb-2">Inference</p>
+                                <p>Gemini · GPT</p>
+                                <p>RAG · LangChain</p>
                             </div>
-                            <div class="bios-item">
-                                <p class="opacity-50 mb-2">[03] VISUALS</p>
-                                <p class="font-bold">TouchDesigner</p>
-                                <p class="font-bold">GLSL Shaders</p>
-                                <p class="font-bold">Three.js / WebGL</p>
-                                <div class="w-full bg-black/5 h-[2px] mt-4"><div class="bg-black w-[95%] h-full"></div></div>
+                            <div>
+                                <p class="opacity-50 mb-2">Visuals</p>
+                                <p>TouchDesigner</p>
+                                <p>GLSL · Three.js</p>
+                                <p>WebGPU</p>
                             </div>
-                            <div class="bios-item">
-                                <p class="opacity-50 mb-2">[04] CORE_RECORDS</p>
-                                <p class="font-bold">Spatial Semantics</p>
-                                <p class="font-bold">HCI Blocking</p>
-                                <p class="font-bold">Latent Intent</p>
-                                <div class="w-full bg-black/5 h-[2px] mt-4 flicker"><div class="bg-green-600 w-full h-full"></div></div>
+                            <div>
+                                <p class="opacity-50 mb-2">Engine room</p>
+                                <p>Python · FastAPI</p>
+                                <p>TypeScript · Next.js</p>
+                                <p>Postgres</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- LOGBOOK -->
-        <section id="playground" class="mb-32 border-t border-black/10 pt-24">
-            <h3 class="text-xs mono uppercase opacity-40 mb-16 tracking-[0.3em] italic font-bold">Logbook // Field_Notes_2026</h3>
-            <div class="space-y-0">
-                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
-                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_01_ZEPHYR ] <br> MAR.2026</div>
-                    <div class="md:col-span-3">
-                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
-                            Biometric Latency Optimization <span class="bg-black text-lemon px-2 py-0.5 text-[8px] mono">STABLE</span>
-                        </h4>
-                        <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Synthesized recursive synchronization loops to reduce reporting lag in high-stakes biometric environments.
-                        </p>
-                    </div>
-                </div>
-                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
-                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_02_MIMIC ] <br> FEB.2026</div>
-                    <div class="md:col-span-3">
-                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
-                            Semantic Face Alignment <span class="bg-black text-lemon px-2 py-0.5 text-[8px] mono">VERIFIED</span>
-                        </h4>
-                        <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Mapped 52 blendshape indices to local mesh influences. Integrated CLAHE image enhancement.
-                        </p>
-                    </div>
-                </div>
-                <div class="logbook-entry grid md:grid-cols-4 gap-8 hover:bg-black/5 transition-colors px-4">
-                    <div class="mono text-[10px] opacity-40 uppercase">[ LOG_03_FLUX ] <br> JAN.2026</div>
-                    <div class="md:col-span-3">
-                        <h4 class="text-xl font-bold uppercase tracking-tight mb-4 flex items-center gap-4">
-                            Generative Visual Synthesis <span class="bg-blue-600 text-white px-2 py-0.5 text-[8px] mono">EXPERIMENTAL</span>
-                        </h4>
-                        <p class="text-sm opacity-70 leading-relaxed font-medium">
-                            Explored real-time particle displacement using TouchDesigner and GLSL shaders.
+                        <p class="mono text-[10px] opacity-40 mt-8 leading-relaxed">
+                            Other code at <a href="https://github.com/amoghgg" target="_blank" rel="noopener" class="underline">github.com/amoghgg</a> — face-biometrics-api, biometric-city, fingerprint verification, wildlife detection.
                         </p>
                     </div>
                 </div>
@@ -312,30 +247,21 @@
 
         <footer class="pb-32 border-t-2 border-black pt-16" id="contact">
             <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-6 hover-trigger" data-label="MAIL">hi@amoghbajpai.com</h2>
-            <div id="sys-log" class="mt-20 mono text-[8px] opacity-20 uppercase tracking-widest border-t border-black/5 pt-8 overflow-hidden max-h-40">
-                [SYSTEM_DIAGNOSTICS: INITIALIZING...]
+            <div class="mt-12 mono text-[10px] opacity-50 uppercase tracking-widest flex flex-wrap gap-x-8 gap-y-2">
+                <a href="https://github.com/amoghgg" target="_blank" rel="noopener" class="underline">github</a>
+                <a href="https://linkedin.com/in/amoghbajpai" target="_blank" rel="noopener" class="underline">linkedin</a>
+                <a href="https://pixel.amoghbajpai.com" target="_blank" rel="noopener" class="underline">lores</a>
             </div>
         </footer>
     </main>
 
     <script>
-        const sysLog = (msg) => {
-            const el = document.getElementById('sys-log');
-            if (el) el.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}<br>` + el.innerHTML;
-        };
-        window.onerror = (m, s, l, c, e) => sysLog(`ERR: ${m} @ ${s}:${l}`);
-
-        const loaderTexts = ["0x00FF // initializing_perception_engine...", "0x0A12 // architecting_narrative...", "0xFF21 // amoghbajpai_v5.3_ready"];
-        let textIdx = 0;
-        const loaderInterval = setInterval(() => {
-            const el = document.getElementById('loader-text');
-            if (el) el.innerText = loaderTexts[Math.min(textIdx++, loaderTexts.length - 1)];
-            if(textIdx >= loaderTexts.length + 1) {
-                clearInterval(loaderInterval);
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('main-content').style.opacity = 1;
-                sysLog("GUI_READY: CONTENT_REVEALED_v5.3");
-            }
+        const sysLog = () => {}; // no-op, kept for downstream callers
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            if (loader) loader.style.display = 'none';
+            const main = document.getElementById('main-content');
+            if (main) main.style.opacity = 1;
         }, 600);
     </script>
 
@@ -592,16 +518,6 @@
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-        const startTime = Date.now();
-        const uptimeVal = document.getElementById('uptime-val');
-        setInterval(() => {
-            const diff = Date.now() - startTime;
-            const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
-            const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
-            const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-            if (uptimeVal) uptimeVal.innerText = `UPTIME: ${h}:${m}:${s}`;
-        }, 1000);
     </script>
 
     <script type="module">
