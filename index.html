@@ -723,7 +723,7 @@
                     activateSemanticBtn.innerText = "[ End_Monologue ]";
                     setCaption("Step into frame.", "Curtain up");
 
-                    inferenceInterval = setInterval(runSemanticInference, 5000);
+                    inferenceInterval = setInterval(runSemanticInference, 7000);
                     runSemanticInference();
                 } catch (e) {
                     setCaption(`Camera unavailable — ${e.message}`, "Error", true);
