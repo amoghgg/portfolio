@@ -192,13 +192,15 @@
                         </div>
                         <div class="relative bg-black rounded overflow-hidden aspect-video shadow-2xl border border-white/5 group">
                             <video id="semantic-video" autoplay playsinline class="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-opacity"></video>
-                            <div id="semantic-terminal" class="absolute inset-0 p-6 pointer-events-none flex flex-col justify-end">
-                                <div id="terminal-content" class="mono text-[11px] text-green-500 uppercase leading-relaxed space-y-1">
-                                    <div class="opacity-40">[ SYSTEM_STANDBY ]</div>
+                            <!-- Caption overlay: single italic line with bottom-aligned bar; gradient scrim for legibility -->
+                            <div id="semantic-overlay" class="absolute inset-0 pointer-events-none flex flex-col justify-end">
+                                <div class="bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 md:p-8">
+                                    <p id="semantic-cue" class="mono text-[9px] uppercase tracking-[0.2em] text-white/60 mb-3">Awaiting cue</p>
+                                    <p id="semantic-caption" class="text-white text-xl md:text-3xl leading-tight italic font-normal opacity-0 transition-opacity duration-500" style="font-variation-settings: 'opsz' 96, 'SOFT' 80;">&nbsp;</p>
                                 </div>
                             </div>
-                            <div id="semantic-loader" class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 pointer-events-none transition-opacity">
-                                <div class="mono text-[10px] text-white animate-pulse uppercase">[ INFERENCING... ]</div>
+                            <div id="semantic-loader" class="absolute top-4 right-4 opacity-0 pointer-events-none transition-opacity">
+                                <span class="mono text-[9px] uppercase tracking-[0.2em] text-white/80 px-2 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">listening…</span>
                             </div>
                         </div>
                     </div>
@@ -635,7 +637,8 @@
 
         const semanticVideo = document.getElementById("semantic-video");
         const activateSemanticBtn = document.getElementById("activate-semantic");
-        const terminalContent = document.getElementById("terminal-content");
+        const captionEl = document.getElementById("semantic-caption");
+        const cueEl = document.getElementById("semantic-cue");
         const semanticLoader = document.getElementById("semantic-loader");
 
         let semanticStreamRunning = false;
@@ -644,12 +647,16 @@
         const captureCanvas = document.createElement("canvas");
         const captureCtx = captureCanvas.getContext("2d");
 
-        const updateTerminal = (msg, type = "info") => {
-            const div = document.createElement("div");
-            div.className = type === "error" ? "text-red-500" : "text-green-500";
-            div.innerText = `> [${new Date().toLocaleTimeString()}] ${msg}`;
-            terminalContent.appendChild(div);
-            if (terminalContent.childNodes.length > 5) terminalContent.removeChild(terminalContent.firstChild);
+        // Crossfade a new caption in. `cue` shows above the line in mono caps.
+        const setCaption = (text, cue = "Now showing", isError = false) => {
+            captionEl.style.opacity = "0";
+            setTimeout(() => {
+                captionEl.textContent = text;
+                captionEl.classList.toggle("text-red-300", isError);
+                captionEl.classList.toggle("text-white", !isError);
+                cueEl.textContent = cue;
+                captionEl.style.opacity = "1";
+            }, 200);
         };
 
         async function runSemanticInference() {
@@ -672,7 +679,12 @@
                 const data = await response.json().catch(() => ({}));
 
                 if (response.status === 429) {
-                    updateTerminal("Slow down — rate limited. Pausing the stream.", "error");
+                    const wait = data.retry_after || 60;
+                    setCaption(
+                        `Easy — rate limited. Try again in ${wait}s.`,
+                        "Pause",
+                        true
+                    );
                     stopStream();
                     return;
                 }
@@ -681,10 +693,10 @@
                 }
                 if (!data.caption) throw new Error("empty response");
 
-                updateTerminal(data.caption);
+                setCaption(data.caption, "Now showing");
             } catch (e) {
                 console.error(e);
-                updateTerminal(`ERR: ${e.message}`, "error");
+                setCaption(e.message || "Something went wrong", "Error", true);
             } finally {
                 semanticLoader.style.opacity = "0";
             }
@@ -697,7 +709,7 @@
             if (semanticVideo.srcObject) {
                 semanticVideo.srcObject.getTracks().forEach(track => track.stop());
             }
-            updateTerminal("SYSTEM_OFFLINE", "info");
+            cueEl.textContent = "Curtain";
         }
 
         activateSemanticBtn.addEventListener("click", async () => {
@@ -709,12 +721,12 @@
                     semanticVideo.srcObject = stream;
                     semanticStreamRunning = true;
                     activateSemanticBtn.innerText = "[ End_Monologue ]";
-                    updateTerminal("STREAM_INITIALIZED");
+                    setCaption("Step into frame.", "Curtain up");
 
                     inferenceInterval = setInterval(runSemanticInference, 5000);
                     runSemanticInference();
                 } catch (e) {
-                    updateTerminal(`CAM_ERR: ${e.message}`, "error");
+                    setCaption(`Camera unavailable — ${e.message}`, "Error", true);
                 }
             }
         });
