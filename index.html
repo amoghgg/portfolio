@@ -661,6 +661,14 @@
 
         async function runSemanticInference() {
             if (!semanticStreamRunning) return;
+            // Skip if the video doesn't have a frame yet (HAVE_CURRENT_DATA = 2).
+            // Without this guard, the first call right after stream-start
+            // captures a 0×0 canvas and the worker rejects it as missing_image.
+            if (
+                semanticVideo.readyState < 2 ||
+                !semanticVideo.videoWidth ||
+                !semanticVideo.videoHeight
+            ) return;
 
             semanticLoader.style.opacity = "1";
 
@@ -723,8 +731,18 @@
                     activateSemanticBtn.innerText = "[ End_Monologue ]";
                     setCaption("Step into frame.", "Curtain up");
 
-                    inferenceInterval = setInterval(runSemanticInference, 7000);
-                    runSemanticInference();
+                    // Wait until the video element actually has a frame before
+                    // the first inference; otherwise we'd capture a 0×0 canvas.
+                    const startInference = () => {
+                        if (!semanticStreamRunning) return;
+                        runSemanticInference();
+                        inferenceInterval = setInterval(runSemanticInference, 7000);
+                    };
+                    if (semanticVideo.readyState >= 2) {
+                        startInference();
+                    } else {
+                        semanticVideo.addEventListener("loadeddata", startInference, { once: true });
+                    }
                 } catch (e) {
                     setCaption(`Camera unavailable — ${e.message}`, "Error", true);
                 }
