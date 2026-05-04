@@ -631,14 +631,15 @@
     </script>
 
     <script type="module">
+        const CAPTION_ENDPOINT = "https://amogh-caption.semantic-stream.workers.dev";
+
         const semanticVideo = document.getElementById("semantic-video");
         const activateSemanticBtn = document.getElementById("activate-semantic");
         const terminalContent = document.getElementById("terminal-content");
         const semanticLoader = document.getElementById("semantic-loader");
-        
+
         let semanticStreamRunning = false;
         let inferenceInterval;
-        let apiKey = localStorage.getItem("GEMINI_API_KEY");
 
         const captureCanvas = document.createElement("canvas");
         const captureCtx = captureCanvas.getContext("2d");
@@ -652,45 +653,38 @@
         };
 
         async function runSemanticInference() {
-            if (!semanticStreamRunning || !apiKey) return;
+            if (!semanticStreamRunning) return;
 
             semanticLoader.style.opacity = "1";
-            
+
             try {
                 captureCanvas.width = semanticVideo.videoWidth;
                 captureCanvas.height = semanticVideo.videoHeight;
                 captureCtx.drawImage(semanticVideo, 0, 0);
-                const base64Image = captureCanvas.toDataURL("image/jpeg", 0.8).split(",")[1];
+                const base64Image = captureCanvas.toDataURL("image/jpeg", 0.7).split(",")[1];
 
-                const prompt = "Describe this scene in one concise, creative sentence. Focus on the main actor and what they are doing. Examples: 'The guy in specs is holding a banana in his right hand', 'The guy in blue specs started playing a guitar'. Be specific about colors and actions.";
-
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
+                const response = await fetch(CAPTION_ENDPOINT, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [
-                                { text: prompt },
-                                { inline_data: { mime_type: "image/jpeg", data: base64Image } }
-                            ]
-                        }]
-                    })
+                    body: JSON.stringify({ image: base64Image }),
                 });
 
-                const data = await response.json();
-                if (data.error) throw new Error(data.error.message);
-                
-                const caption = data.candidates[0].content.parts[0].text;
-                updateTerminal(caption.trim());
-                
+                const data = await response.json().catch(() => ({}));
+
+                if (response.status === 429) {
+                    updateTerminal("Slow down — rate limited. Pausing the stream.", "error");
+                    stopStream();
+                    return;
+                }
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || `HTTP ${response.status}`);
+                }
+                if (!data.caption) throw new Error("empty response");
+
+                updateTerminal(data.caption);
             } catch (e) {
                 console.error(e);
                 updateTerminal(`ERR: ${e.message}`, "error");
-                if (e.message.includes("API key")) {
-                    localStorage.removeItem("GEMINI_API_KEY");
-                    apiKey = null;
-                    stopStream();
-                }
             } finally {
                 semanticLoader.style.opacity = "0";
             }
@@ -710,19 +704,13 @@
             if (semanticStreamRunning) {
                 stopStream();
             } else {
-                if (!apiKey) {
-                    apiKey = prompt("Enter your Gemini API Key (stored locally):");
-                    if (!apiKey) return;
-                    localStorage.setItem("GEMINI_API_KEY", apiKey);
-                }
-
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                     semanticVideo.srcObject = stream;
                     semanticStreamRunning = true;
                     activateSemanticBtn.innerText = "[ End_Monologue ]";
                     updateTerminal("STREAM_INITIALIZED");
-                    
+
                     inferenceInterval = setInterval(runSemanticInference, 5000);
                     runSemanticInference();
                 } catch (e) {
