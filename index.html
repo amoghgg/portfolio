@@ -686,7 +686,8 @@
 
                 const data = await response.json().catch(() => ({}));
 
-                if (response.status === 429) {
+                // Our own worker rate limit — pause the stream cleanly.
+                if (response.status === 429 && data.error === "rate_limited") {
                     const wait = data.retry_after || 60;
                     setCaption(
                         `Easy — rate limited. Try again in ${wait}s.`,
@@ -696,15 +697,22 @@
                     stopStream();
                     return;
                 }
+                // Gemini side hiccup (quota / 503 / transient): skip this
+                // frame silently, the next 7s poll will retry.
+                if (data.error === "gemini_error" || (!response.ok && response.status >= 500)) {
+                    console.warn("[semantic] upstream skip:", data.detail || response.status);
+                    return;
+                }
                 if (!response.ok || data.error) {
                     throw new Error(data.error || `HTTP ${response.status}`);
                 }
-                if (!data.caption) throw new Error("empty response");
+                if (!data.caption) return; // silent skip on empty too
 
                 setCaption(data.caption, "Now showing");
             } catch (e) {
-                console.error(e);
-                setCaption(e.message || "Something went wrong", "Error", true);
+                console.warn("[semantic] caption skipped:", e.message);
+                // Don't surface every transient network blip to the audience.
+                // The next poll will recover.
             } finally {
                 semanticLoader.style.opacity = "0";
             }
