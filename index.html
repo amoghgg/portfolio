@@ -22,7 +22,7 @@
             font-style: normal;
             font-display: swap;
         }
-        :root { --lemon: #FEF9C3; --dark: #1a1a1a; }
+        :root { --lemon: #000000; --dark: #FFFFFF; }
         body {
             background-color: var(--lemon);
             color: var(--dark);
@@ -48,8 +48,21 @@
             letter-spacing: 0;
         }
         
-        #canvas-container { width: 100%; height: 600px; position: relative; background: #000; overflow: hidden; border-radius: 4px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
-        canvas { display: block; width: 100% !important; height: 100% !important; }
+        #canvas-container { position: absolute; inset: 0; background: #000; overflow: hidden; }
+        #canvas-container canvas { display: block; width: 100% !important; height: 100% !important; }
+        .project-screen { position: relative; width: 100%; min-height: 100vh; overflow: hidden; }
+        .project-screen .screen-bg { position: absolute; inset: 0; background: #000; overflow: hidden; }
+        .project-screen .screen-overlay { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 3.5rem 1.25rem 3rem; color: #FFFFFF !important; }
+        @media (min-width: 768px) { .project-screen .screen-overlay { padding: 5rem 3rem 4rem; } }
+        @media (min-width: 1024px) { .project-screen .screen-overlay { padding: 5rem 5rem 4.5rem; } }
+        .project-screen .screen-overlay h2,
+        .project-screen .screen-overlay p,
+        .project-screen .screen-overlay li,
+        .project-screen .screen-overlay span { color: #FFFFFF !important; }
+        .project-screen .screen-overlay h2,
+        .project-screen .screen-overlay p,
+        .project-screen .screen-overlay li { text-shadow: 0 2px 18px rgba(0,0,0,0.55), 0 0 4px rgba(0,0,0,0.4); }
+        .project-screen .screen-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.05) 22%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.55) 78%, rgba(0,0,0,0.85) 100%); pointer-events: none; }
         
         #main-content { z-index: 1; position: relative; }
         
@@ -68,11 +81,39 @@
         
         .btn-ai { background: var(--dark); color: var(--lemon); padding: 14px 28px; border-radius: 2px; font-weight: bold; font-family: 'Fragment Mono', 'JetBrains Mono', monospace; transition: all 0.4s; border: none; cursor: pointer; }
         .btn-ai:hover { background: #000; letter-spacing: 0.1em; font-style: italic !important; }
+        .btn-ai-light { background: #FFFFFF; color: #000000; padding: 14px 28px; border-radius: 2px; font-weight: bold; font-family: 'Fragment Mono', 'JetBrains Mono', monospace; transition: all 0.4s; border: none; cursor: pointer; }
+        .btn-ai-light:hover { background: #f5f5f5; color: #000; letter-spacing: 0.1em; font-style: italic !important; }
+        #scratch-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1500; mix-blend-mode: difference; }
+        body.is-scratching, body.is-scratching * { user-select: none !important; -webkit-user-select: none !important; }
+
+        #semantic-ambient { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+        .ambient-word {
+            position: absolute;
+            color: rgba(180, 200, 235, 0.42);
+            font-family: 'Fragment Mono', 'JetBrains Mono', monospace;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
+            text-transform: lowercase;
+            white-space: nowrap;
+            user-select: none;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            animation: ambient-drift 11s ease-in-out forwards;
+        }
+        @keyframes ambient-drift {
+            0%   { opacity: 0; transform: translate(-50%, -45%) scale(0.96); filter: blur(2px); }
+            18%  { opacity: 0.45; filter: blur(0); }
+            72%  { opacity: 0.45; transform: translate(-50%, -55%) scale(1.01); filter: blur(0); }
+            100% { opacity: 0; transform: translate(-50%, -65%) scale(1.04); filter: blur(2px); }
+        }
+        #project-02.stream-active #semantic-ambient { opacity: 0; transition: opacity 0.6s ease; }
         
         .calib-btn { background: rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 2px; font-family: 'Fragment Mono', 'JetBrains Mono', monospace; font-size: 10px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s; }
         .calib-btn:hover { background: #fff; color: #000; }
 
-        #intensity-meter { position: absolute; bottom: 6px; left: 6px; width: calc(100% - 12px); height: 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; display: none; }
+        #intensity-meter { position: absolute; top: 24px; left: 24px; width: 280px; max-width: calc(100% - 48px); height: 24px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; display: none; z-index: 25; }
         #intensity-fill { height: 100%; width: 0%; background: #fff; transition: width 0.1s linear; }
         #intensity-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Fragment Mono', 'JetBrains Mono', monospace; font-size: 8px; color: #fff; mix-blend-mode: difference; text-transform: uppercase; letter-spacing: 0.2em; pointer-events: none; }
 
@@ -87,17 +128,18 @@
         @media (max-width: 768px) { .hero-name { font-size: 4rem !important; line-height: 0.9 !important; } #cursor { display: none; } #canvas-container { height: 400px; } }
     </style>
 </head>
-<body class="selection:bg-black selection:text-white">
+<body class="selection:bg-white selection:text-black">
 
     <div class="grain"></div>
     <div id="loader"><div id="loader-text">amoghbajpai.com</div></div>
     <div id="cursor" data-label=""></div>
-    
+    <canvas id="scratch-canvas" aria-hidden="true"></canvas>
+
     <video id="video-preview" autoplay playsinline class="hidden"></video>
 
-    <main class="relative min-h-screen px-6 py-12 md:px-24 md:py-32 max-w-7xl mx-auto opacity-0" id="main-content">
-        
-        <header class="mb-32 mt-10">
+    <main class="relative min-h-screen opacity-0" id="main-content">
+
+        <header class="px-6 pt-24 pb-32 md:px-24 md:pt-44 md:pb-32 max-w-7xl mx-auto">
             <h1 class="hero-name text-7xl md:text-[12rem] font-black mb-12 leading-[0.85]">Amogh <br> Bajpai</h1>
             <p class="text-xl md:text-3xl max-w-2xl font-normal leading-snug mb-16 tracking-tight opacity-90 italic">
                 Engineering machine perception through the lens of human dramaturgy.
@@ -109,105 +151,109 @@
             </nav>
         </header>
 
-        <section id="work" class="mb-32">
-            <div class="space-y-32">
+        <section id="work">
+            <div>
                 <!-- Project 01 -->
-                <div class="reveal border-t border-black/10 pt-16" id="project-01">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">A solo for one face and 478 particles · the audience is the performer</p>
-                    <div class="grid md:grid-cols-2 gap-16 items-center">
-                        <div>
-                            <h2 class="italic-display text-6xl md:text-9xl font-black leading-[0.9] tracking-tight hover-trigger mb-10" data-label="SCAN">Pixel <br> Manifold</h2>
-                            <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                Everybody is made of pixels. Real-time bitmapping of facial geometry into interactive particles.
-                            </p>
-                            <p class="text-lg italic opacity-80 mb-8 max-w-md leading-relaxed">
-                                Take a breath. Look up. The light is on you.
-                            </p>
-                            <div class="space-y-4 mb-12">
-                                <p class="mono text-[10px] uppercase opacity-50 tracking-widest">Stage directions</p>
-                                <ul class="mono text-[11px] opacity-70 space-y-2 uppercase leading-relaxed">
-                                    <li>01. Take the stage to scan facial landmarks.</li>
-                                    <li>02. Hold a blink for 3s to charge the color shift.</li>
-                                    <li>03. Sustain to 6s to trigger a burst.</li>
-                                    <li>04. The intensity meter is your cue light.</li>
-                                </ul>
+                <div class="reveal project-screen border-t border-black/10" id="project-01">
+                    <div id="canvas-container" class="group">
+                        <!-- Intensity Meter -->
+                        <div id="intensity-meter">
+                            <div id="intensity-fill"></div>
+                            <div id="intensity-label">Standby</div>
+                        </div>
+                        <!-- Calibration Overlay -->
+                        <div id="calibration-controls" class="absolute top-6 right-6 z-30 flex flex-col gap-2 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto bg-black/40 backdrop-blur-sm p-4 rounded border border-white/10">
+                            <p class="mono text-[8px] text-white opacity-50 mb-4 uppercase tracking-widest">POV_Calibration</p>
+                            <div class="flex gap-2 justify-end mb-4">
+                                <button class="calib-btn w-full" id="cal-flip">[ Flip_POV ]</button>
                             </div>
-                            <div class="flex gap-4 flex-wrap">
-                                <button id="activate-ai" class="btn-ai uppercase" data-label="LIVE">[ Take_The_Stage ]</button>
+                            <div class="flex gap-2 justify-end">
+                                <button class="calib-btn" id="cal-up">^</button>
+                            </div>
+                            <div class="flex gap-2 justify-end">
+                                <button class="calib-btn" id="cal-left"><</button>
+                                <button class="calib-btn" id="cal-down">v</button>
+                                <button class="calib-btn" id="cal-right">></button>
+                            </div>
+                            <div class="flex gap-2 justify-end mt-2 border-t border-white/10 pt-2">
+                                <button class="calib-btn" id="cal-plus">+</button>
+                                <button class="calib-btn" id="cal-minus">-</button>
                             </div>
                         </div>
-                        <div id="canvas-container" class="group">
-                            <!-- Intensity Meter -->
-                            <div id="intensity-meter">
-                                <div id="intensity-fill"></div>
-                                <div id="intensity-label">Standby</div>
+                    </div>
+                    <div class="screen-scrim"></div>
+                    <div class="screen-overlay max-w-7xl mx-auto w-full">
+                        <p class="mono text-[10px] uppercase opacity-70 tracking-widest italic">A solo for one face and 478 particles · the audience is the performer</p>
+                        <div class="flex flex-col lg:flex-row lg:items-end gap-10 lg:gap-16">
+                            <div class="lg:w-1/2 min-w-0">
+                                <h2 class="italic-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight hover-trigger" data-label="SCAN">Pixel <br> Manifold</h2>
                             </div>
-                            <!-- Calibration Overlay -->
-                            <div id="calibration-controls" class="absolute top-6 right-6 z-20 flex flex-col gap-2 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto bg-black/40 backdrop-blur-sm p-4 rounded border border-white/10">
-                                <p class="mono text-[8px] text-white opacity-50 mb-4 uppercase tracking-widest">POV_Calibration</p>
-                                <div class="flex gap-2 justify-end mb-4">
-                                    <button class="calib-btn w-full" id="cal-flip">[ Flip_POV ]</button>
+                            <div class="lg:w-1/2 min-w-0 max-w-xl">
+                                <p class="text-xl md:text-2xl lg:text-3xl leading-tight font-medium tracking-tight mb-5">
+                                    Everybody is made of pixels. Real-time bitmapping of facial geometry into interactive particles.
+                                </p>
+                                <p class="text-sm md:text-base italic opacity-90 mb-6 leading-relaxed">
+                                    Take a breath. Look up. The light is on you.
+                                </p>
+                                <div class="space-y-2 mb-7">
+                                    <p class="mono text-[10px] uppercase opacity-70 tracking-widest">Stage directions</p>
+                                    <ul class="mono text-[10px] md:text-[11px] opacity-90 space-y-1 uppercase leading-relaxed">
+                                        <li>01. Take the stage to scan facial landmarks.</li>
+                                        <li>02. Hold a blink for 3s to charge the color shift.</li>
+                                        <li>03. Sustain to 6s to trigger a burst.</li>
+                                        <li>04. The intensity meter is your cue light.</li>
+                                    </ul>
                                 </div>
-                                <div class="flex gap-2 justify-end">
-                                    <button class="calib-btn" id="cal-up">^</button>
-                                </div>
-                                <div class="flex gap-2 justify-end">
-                                    <button class="calib-btn" id="cal-left"><</button>
-                                    <button class="calib-btn" id="cal-down">v</button>
-                                    <button class="calib-btn" id="cal-right">></button>
-                                </div>
-                                <div class="flex gap-2 justify-end mt-2 border-t border-white/10 pt-2">
-                                    <button class="calib-btn" id="cal-plus">+</button>
-                                    <button class="calib-btn" id="cal-minus">-</button>
-                                </div>
+                                <button id="activate-ai" class="btn-ai-light uppercase" data-label="LIVE">[ Take_The_Stage ]</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Project 02: Semantic Scene Perception -->
-                <div class="reveal border-t border-black/10 pt-16" id="project-02">
-                    <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">A monologue rehearsed in real time · between you and a stranger that has read your room</p>
-                    <div class="grid md:grid-cols-2 gap-16 items-center">
-                        <div>
-                            <h2 class="italic-display text-6xl md:text-9xl font-black leading-[0.9] tracking-tight hover-trigger mb-10" data-label="SEMANTICS">Semantic <br> Stream</h2>
-                            <p class="text-2xl md:text-4xl leading-tight font-medium tracking-tight mb-10">
-                                Translating the visual world into high-fidelity narrative descriptions.
-                            </p>
-                            <p class="text-lg italic opacity-80 mb-8 max-w-md leading-relaxed">
-                                Step into frame. The system is watching, trying to put you into words.
-                            </p>
-                            <div class="space-y-4 mb-12">
-                                <p class="mono text-[10px] uppercase opacity-50 tracking-widest">Stage directions</p>
-                                <ul class="mono text-[11px] opacity-70 space-y-2 uppercase leading-relaxed">
-                                    <li>01. Begin the monologue. Multimodal inference comes online.</li>
-                                    <li>02. Bring objects into frame. Perform an action.</li>
-                                    <li>03. The terminal speaks back, every five seconds.</li>
-                                    <li>04. Actors. Objects. Latent intent.</li>
-                                </ul>
-                            </div>
-                            <div class="flex gap-4 flex-wrap">
-                                <button id="activate-semantic" class="btn-ai uppercase" data-label="STREAM">[ Begin_Monologue ]</button>
-                            </div>
+                <div class="reveal project-screen border-t border-black/10" id="project-02">
+                    <div class="screen-bg group">
+                        <video id="semantic-video" autoplay playsinline class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-90 transition-opacity"></video>
+                        <div id="semantic-ambient" aria-hidden="true"></div>
+                        <div id="semantic-loader" class="absolute top-6 right-6 z-30 opacity-0 pointer-events-none transition-opacity">
+                            <span class="mono text-[9px] uppercase tracking-[0.2em] text-white/80 px-2 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">listening…</span>
                         </div>
-                        <div class="relative bg-black rounded overflow-hidden aspect-video shadow-2xl border border-white/5 group">
-                            <video id="semantic-video" autoplay playsinline class="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-opacity"></video>
-                            <!-- Caption overlay: single italic line with bottom-aligned bar; gradient scrim for legibility -->
-                            <div id="semantic-overlay" class="absolute inset-0 pointer-events-none flex flex-col justify-end">
-                                <div class="bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 md:p-8">
-                                    <p id="semantic-cue" class="mono text-[9px] uppercase tracking-[0.2em] text-white/60 mb-3">Awaiting cue</p>
-                                    <p id="semantic-caption" class="text-white text-xl md:text-3xl leading-tight italic font-normal opacity-0 transition-opacity duration-500" style="font-variation-settings: 'opsz' 96, 'SOFT' 80;">&nbsp;</p>
+                    </div>
+                    <div class="screen-scrim"></div>
+                    <div class="screen-overlay max-w-7xl mx-auto w-full">
+                        <p class="mono text-[10px] uppercase opacity-70 tracking-widest italic">A monologue rehearsed in real time · between you and a stranger that has read your room</p>
+                        <div class="flex flex-col lg:flex-row lg:items-end gap-10 lg:gap-16">
+                            <div class="lg:w-1/2 min-w-0">
+                                <h2 class="italic-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight hover-trigger" data-label="SEMANTICS">Semantic <br> Stream</h2>
+                                <div id="semantic-overlay" class="mt-6 max-w-md pointer-events-none">
+                                    <p id="semantic-cue" class="mono text-[10px] uppercase tracking-[0.2em] opacity-70 mb-3">Awaiting cue</p>
+                                    <p id="semantic-caption" class="text-lg md:text-2xl leading-tight italic font-normal opacity-0 transition-opacity duration-500" style="font-variation-settings: 'opsz' 96, 'SOFT' 80;">&nbsp;</p>
                                 </div>
                             </div>
-                            <div id="semantic-loader" class="absolute top-4 right-4 opacity-0 pointer-events-none transition-opacity">
-                                <span class="mono text-[9px] uppercase tracking-[0.2em] text-white/80 px-2 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">listening…</span>
+                            <div class="lg:w-1/2 min-w-0 max-w-xl">
+                                <p class="text-xl md:text-2xl lg:text-3xl leading-tight font-medium tracking-tight mb-5">
+                                    Translating the visual world into high-fidelity narrative descriptions.
+                                </p>
+                                <p class="text-sm md:text-base italic opacity-90 mb-6 leading-relaxed">
+                                    Step into frame. The system is watching, trying to put you into words.
+                                </p>
+                                <div class="space-y-2 mb-7">
+                                    <p class="mono text-[10px] uppercase opacity-70 tracking-widest">Stage directions</p>
+                                    <ul class="mono text-[10px] md:text-[11px] opacity-90 space-y-1 uppercase leading-relaxed">
+                                        <li>01. Begin the monologue. Multimodal inference comes online.</li>
+                                        <li>02. Bring objects into frame. Perform an action.</li>
+                                        <li>03. The terminal speaks back, every five seconds.</li>
+                                        <li>04. Actors. Objects. Latent intent.</li>
+                                    </ul>
+                                </div>
+                                <button id="activate-semantic" class="btn-ai-light uppercase" data-label="STREAM">[ Begin_Monologue ]</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Project 03: Lores -->
-                <div class="reveal border-t border-black/10 pt-16">
+                <div class="reveal border-t border-black/10 pt-24 pb-32 px-6 md:px-24 max-w-7xl mx-auto">
                     <p class="mono text-[10px] uppercase mb-8 opacity-50 tracking-widest italic">An instrument · drop something in, it plays back in 8-bit</p>
                     <div class="grid md:grid-cols-2 gap-16 items-start">
                         <h2 class="italic-display text-6xl md:text-9xl font-black leading-[0.9] tracking-tight hover-trigger" data-label="OPEN">Lores</h2>
@@ -228,7 +274,7 @@
         </section>
 
         <!-- ABOUT -->
-        <section id="about" class="mb-32 border-t-2 border-black pt-24">
+        <section id="about" class="px-6 md:px-24 max-w-7xl mx-auto mb-32 border-t-2 border-black pt-24">
             <div class="grid md:grid-cols-2 gap-24">
                 <div>
                     <h3 class="italic-display text-6xl md:text-7xl font-black tracking-tight mb-10">The Dramaturg</h3>
@@ -286,7 +332,7 @@
             </div>
         </section>
 
-        <footer class="pb-32 border-t-2 border-black pt-16" id="contact">
+        <footer class="px-6 md:px-24 max-w-7xl mx-auto pb-32 border-t-2 border-black pt-16" id="contact">
             <p class="mono text-[10px] uppercase opacity-50 tracking-widest mb-6">Stage Door</p>
             <h2 class="italic-display text-5xl md:text-8xl font-black tracking-tight leading-none mb-12 hover-trigger lowercase" data-label="MAIL">hi@amoghbajpai.com</h2>
 
@@ -323,12 +369,12 @@
          To remove: delete this block + the matching <script> "color-tester" block. -->
     <div id="color-tester" class="fixed bottom-5 right-5 z-[9998] flex items-center gap-2 px-3 py-2 rounded-full border border-black/30 bg-white/85 backdrop-blur-md shadow-lg select-none">
         <span class="mono text-[8px] uppercase tracking-widest opacity-50">BG</span>
-        <label class="relative cursor-pointer block w-9 h-9 rounded-full border-2 border-black/40 overflow-hidden" id="ct-bg-wrap" style="background:#FEF9C3" title="Background color">
-            <input type="color" id="ct-bg" value="#FEF9C3" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+        <label class="relative cursor-pointer block w-9 h-9 rounded-full border-2 border-black/40 overflow-hidden" id="ct-bg-wrap" style="background:#000000" title="Background color">
+            <input type="color" id="ct-bg" value="#000000" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
         </label>
         <span class="mono text-[8px] uppercase tracking-widest opacity-50">FG</span>
-        <label class="relative cursor-pointer block w-9 h-9 rounded-full border-2 border-black/40 overflow-hidden" id="ct-fg-wrap" style="background:#1a1a1a" title="Text color">
-            <input type="color" id="ct-fg" value="#1a1a1a" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+        <label class="relative cursor-pointer block w-9 h-9 rounded-full border-2 border-black/40 overflow-hidden" id="ct-fg-wrap" style="background:#FFFFFF" title="Text color">
+            <input type="color" id="ct-fg" value="#FFFFFF" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
         </label>
         <button id="ct-reset" class="mono text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity ml-1 px-1" title="Reset to defaults">↺</button>
     </div>
@@ -341,7 +387,10 @@
             const bgWrap = document.getElementById('ct-bg-wrap');
             const fgWrap = document.getElementById('ct-fg-wrap');
             const reset = document.getElementById('ct-reset');
-            const DEFAULTS = { bg: '#FEF9C3', fg: '#1a1a1a' };
+            const DEFAULTS = { bg: '#000000', fg: '#FFFFFF' };
+            // Bumped key so previously-saved color samples are ignored after the
+            // default-theme switch to black/white.
+            const STORAGE_KEY = 'ct-v2';
 
             const apply = (b, f) => {
                 root.style.setProperty('--lemon', b);
@@ -349,11 +398,14 @@
                 bg.value = b; fg.value = f;
                 bgWrap.style.background = b;
                 fgWrap.style.background = f;
-                try { localStorage.setItem('ct', JSON.stringify({ bg: b, fg: f })); } catch (e) {}
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ bg: b, fg: f })); } catch (e) {}
             };
 
+            // Drop any value stored under the old key.
+            try { localStorage.removeItem('ct'); } catch (e) {}
+
             try {
-                const saved = JSON.parse(localStorage.getItem('ct') || 'null');
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
                 if (saved && saved.bg && saved.fg) apply(saved.bg, saved.fg);
             } catch (e) {}
 
@@ -361,7 +413,7 @@
             fg.addEventListener('input', e => apply(bg.value, e.target.value));
             reset.addEventListener('click', () => {
                 apply(DEFAULTS.bg, DEFAULTS.fg);
-                try { localStorage.removeItem('ct'); } catch (e) {}
+                try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
             });
         })();
     </script>
@@ -383,11 +435,12 @@
 
         let faceLandmarker, webcamRunning = false, scene, camera, renderer, particles;
         let mouseX = 0, mouseY = 0, burstActive = false;
-        
+        let firstFrameAfterStart = false;
+
         let blinkStartTime = 0;
         let colorModeActive = false;
-        let blinkPersistenceBuffer = 0; 
-        const MAX_BUFFER = 10; 
+        let blinkPersistenceBuffer = 0;
+        const MAX_BUFFER = 10;
 
         let offsetX = 0, offsetY = 0, scaleFactor = 8, mirrorX = -1;
 
@@ -506,6 +559,11 @@
                         activateBtn.innerText = "[ Step_Off ]";
                         calibUI.classList.remove('opacity-0', 'pointer-events-none');
                         meter.style.display = 'block';
+                        // Idle rotation accumulates on the parent — reset so the
+                        // face renders facing the viewer, not at whatever angle
+                        // the rotating sphere happened to be at.
+                        if (particles) particles.rotation.set(0, 0, 0);
+                        firstFrameAfterStart = true;
                         runInference();
                     };
                 } catch(e) { sysLog(`CAMERA_ERR: ${e.message}`); }
@@ -603,16 +661,31 @@
                     }
                 }
 
+                // Re-center each frame on the landmark centroid so the face
+                // sits at the scene origin regardless of where the user is in
+                // the camera frame. Otherwise framing variance reads as the
+                // image "looking elsewhere".
+                let cx = 0, cy = 0, cz = 0;
+                for (const lm of landmarks) { cx += lm.x; cy += lm.y; cz += lm.z; }
+                cx /= landmarks.length; cy /= landmarks.length; cz /= landmarks.length;
+
                 landmarks.forEach((lm, i) => {
                     if (i < pos.length / 3) {
-                        const tx = (lm.x * mirrorX - 0.5 * mirrorX + offsetX) * scaleFactor;
-                        const ty = (-(lm.y - 0.5) + offsetY) * scaleFactor;
-                        const tz = -lm.z * scaleFactor;
-                        pos[i*3] += (tx - pos[i*3]) * 0.3;
-                        pos[i*3+1] += (ty - pos[i*3+1]) * 0.3;
-                        pos[i*3+2] += (tz - pos[i*3+2]) * 0.3;
+                        const tx = ((lm.x - cx) * mirrorX + offsetX) * scaleFactor;
+                        const ty = (-(lm.y - cy) + offsetY) * scaleFactor;
+                        const tz = -(lm.z - cz) * scaleFactor;
+                        if (firstFrameAfterStart) {
+                            pos[i*3] = tx;
+                            pos[i*3+1] = ty;
+                            pos[i*3+2] = tz;
+                        } else {
+                            pos[i*3] += (tx - pos[i*3]) * 0.3;
+                            pos[i*3+1] += (ty - pos[i*3+1]) * 0.3;
+                            pos[i*3+2] += (tz - pos[i*3+2]) * 0.3;
+                        }
                     }
                 });
+                firstFrameAfterStart = false;
                 particles.geometry.attributes.position.needsUpdate = true;
             }
             requestAnimationFrame(runInference);
@@ -640,9 +713,64 @@
         const captionEl = document.getElementById("semantic-caption");
         const cueEl = document.getElementById("semantic-cue");
         const semanticLoader = document.getElementById("semantic-loader");
+        const semanticSection = document.getElementById("project-02");
+        const ambientHost = document.getElementById("semantic-ambient");
 
         let semanticStreamRunning = false;
         let inferenceInterval;
+        let ambientInterval;
+
+        const ambientPhrases = [
+            "two strangers cross the room",
+            "a coffee cup, half-empty, on a windowsill",
+            "shadows rehearse the choreography of dusk",
+            "the lamp asks a question only the camera can answer",
+            "an actor practices being unobserved",
+            "a hand enters the frame, then forgets why",
+            "the ceiling, blank, like an unread page",
+            "footsteps measure the distance home",
+            "a moth circles the bulb",
+            "the light is on you",
+            "someone left in a hurry",
+            "the room exhales",
+            "two cups, one warm",
+            "a stranger who has read your room",
+        ];
+
+        const spawnAmbientWord = () => {
+            if (semanticStreamRunning || !ambientHost) return;
+            const span = document.createElement("span");
+            span.className = "ambient-word";
+            span.textContent = ambientPhrases[Math.floor(Math.random() * ambientPhrases.length)];
+            // Stay in the upper band so the description column at the bottom-right stays clean.
+            // 70% chance: top strip (anywhere across); 30%: left margin column.
+            if (Math.random() < 0.7) {
+                span.style.top = (6 + Math.random() * 24) + "%";
+                span.style.left = (8 + Math.random() * 84) + "%";
+            } else {
+                span.style.left = (4 + Math.random() * 22) + "%";
+                span.style.top = (32 + Math.random() * 54) + "%";
+            }
+            span.style.fontSize = (0.7 + Math.random() * 0.5) + "rem";
+            const dur = 9 + Math.random() * 5;
+            span.style.animationDuration = dur + "s";
+            ambientHost.appendChild(span);
+            setTimeout(() => span.remove(), dur * 1000 + 200);
+        };
+
+        const startAmbient = () => {
+            if (ambientInterval) return;
+            for (let i = 0; i < 3; i++) setTimeout(spawnAmbientWord, i * 700);
+            ambientInterval = setInterval(spawnAmbientWord, 1600);
+        };
+
+        const stopAmbient = () => {
+            clearInterval(ambientInterval);
+            ambientInterval = null;
+            if (ambientHost) ambientHost.innerHTML = "";
+        };
+
+        startAmbient();
 
         const captureCanvas = document.createElement("canvas");
         const captureCtx = captureCanvas.getContext("2d");
@@ -726,6 +854,8 @@
                 semanticVideo.srcObject.getTracks().forEach(track => track.stop());
             }
             cueEl.textContent = "Curtain";
+            if (semanticSection) semanticSection.classList.remove("stream-active");
+            startAmbient();
         }
 
         activateSemanticBtn.addEventListener("click", async () => {
@@ -737,6 +867,8 @@
                     semanticVideo.srcObject = stream;
                     semanticStreamRunning = true;
                     activateSemanticBtn.innerText = "[ End_Monologue ]";
+                    if (semanticSection) semanticSection.classList.add("stream-active");
+                    stopAmbient();
                     setCaption("Step into frame.", "Curtain up");
 
                     // Wait until the video element actually has a frame before
@@ -756,6 +888,95 @@
                 }
             }
         });
+    </script>
+
+    <script>
+        // scratch-layer: drag anywhere to leave fading sketchy scratches
+        (function () {
+            const canvas = document.getElementById('scratch-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let dpr = window.devicePixelRatio || 1;
+
+            const resize = () => {
+                dpr = window.devicePixelRatio || 1;
+                canvas.width = Math.floor(window.innerWidth * dpr);
+                canvas.height = Math.floor(window.innerHeight * dpr);
+                canvas.style.width = window.innerWidth + 'px';
+                canvas.style.height = window.innerHeight + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            };
+            resize();
+            window.addEventListener('resize', resize);
+
+            const strokes = [];
+            let dragging = false;
+
+            const isInteractive = (t) =>
+                !!(t && t.closest && t.closest('button, a, input, textarea, select, label, [contenteditable]'));
+
+            const onDown = (e) => {
+                if (!isInteractive(e.target)) {
+                    e.preventDefault();
+                    document.body.classList.add('is-scratching');
+                }
+                dragging = true;
+                strokes.push({ pts: [{ x: e.clientX, y: e.clientY, t: performance.now() }] });
+            };
+            const onMove = (e) => {
+                if (!dragging) return;
+                const s = strokes[strokes.length - 1];
+                if (s) s.pts.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+            };
+            const stop = () => {
+                dragging = false;
+                document.body.classList.remove('is-scratching');
+            };
+
+            window.addEventListener('pointerdown', onDown);
+            window.addEventListener('pointermove', onMove);
+            window.addEventListener('pointerup', stop);
+            window.addEventListener('pointercancel', stop);
+            window.addEventListener('blur', stop);
+            document.addEventListener('selectstart', (e) => { if (dragging) e.preventDefault(); });
+            document.addEventListener('dragstart', (e) => { if (dragging) e.preventDefault(); });
+
+            const FADE_MS = 1100;
+
+            const draw = () => {
+                const now = performance.now();
+                ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+                for (let i = strokes.length - 1; i >= 0; i--) {
+                    const last = strokes[i].pts[strokes[i].pts.length - 1];
+                    if (!last || now - last.t > FADE_MS + 200) strokes.splice(i, 1);
+                }
+
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                for (const s of strokes) {
+                    const pts = s.pts;
+                    for (let i = 1; i < pts.length; i++) {
+                        const a = pts[i - 1];
+                        const b = pts[i];
+                        const age = now - b.t;
+                        const alpha = Math.max(0, 1 - age / FADE_MS);
+                        if (alpha <= 0) continue;
+                        const j = 0.7;
+                        ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.9) + ')';
+                        ctx.lineWidth = 1.6;
+                        ctx.beginPath();
+                        ctx.moveTo(a.x + (Math.random() - 0.5) * j, a.y + (Math.random() - 0.5) * j);
+                        ctx.lineTo(b.x + (Math.random() - 0.5) * j, b.y + (Math.random() - 0.5) * j);
+                        ctx.stroke();
+                    }
+                }
+
+                requestAnimationFrame(draw);
+            };
+            requestAnimationFrame(draw);
+        })();
     </script>
 </body>
 </html>
