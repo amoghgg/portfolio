@@ -50,6 +50,8 @@
         
         #canvas-container { position: absolute; inset: 0; background: #000; overflow: hidden; }
         #canvas-container canvas { display: block; width: 100% !important; height: 100% !important; }
+        @keyframes warmingCuePulse { 0%, 100% { opacity: 0.35; letter-spacing: 0.35em; } 50% { opacity: 0.95; letter-spacing: 0.6em; } }
+        #stage-warming-overlay.is-on #stage-warming-cue { animation: warmingCuePulse 1.6s ease-in-out infinite; }
         .project-screen { position: relative; width: 100%; min-height: 100vh; overflow: hidden; }
         .project-screen .screen-bg { position: absolute; inset: 0; background: #000; overflow: hidden; }
         .project-screen .screen-overlay { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 3.5rem 1.25rem 3rem; color: #FFFFFF !important; }
@@ -161,6 +163,13 @@
                             <div id="intensity-fill"></div>
                             <div id="intensity-label">Standby</div>
                         </div>
+                        <!-- Warming overlay: shown between camera grant and first detection -->
+                        <div id="stage-warming-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-700 z-20">
+                            <div class="text-center px-6">
+                                <p id="stage-warming-cue" class="mono text-[9px] uppercase tracking-[0.35em] text-white/70 mb-4">·  ·  ·</p>
+                                <p id="stage-warming-line" class="italic-display text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight italic text-white" style="text-shadow: 0 0 40px rgba(255,255,255,0.45); transition: opacity 0.4s ease;">find your mark</p>
+                            </div>
+                        </div>
                         <!-- Calibration Overlay -->
                         <div id="calibration-controls" class="absolute top-6 right-6 z-30 flex flex-col gap-2 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto bg-black/40 backdrop-blur-sm p-4 rounded border border-white/10">
                             <p class="mono text-[8px] text-white opacity-50 mb-4 uppercase tracking-widest">POV_Calibration</p>
@@ -183,7 +192,7 @@
                     </div>
                     <div class="screen-scrim"></div>
                     <div class="screen-overlay max-w-7xl mx-auto w-full">
-                        <p class="mono text-[10px] uppercase opacity-70 tracking-widest italic">A solo for one face and 478 particles · the audience is the performer</p>
+                        <p class="mono text-[10px] uppercase opacity-70 tracking-widest italic">A solo for one face, two hands, and 1298 particles · the audience is the performer</p>
                         <div class="flex flex-col lg:flex-row lg:items-end gap-10 lg:gap-16">
                             <div class="lg:w-1/2 min-w-0">
                                 <h2 class="italic-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight hover-trigger" data-label="SCAN">Pixel <br> Manifold</h2>
@@ -198,10 +207,10 @@
                                 <div class="space-y-2 mb-7">
                                     <p class="mono text-[10px] uppercase opacity-70 tracking-widest">Stage directions</p>
                                     <ul class="mono text-[10px] md:text-[11px] opacity-90 space-y-1 uppercase leading-relaxed">
-                                        <li>01. Take the stage to scan facial landmarks.</li>
-                                        <li>02. Hold a blink for 3s to charge the color shift.</li>
-                                        <li>03. Sustain to 6s to trigger a burst.</li>
-                                        <li>04. The intensity meter is your cue light.</li>
+                                        <li>01. Take the stage. Face and hands enter the field.</li>
+                                        <li>02. Open your fists — the manifold blooms in color.</li>
+                                        <li>03. Close them — return to white.</li>
+                                        <li>04. The intensity meter reads your reach.</li>
                                     </ul>
                                 </div>
                                 <button id="activate-ai" class="btn-ai-light uppercase" data-label="LIVE">[ Take_The_Stage ]</button>
@@ -431,16 +440,178 @@
 
     <script type="module">
         import * as THREE from "https://esm.sh/three@0.158.0?v=5.3";
-        import { FaceLandmarker, FilesetResolver } from "https://esm.sh/@mediapipe/tasks-vision@0.10.3?v=5.3";
+        import { FaceLandmarker, HandLandmarker, FilesetResolver } from "https://esm.sh/@mediapipe/tasks-vision@0.10.3?v=5.3";
 
-        let faceLandmarker, webcamRunning = false, scene, camera, renderer, particles;
-        let mouseX = 0, mouseY = 0, burstActive = false;
+        const FACE_LM_COUNT = 478;
+        const HAND_LM_COUNT = 21;
+        const MAX_HANDS = 2;
+        // Volumetric hand: palm is filled via 3 triangles fanning from the
+        // wrist; fingers are thick tubes via perpendicular offset around each
+        // bone segment. Each particle slot has a fixed "role" + fixed random
+        // weights so the cloud is stable, not flickering noise.
+        const HAND_PALM_TRIS = [[0, 5, 9], [0, 9, 13], [0, 13, 17]];
+        const HAND_FINGERS = [
+            [1, 2, 3, 4],     // thumb
+            [5, 6, 7, 8],     // index
+            [9, 10, 11, 12],  // middle
+            [13, 14, 15, 16], // ring
+            [17, 18, 19, 20]  // pinky
+        ];
+        const PALM_PARTICLES_PER_TRI = 50;
+        const FINGER_PARTICLES = 40;
+        const FINGERTIP_CAP_PARTICLES = 10;
+        const WRIST_PARTICLES = 10;
+        const FINGER_HALF_WIDTH = 0.014;
+        const FINGERTIP_CAP_RADIUS = 0.012;
+        const WRIST_CAP_RADIUS = 0.022;
+        // Direct write — smoothing is handled upstream by the One-Euro filter
+        // on raw landmarks, so the per-particle lerp becomes pass-through.
+        const FOLLOW_RATE = 1.0;
+        const HAND_DENSE_COUNT =
+            HAND_PALM_TRIS.length * PALM_PARTICLES_PER_TRI
+            + HAND_FINGERS.length * (FINGER_PARTICLES + FINGERTIP_CAP_PARTICLES)
+            + WRIST_PARTICLES;
+        // 3·50 + 5·(40+10) + 10 = 150 + 250 + 10 = 410 per hand.
+        // 478 face + 410·2 = 1298 total.
+        const TOTAL_PARTICLES = FACE_LM_COUNT + HAND_DENSE_COUNT * MAX_HANDS;
+
+        const HAND_BLUEPRINT = (() => {
+            const bp = [];
+            for (let ti = 0; ti < HAND_PALM_TRIS.length; ti++) {
+                for (let k = 0; k < PALM_PARTICLES_PER_TRI; k++) {
+                    let u = Math.random(), v = Math.random();
+                    if (u + v > 1) { u = 1 - u; v = 1 - v; }
+                    bp.push({ kind: 0, tri: ti, u, v, w: 1 - u - v });
+                }
+            }
+            for (let fi = 0; fi < HAND_FINGERS.length; fi++) {
+                for (let k = 0; k < FINGER_PARTICLES; k++) {
+                    bp.push({
+                        kind: 1,
+                        finger: fi,
+                        bone: k % 3,
+                        t: Math.random(),
+                        perp: (Math.random() - 0.5) * 2
+                    });
+                }
+            }
+            for (let fi = 0; fi < HAND_FINGERS.length; fi++) {
+                // Fingertip caps — disk of jittered particles at each tip joint,
+                // so fingertips read as solid pads instead of fading to a point.
+                for (let k = 0; k < FINGERTIP_CAP_PARTICLES; k++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const r = Math.sqrt(Math.random()) * FINGERTIP_CAP_RADIUS;
+                    bp.push({
+                        kind: 3,
+                        finger: fi,
+                        dx: Math.cos(angle) * r,
+                        dy: Math.sin(angle) * r
+                    });
+                }
+            }
+            for (let k = 0; k < WRIST_PARTICLES; k++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = Math.sqrt(Math.random()) * WRIST_CAP_RADIUS;
+                bp.push({
+                    kind: 2,
+                    dx: Math.cos(angle) * r,
+                    dy: Math.sin(angle) * r
+                });
+            }
+            return bp;
+        })();
+
+        let faceLandmarker, handLandmarker, webcamRunning = false, scene, camera, renderer, particles;
+        let opennessSmoothed = 0;
+        const OPENNESS_SMOOTHING = 0.3;       // 0..1; higher = snappier response
+        const OPENNESS_COLOR_THRESHOLD = 0.55; // openness above this = color mode
+
+        // One-Euro filter on raw landmarks. Heavy smoothing at rest (kills
+        // MediaPipe jitter for cinematic feel), light smoothing during motion
+        // (kills lag for mirror feel). Particles then write directly.
+        const FILTER_MIN_CUTOFF = 1.2;    // Hz; lower = more smoothing at rest
+        const FILTER_BETA = 0.5;          // higher = more responsive to motion
+        const FILTER_DERIV_CUTOFF = 1.0;  // Hz; cutoff on derivative estimate
+        const faceFiltX = new Float32Array(FACE_LM_COUNT * 3);
+        const faceFiltDX = new Float32Array(FACE_LM_COUNT * 3);
+        let faceFiltReady = false;
+        const handFiltX = new Float32Array(MAX_HANDS * HAND_LM_COUNT * 3);
+        const handFiltDX = new Float32Array(MAX_HANDS * HAND_LM_COUNT * 3);
+        const handFiltReady = [false, false];
+        let lastFilterTime = 0;
+
+        function smoothingAlpha(dt, cutoff) {
+            const tau = 1 / (2 * Math.PI * cutoff);
+            return 1 / (1 + tau / dt);
+        }
+        function filterAxis(stateX, stateDX, idx, target, dt) {
+            const prev = stateX[idx];
+            const rawD = (target - prev) / dt;
+            const aD = smoothingAlpha(dt, FILTER_DERIV_CUTOFF);
+            const smD = stateDX[idx] + aD * (rawD - stateDX[idx]);
+            stateDX[idx] = smD;
+            const cutoff = FILTER_MIN_CUTOFF + FILTER_BETA * Math.abs(smD);
+            const a = smoothingAlpha(dt, cutoff);
+            const sm = prev + a * (target - prev);
+            stateX[idx] = sm;
+            return sm;
+        }
+        function filterFaceLandmarks(lms, dt) {
+            if (!faceFiltReady) {
+                for (let i = 0; i < FACE_LM_COUNT; i++) {
+                    const lm = lms[i];
+                    faceFiltX[i*3] = lm.x;
+                    faceFiltX[i*3+1] = lm.y;
+                    faceFiltX[i*3+2] = lm.z;
+                    faceFiltDX[i*3] = 0;
+                    faceFiltDX[i*3+1] = 0;
+                    faceFiltDX[i*3+2] = 0;
+                }
+                faceFiltReady = true;
+            } else {
+                for (let i = 0; i < FACE_LM_COUNT; i++) {
+                    const lm = lms[i];
+                    lm.x = filterAxis(faceFiltX, faceFiltDX, i*3, lm.x, dt);
+                    lm.y = filterAxis(faceFiltX, faceFiltDX, i*3+1, lm.y, dt);
+                    lm.z = filterAxis(faceFiltX, faceFiltDX, i*3+2, lm.z, dt);
+                }
+            }
+        }
+        function filterHandLandmarks(h, handLms, dt) {
+            if (!handLms) { handFiltReady[h] = false; return; }
+            const base = h * HAND_LM_COUNT * 3;
+            if (!handFiltReady[h]) {
+                for (let i = 0; i < HAND_LM_COUNT; i++) {
+                    const lm = handLms[i];
+                    handFiltX[base + i*3] = lm.x;
+                    handFiltX[base + i*3 + 1] = lm.y;
+                    handFiltX[base + i*3 + 2] = lm.z;
+                    handFiltDX[base + i*3] = 0;
+                    handFiltDX[base + i*3 + 1] = 0;
+                    handFiltDX[base + i*3 + 2] = 0;
+                }
+                handFiltReady[h] = true;
+            } else {
+                for (let i = 0; i < HAND_LM_COUNT; i++) {
+                    const lm = handLms[i];
+                    lm.x = filterAxis(handFiltX, handFiltDX, base + i*3, lm.x, dt);
+                    lm.y = filterAxis(handFiltX, handFiltDX, base + i*3 + 1, lm.y, dt);
+                    lm.z = filterAxis(handFiltX, handFiltDX, base + i*3 + 2, lm.z, dt);
+                }
+            }
+        }
+
+        let stageWarming = false;
+        let warmingPhraseTimer = null;
+        const WARMING_PHRASES = [
+            "find your mark",
+            "the lights are coming up",
+            "tuning the field",
+            "settle, breathe",
+            "the stage is yours"
+        ];
+        let mouseX = 0, mouseY = 0;
         let firstFrameAfterStart = false;
-
-        let blinkStartTime = 0;
-        let colorModeActive = false;
-        let blinkPersistenceBuffer = 0;
-        const MAX_BUFFER = 10;
 
         let offsetX = 0, offsetY = 0, scaleFactor = 8, mirrorX = -1;
 
@@ -455,7 +626,7 @@
         const glossaryMap = {
             "BLOCKING": "The precise staging of agents to facilitate narrative flow.",
             "TOUCHDESIGNER": "Node-based visual development platform for real-time media.",
-            "LANDMARKS": "478 3D spatial points tracked in real-time.",
+            "LANDMARKS": "1298 3D spatial points — face and hands — tracked in real-time.",
             "RETRIEVAL": "Semantic context loading for LLM inference.",
         };
 
@@ -476,6 +647,35 @@
                 mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
             }
         });
+
+        function setWarmingLine(text) {
+            const line = document.getElementById('stage-warming-line');
+            if (!line) return;
+            line.style.opacity = '0';
+            setTimeout(() => { line.textContent = text; line.style.opacity = '1'; }, 380);
+        }
+        function showWarmingOverlay() {
+            const overlay = document.getElementById('stage-warming-overlay');
+            if (!overlay) return;
+            const line = document.getElementById('stage-warming-line');
+            if (line) { line.textContent = WARMING_PHRASES[0]; line.style.opacity = '1'; }
+            overlay.classList.remove('opacity-0');
+            overlay.classList.add('opacity-100', 'is-on');
+            let idx = 0;
+            if (warmingPhraseTimer) clearInterval(warmingPhraseTimer);
+            warmingPhraseTimer = setInterval(() => {
+                idx = (idx + 1) % WARMING_PHRASES.length;
+                setWarmingLine(WARMING_PHRASES[idx]);
+            }, 2100);
+        }
+        function hideWarmingOverlay() {
+            const overlay = document.getElementById('stage-warming-overlay');
+            if (overlay) {
+                overlay.classList.remove('opacity-100', 'is-on');
+                overlay.classList.add('opacity-0');
+            }
+            if (warmingPhraseTimer) { clearInterval(warmingPhraseTimer); warmingPhraseTimer = null; }
+        }
 
         document.querySelectorAll('.hover-trigger').forEach(el => {
             el.addEventListener('mouseenter', () => {
@@ -506,7 +706,7 @@
                 container.appendChild(renderer.domElement);
                 
                 const geometry = new THREE.BufferGeometry();
-                const count = 478; 
+                const count = TOTAL_PARTICLES;
                 const positions = new Float32Array(count * 3);
                 const colors = new Float32Array(count * 3);
                 for (let i = 0; i < count; i++) {
@@ -526,7 +726,21 @@
 
             function animate() {
                 requestAnimationFrame(animate);
-                if (particles && !webcamRunning && !burstActive) { particles.rotation.y += 0.005; }
+                if (particles) {
+                    if (stageWarming) {
+                        // Breathing cloud while MediaPipe spins up: wobble on
+                        // multiple axes + scale pulse + opacity sway so the
+                        // wait reads as "lights coming up", not "loading".
+                        const t = performance.now() * 0.001;
+                        particles.rotation.y += 0.011;
+                        particles.rotation.x = Math.sin(t * 0.55) * 0.32;
+                        const s = 1 + Math.sin(t * 1.35) * 0.18;
+                        particles.scale.set(s, s, s);
+                        particles.material.opacity = 0.45 + Math.sin(t * 1.35) * 0.35;
+                    } else if (!webcamRunning) {
+                        particles.rotation.y += 0.005;
+                    }
+                }
                 renderer.render(scene, camera);
             }
             animate();
@@ -539,18 +753,28 @@
                     baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`, delegate: "GPU" },
                     outputFaceBlendshapes: true, runningMode: "VIDEO", numFaces: 1
                 });
+                handLandmarker = await HandLandmarker.createFromOptions(filesetResolver, {
+                    baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`, delegate: "GPU" },
+                    runningMode: "VIDEO", numHands: MAX_HANDS
+                });
                 sysLog("AI_ENGINE: READY_v5.3");
             } catch (e) { sysLog(`AI_ERR: ${e.message}`); }
         }
 
         activateBtn.addEventListener("click", async () => {
             if (!faceLandmarker) return;
-            if (webcamRunning) {
-                webcamRunning = false; activateBtn.innerText = "[ Take_The_Stage ]";
+            if (webcamRunning || stageWarming) {
+                webcamRunning = false;
+                stageWarming = false;
+                hideWarmingOverlay();
+                if (particles) { particles.scale.set(1, 1, 1); particles.material.opacity = 0.9; }
+                activateBtn.innerText = "[ Take_The_Stage ]";
                 calibUI.classList.add('opacity-0', 'pointer-events-none');
                 meter.style.display = 'none';
                 if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
             } else {
+                stageWarming = true;
+                showWarmingOverlay();
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                     video.srcObject = stream;
@@ -559,106 +783,109 @@
                         activateBtn.innerText = "[ Step_Off ]";
                         calibUI.classList.remove('opacity-0', 'pointer-events-none');
                         meter.style.display = 'block';
-                        // Idle rotation accumulates on the parent — reset so the
-                        // face renders facing the viewer, not at whatever angle
-                        // the rotating sphere happened to be at.
-                        if (particles) particles.rotation.set(0, 0, 0);
                         firstFrameAfterStart = true;
                         runInference();
                     };
-                } catch(e) { sysLog(`CAMERA_ERR: ${e.message}`); }
+                } catch(e) {
+                    stageWarming = false;
+                    hideWarmingOverlay();
+                    if (particles) { particles.scale.set(1, 1, 1); particles.material.opacity = 0.9; }
+                    sysLog(`CAMERA_ERR: ${e.message}`);
+                }
             }
         });
 
-        function triggerBurst() {
-            if (burstActive) return;
-            burstActive = true;
-            sysLog("PARTICLE_BURST: IDENTITY_DISPERSED");
-            meterLabel.innerText = "[ SYSTEM_OVERLOAD: BURST ]";
-            const pos = particles.geometry.attributes.position.array;
-            const col = particles.geometry.attributes.color.array;
-            for (let i = 0; i < pos.length / 3; i++) {
-                gsap.to(pos, {
-                    [i*3]: (Math.random() - 0.5) * 20,
-                    [i*3+1]: (Math.random() - 0.5) * 20,
-                    [i*3+2]: (Math.random() - 0.5) * 20,
-                    duration: 2, ease: "expo.out",
-                    onUpdate: () => { particles.geometry.attributes.position.needsUpdate = true; }
-                });
+        function computeHandOpenness(handLms) {
+            // Avg ratio of fingertip-to-wrist distance vs MCP-to-wrist distance
+            // across the four non-thumb fingers. Closed fist ≈ 1.0 (tip near
+            // palm), open hand ≈ 1.8–2.0 (tip far past MCP).
+            const wrist = handLms[0];
+            const pairs = [[5,8],[9,12],[13,16],[17,20]];
+            let sum = 0;
+            for (const [mcpIdx, tipIdx] of pairs) {
+                const mcp = handLms[mcpIdx], tip = handLms[tipIdx];
+                const dTip = Math.hypot(tip.x - wrist.x, tip.y - wrist.y);
+                const dMcp = Math.hypot(mcp.x - wrist.x, mcp.y - wrist.y);
+                sum += dTip / Math.max(dMcp, 1e-3);
             }
-            setTimeout(() => { 
-                burstActive = false;
-                blinkStartTime = 0;
-                colorModeActive = false;
-                blinkPersistenceBuffer = 0;
-                particles.material.size = 0.05;
-                for(let i=0; i<col.length; i++) col[i] = 1;
-                particles.geometry.attributes.color.needsUpdate = true;
-                meterFill.style.width = '0%';
-                meterLabel.innerText = "Ready";
-                sysLog("PARTICLE_BURST: REFORMED");
-            }, 3000);
+            const ratio = sum / pairs.length;
+            // Map [1.1, 1.8] -> [0, 1]
+            return Math.max(0, Math.min(1, (ratio - 1.1) / 0.7));
         }
 
         function runInference() {
-            if (!webcamRunning || video.readyState < 2 || burstActive) {
+            if (!webcamRunning || video.readyState < 2) {
                 if (webcamRunning) requestAnimationFrame(runInference);
                 return;
             }
             const results = faceLandmarker.detectForVideo(video, performance.now());
             if (results.faceLandmarks && results.faceLandmarks.length > 0) {
+                if (stageWarming) {
+                    // First successful detection — bring the lights up. Reset
+                    // breathing transforms before the landmark loop writes
+                    // new positions, otherwise the snap is visible.
+                    stageWarming = false;
+                    hideWarmingOverlay();
+                    particles.scale.set(1, 1, 1);
+                    particles.rotation.set(0, 0, 0);
+                    particles.material.opacity = 0.9;
+                    firstFrameAfterStart = true;
+                    faceFiltReady = false;
+                    handFiltReady[0] = false;
+                    handFiltReady[1] = false;
+                    lastFilterTime = 0;
+                }
                 const landmarks = results.faceLandmarks[0];
-                const blend = results.faceBlendshapes[0].categories;
                 const pos = particles.geometry.attributes.position.array;
                 const col = particles.geometry.attributes.color.array;
-                
-                const leftBlink = blend.find(s => s.categoryName === 'eyeBlinkLeft')?.score || 0;
-                const rightBlink = blend.find(s => s.categoryName === 'eyeBlinkRight')?.score || 0;
-                const blinkScore = (leftBlink + rightBlink) / 2;
 
-                if (blinkScore > 0.4) {
-                    blinkPersistenceBuffer = MAX_BUFFER;
-                    if (blinkStartTime === 0) blinkStartTime = performance.now();
-                    const elapsed = performance.now() - blinkStartTime;
-                    
-                    if (elapsed <= 3000) {
-                        const p = (elapsed / 3000) * 100;
-                        meterFill.style.width = `${p / 2}%`; // 0-50%
-                        meterFill.style.background = '#fff';
-                        meterLabel.innerText = `[ Charging_Color: ${Math.round(p)}% ]`;
-                    } else if (elapsed > 3000) {
-                        if (!colorModeActive) {
-                            colorModeActive = true;
-                            sysLog("INTENSITY_THRESHOLD: COLOR_SHIFT_ACTIVE");
-                        }
-                        const p = Math.min(((elapsed - 3000) / 3000) * 100, 100);
-                        meterFill.style.width = `${50 + p / 2}%`; // 50-100%
-                        meterFill.style.background = 'linear-gradient(90deg, #ff0000, #ff00ff, #0000ff)';
-                        meterLabel.innerText = `[ Priming_Burst: ${Math.round(p)}% ]`;
-                        for (let i = 0; i < col.length; i++) col[i] = Math.random();
-                        particles.geometry.attributes.color.needsUpdate = true;
-                    }
-                    
-                    if (elapsed > 6000) triggerBurst();
-                    particles.material.size = 0.05 + (elapsed / 6000) * 0.4;
+                // Hand inference runs here (not below) so openness can drive
+                // colors/size before the geometry write.
+                const handResults = handLandmarker
+                    ? handLandmarker.detectForVideo(video, performance.now())
+                    : null;
+                const handsDetected = handResults?.landmarks || [];
+
+                // One-Euro filter pass on raw landmarks. Mutates lm.x/y/z in
+                // place so all downstream code (centroid, projection, openness,
+                // hand blueprint) sees smoothed values.
+                const nowSec = performance.now() / 1000;
+                const dt = lastFilterTime > 0
+                    ? Math.max(nowSec - lastFilterTime, 1 / 120)
+                    : 1 / 60;
+                lastFilterTime = nowSec;
+                filterFaceLandmarks(landmarks, dt);
+                for (let h = 0; h < MAX_HANDS; h++) {
+                    filterHandLandmarks(h, handsDetected[h], dt);
+                }
+
+                let opennessRaw = 0;
+                for (const handLms of handsDetected) {
+                    opennessRaw = Math.max(opennessRaw, computeHandOpenness(handLms));
+                }
+                opennessSmoothed += (opennessRaw - opennessSmoothed) * OPENNESS_SMOOTHING;
+
+                const inColor = opennessSmoothed > OPENNESS_COLOR_THRESHOLD;
+                if (inColor) {
+                    // Dance: randomize all particle colors each frame
+                    for (let i = 0; i < col.length; i++) col[i] = Math.random();
                 } else {
-                    if (blinkPersistenceBuffer > 0) {
-                        blinkPersistenceBuffer--;
-                    } else {
-                        if (colorModeActive) {
-                            blinkStartTime = performance.now() - 3001; 
-                            meterFill.style.width = '50%';
-                            meterFill.style.background = 'linear-gradient(90deg, #ff0000, #ff00ff, #0000ff)';
-                            meterLabel.innerText = "[ Colorful_Mode: LOCKED ]";
-                            for (let i = 0; i < col.length; i++) { if(col[i] === 1) col[i] = Math.random(); }
-                            particles.geometry.attributes.color.needsUpdate = true;
-                        } else {
-                            blinkStartTime = 0;
-                            meterFill.style.width = '0%';
-                            meterLabel.innerText = "System_Active";
-                        }
-                        particles.material.size = 0.05 + blinkScore * 0.25;
-                    }
+                    // Lerp back toward white as fists close
+                    for (let i = 0; i < col.length; i++) col[i] += (1 - col[i]) * 0.18;
+                }
+                particles.geometry.attributes.color.needsUpdate = true;
+                particles.material.size = 0.05 + opennessSmoothed * 0.22;
+
+                const pct = Math.round(opennessSmoothed * 100);
+                meterFill.style.width = `${pct}%`;
+                if (inColor) {
+                    meterFill.style.background = 'linear-gradient(90deg, #ff0000, #ff00ff, #0000ff)';
+                    meterLabel.innerText = `[ Open: ${pct}% — Color_Mode ]`;
+                } else {
+                    meterFill.style.background = '#fff';
+                    meterLabel.innerText = handsDetected.length === 0
+                        ? "Stand_By"
+                        : `[ Reach: ${pct}% ]`;
                 }
 
                 // Re-center each frame on the landmark centroid so the face
@@ -679,12 +906,85 @@
                             pos[i*3+1] = ty;
                             pos[i*3+2] = tz;
                         } else {
-                            pos[i*3] += (tx - pos[i*3]) * 0.3;
-                            pos[i*3+1] += (ty - pos[i*3+1]) * 0.3;
-                            pos[i*3+2] += (tz - pos[i*3+2]) * 0.3;
+                            pos[i*3] += (tx - pos[i*3]) * FOLLOW_RATE;
+                            pos[i*3+1] += (ty - pos[i*3+1]) * FOLLOW_RATE;
+                            pos[i*3+2] += (tz - pos[i*3+2]) * FOLLOW_RATE;
                         }
                     }
                 });
+
+                const writeParticle = (i, tx, ty, tz) => {
+                    if (firstFrameAfterStart) {
+                        pos[i*3] = tx; pos[i*3+1] = ty; pos[i*3+2] = tz;
+                    } else {
+                        pos[i*3] += (tx - pos[i*3]) * FOLLOW_RATE;
+                        pos[i*3+1] += (ty - pos[i*3+1]) * FOLLOW_RATE;
+                        pos[i*3+2] += (tz - pos[i*3+2]) * FOLLOW_RATE;
+                    }
+                };
+                const projectLM = (lx, ly, lz) => [
+                    ((lx - cx) * mirrorX + offsetX) * scaleFactor,
+                    (-(ly - cy) + offsetY) * scaleFactor,
+                    -(lz - cz) * scaleFactor
+                ];
+                for (let h = 0; h < MAX_HANDS; h++) {
+                    const baseIdx = FACE_LM_COUNT + h * HAND_DENSE_COUNT;
+                    const handLms = handsDetected[h];
+                    if (handLms) {
+                        for (let k = 0; k < HAND_BLUEPRINT.length; k++) {
+                            const bp = HAND_BLUEPRINT[k];
+                            let lx, ly, lz;
+                            if (bp.kind === 0) {
+                                // Palm triangle fill: barycentric blend of 3 landmarks
+                                const tri = HAND_PALM_TRIS[bp.tri];
+                                const la = handLms[tri[0]];
+                                const lb = handLms[tri[1]];
+                                const lc = handLms[tri[2]];
+                                lx = la.x * bp.u + lb.x * bp.v + lc.x * bp.w;
+                                ly = la.y * bp.u + lb.y * bp.v + lc.y * bp.w;
+                                lz = la.z * bp.u + lb.z * bp.v + lc.z * bp.w;
+                            } else if (bp.kind === 1) {
+                                // Finger bone tube: lerp along bone + perpendicular thickness
+                                const joints = HAND_FINGERS[bp.finger];
+                                const la = handLms[joints[bp.bone]];
+                                const lb = handLms[joints[bp.bone + 1]];
+                                lx = la.x + (lb.x - la.x) * bp.t;
+                                ly = la.y + (lb.y - la.y) * bp.t;
+                                lz = la.z + (lb.z - la.z) * bp.t;
+                                const bx = lb.x - la.x, by = lb.y - la.y;
+                                const len = Math.sqrt(bx * bx + by * by) || 1;
+                                lx += (-by / len) * FINGER_HALF_WIDTH * bp.perp;
+                                ly += (bx / len) * FINGER_HALF_WIDTH * bp.perp;
+                            } else if (bp.kind === 3) {
+                                // Fingertip cap: jittered disk around the tip joint
+                                const joints = HAND_FINGERS[bp.finger];
+                                const tip = handLms[joints[joints.length - 1]];
+                                lx = tip.x + bp.dx;
+                                ly = tip.y + bp.dy;
+                                lz = tip.z;
+                            } else {
+                                // Wrist cap: small jittered disk around landmark 0
+                                const lw = handLms[0];
+                                lx = lw.x + bp.dx;
+                                ly = lw.y + bp.dy;
+                                lz = lw.z;
+                            }
+                            const [tx, ty, tz] = projectLM(lx, ly, lz);
+                            writeParticle(baseIdx + k, tx, ty, tz);
+                        }
+                    } else {
+                        // No hand for this slot — slide its particles far below
+                        // frame instead of blobbing onto the face, then snap
+                        // back fast when a hand re-enters.
+                        for (let j = 0; j < HAND_DENSE_COUNT; j++) {
+                            const i = baseIdx + j;
+                            pos[i*3] += (0 - pos[i*3]) * 0.2;
+                            pos[i*3+1] += (-30 - pos[i*3+1]) * 0.2;
+                            pos[i*3+2] += (0 - pos[i*3+2]) * 0.2;
+                        }
+                    }
+                }
+
                 firstFrameAfterStart = false;
                 particles.geometry.attributes.position.needsUpdate = true;
             }
