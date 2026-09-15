@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lights — Amogh Bajpai</title>
+    <meta name="description" content="Lights: markerless gestural cue triggering for theatrical lighting, evaluated by false triggers per hour. Paper in preparation, prototype live.">
+    <meta name="theme-color" content="#f3efe7">
+    <link rel="canonical" href="https://www.amoghbajpai.com/research/lights/">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Lights — gestural cue triggering for theatrical lighting">
+    <meta property="og:description" content="One false trigger blacks out a live show. So the number that matters is false triggers per hour.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f3efe7'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23b0391d'/%3E%3C/svg%3E">
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/site.css">
+    <style>
+        .article-body .stages, .stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(96px, 1fr)); gap: 10px; min-width: 540px; counter-reset: st; }
+        .stages li { counter-increment: st; border: 1px solid var(--rule-strong); background: var(--paper); padding: 12px 12px 14px; font-size: 16px !important; line-height: 1.3 !important; margin: 0 !important; }
+        .stages li::before { content: "0" counter(st); display: block; font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-bottom: 18px; }
+        .stages li.cut { border-style: dashed; border-color: var(--ink-3); color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+        .stages-key { display: flex; justify-content: space-between; gap: 16px; margin-top: 12px; min-width: 540px; }
+        .cues { width: 100%; border-collapse: collapse; font-size: 17px; }
+        .cues th { text-align: left; font-family: var(--mono); font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); padding: 0 16px 10px 0; border-bottom: 1px solid var(--rule-strong); }
+        .cues td { padding: 12px 16px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+        .cues td:first-child { font-style: italic; white-space: nowrap; }
+        .cues td:last-child { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+        .scroll-x { overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="masthead">
+        <div class="wrap">
+            <a class="name" href="/">Amogh Bajpai</a>
+            <nav aria-label="Sections">
+                <a href="/#research">Research</a>
+                <a href="/#works">Works</a>
+                <a href="/#about" class="opt">About</a>
+                <a href="/#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main" class="wrap">
+        <div class="article-head">
+            <a class="crumb meta" href="/#research">← Research · 02</a>
+            <p class="label">Research · paper in preparation</p>
+            <h1 class="display"><em>Lights</em></h1>
+            <p class="dek">Markerless gestural cue triggering for theatrical lighting. A hand in the wings calls the cue, and the camera has to be right when a mistake blacks out the stage.</p>
+        </div>
+
+        <dl class="article-meta">
+            <div><dt>Status</dt><dd>Paper in preparation</dd></div>
+            <div><dt>With</dt><dd>Varun Tiwari, Manipal University Jaipur</dd></div>
+            <div><dt>Prototype</dt><dd><a href="https://lights.amoghbajpai.com" target="_blank" rel="noopener">lights.amoghbajpai.com</a></dd></div>
+            <div><dt>Code</dt><dd><a href="https://github.com/amoghgg/lights" target="_blank" rel="noopener">github.com/amoghgg/lights</a></dd></div>
+        </dl>
+
+        <div class="article-body">
+            <section>
+                <h2>The problem</h2>
+                <div class="block">
+                    <p class="pull">A cue that is correct in content and late in delivery has failed.</p>
+                    <p>
+                        In small, under-resourced theatre, the person who knows when a cue belongs and the person who can
+                        execute it are rarely the same. An assistant director watches from the wings with no control
+                        surface; a volunteer works the lighting desk from a cue sheet. Every cue has to travel between
+                        them: perceived, signalled, understood, found on the desk, executed. Each handoff costs time, and
+                        transitions land late, night after night.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>The idea</h2>
+                <figure class="figure block">
+                    <div class="plate scroll-x">
+                        <ol class="stages" aria-label="Five stages of cue delivery, with three removed">
+                            <li>Perceive the moment</li>
+                            <li class="cut">Signal the operator</li>
+                            <li class="cut">Operator understands</li>
+                            <li class="cut">Find the control</li>
+                            <li>Execute</li>
+                        </ol>
+                        <div class="stages-key meta"><span>Manual cue delivery: five handoffs</span><span>Gesture trigger: three removed</span></div>
+                    </div>
+                    <figcaption class="meta">Handing the trigger to the person who already holds the knowledge removes three of the five stages.</figcaption>
+                </figure>
+            </section>
+
+            <section>
+                <h2>Cue vocabulary</h2>
+                <div class="block">
+                    <p>
+                        The prototype recognises five cues from hand landmarks alone, with no markers, gloves or calibration.
+                        The vocabulary is deliberately small and designed so the gestures are structurally hard to
+                        confuse: static and dynamic, one hand and two.
+                    </p>
+                    <div class="scroll-x">
+                        <table class="cues">
+                            <thead><tr><th>Cue</th><th>Gesture</th><th>Kind</th></tr></thead>
+                            <tbody>
+                                <tr><td>Blackout</td><td>Double clap</td><td>Dynamic · two hands</td></tr>
+                                <tr><td>General cover</td><td>Both palms open, raised</td><td>Static · two hands</td></tr>
+                                <tr><td>Centre special</td><td>Index finger pointing, held</td><td>Static · one hand</td></tr>
+                                <tr><td>Master dim</td><td>Flat palm height sets the level</td><td>Continuous · one hand</td></tr>
+                                <tr><td>Colour state</td><td>Lateral swipe</td><td>Dynamic · one hand</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>What we measure</h2>
+                <div class="block">
+                    <p>
+                        Gesture-recognition papers routinely report accuracies in the nineties. Those numbers come from
+                        pre-segmented clips that contain a gesture by construction, so they can't measure false activation
+                        at all. On a stage the errors are asymmetric: a missed cue merely fails to help, but a false one
+                        blacks out the stage in front of an audience.
+                    </p>
+                    <p>
+                        So the headline number is <strong>false triggers per hour</strong>, alongside cue delivery latency
+                        against a manual baseline. Cues are grouped by timing contract: timing-critical cues commit as
+                        soon as they are recognised, while selective ones wait behind an explicit confirmation. Three
+                        detectors run on identical data through an identical streaming loop: naive rules, rules with
+                        structural fixes, and a small causal temporal network. Evaluation is split by participant, not by
+                        clip.
+                    </p>
+                    <p class="note">Results aren't published yet. This page will be updated when the evaluation is complete.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Builds on</h2>
+                <div class="block">
+                    <ol class="refs">
+                        <li>R. J. K. Jacob. <em>What you look at is what you get: eye movement-based interaction techniques.</em> CHI 1990. <a href="https://doi.org/10.1145/97243.97246">doi:10.1145/97243.97246</a>: the Midas touch problem.</li>
+                        <li>Juntunen et al. <em>Orchestrating light.</em> Lighting Research &amp; Technology, 2017. <a href="https://doi.org/10.1177/1477153516654516">doi:10.1177/1477153516654516</a></li>
+                        <li>Schwarz, Cunningham &amp; Woodford-Smith. <em>Towards a new paradigm for intuitive theatrical lighting control.</em> EVA London 2019. <a href="https://doi.org/10.14236/ewic/EVA2019.68">doi:10.14236/ewic/EVA2019.68</a></li>
+                        <li>Zhang et al. <em>MediaPipe Hands: On-device Real-time Hand Tracking.</em> 2020. <a href="https://arxiv.org/abs/2006.10214">arXiv:2006.10214</a></li>
+                    </ol>
+                </div>
+            </section>
+        </div>
+
+        <nav class="next" aria-label="More research">
+            <a href="/research/signflip/">← SignFlip</a>
+            <a href="/#works">Works →</a>
+        </nav>
+
+        <footer class="footer meta">
+            <span>© 2026 Amogh Bajpai</span>
+            <nav aria-label="Elsewhere">
+                <a href="mailto:hi@amoghbajpai.com">Email</a>
+                <a href="https://github.com/amoghgg" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </footer>
+    </main>
+    <script src="/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Stream — Amogh Bajpai</title>
+    <meta name="description" content="A live piece: a stranger watches your room through your webcam and narrates it back to you.">
+    <meta name="theme-color" content="#0b0a08">
+    <meta property="og:title" content="Semantic Stream — Amogh Bajpai">
+    <meta property="og:description" content="A stranger watches your room and narrates it back to you.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0a08'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23e9b872'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/site.css">
+    <link rel="stylesheet" href="/assets/stage.css">
+    <style>
+        #semantic-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
+        body.is-live #semantic-video { opacity: 0.55; }
+
+        #ambient { position: absolute; inset: 0; overflow: hidden; pointer-events: none; transition: opacity 0.6s ease; }
+        body.is-live #ambient { opacity: 0; }
+        .ambient-word {
+            position: absolute; white-space: nowrap; user-select: none;
+            font-style: italic; font-weight: 320; font-variation-settings: "opsz" 72, "SOFT" 100;
+            color: rgba(237, 232, 221, 0.5);
+            transform: translate(-50%, -50%); opacity: 0;
+            animation: ambient-drift 11s ease-in-out forwards;
+        }
+        @keyframes ambient-drift {
+            0%   { opacity: 0; transform: translate(-50%, -40%); filter: blur(3px); }
+            18%  { opacity: 0.55; filter: blur(0); }
+            72%  { opacity: 0.55; transform: translate(-50%, -58%); filter: blur(0); }
+            100% { opacity: 0; transform: translate(-50%, -70%); filter: blur(3px); }
+        }
+
+        .caption-block {
+            position: fixed; left: 0; right: 0; bottom: clamp(88px, 14vh, 140px); z-index: 15;
+            padding-inline: var(--gutter); text-align: center; pointer-events: none;
+            opacity: 0; transition: opacity 0.6s ease;
+        }
+        body.is-live .caption-block { opacity: 1; }
+        .caption-block .cue { font-family: var(--mono); font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--stage-ink-3); margin: 0 0 14px; }
+        #caption {
+            margin: 0 auto; max-width: 28ch; font-size: clamp(26px, 3.6vw, 52px); line-height: 1.2;
+            font-style: italic; font-weight: 330; font-variation-settings: "opsz" 144, "SOFT" 100;
+            color: var(--stage-ink); text-shadow: 0 2px 30px rgba(0,0,0,0.6); transition: opacity 0.3s ease;
+        }
+        #caption.error { color: #f0b8a8; font-size: clamp(20px, 2.4vw, 32px); }
+        .listening { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--tungsten); margin-left: 8px; vertical-align: middle; opacity: 0; transition: opacity 0.3s; }
+        .listening.on { opacity: 1; animation: pulse 1s ease-in-out infinite; }
+        @keyframes pulse { 50% { opacity: 0.25; } }
+        @media (prefers-reduced-motion: reduce) { .ambient-word { animation-duration: 0s; opacity: 0.5; } .listening.on { animation: none; } }
+    </style>
+</head>
+<body class="stage-page">
+    <div class="stage" aria-hidden="true">
+        <video id="semantic-video" autoplay playsinline muted></video>
+        <div id="ambient"></div>
+    </div>
+    <div class="stage-scrim"></div>
+
+    <header class="stage-top">
+        <a href="/#works">← Programme</a>
+        <span class="where">05 · Works</span>
+    </header>
+
+    <div class="caption-block" aria-live="polite">
+        <p class="cue"><span id="cue">Curtain up</span><span class="listening" id="listening"></span></p>
+        <p id="caption">Step into frame.</p>
+    </div>
+
+    <section class="note-panel">
+        <div>
+            <p class="label">Live piece · 2026</p>
+            <h1 class="display">Semantic <em>Stream</em></h1>
+        </div>
+        <div>
+            <p class="lede">A monologue rehearsed in real time, between you and a stranger that has read your room. A vision-language model watches through your camera and tries to put you into words.</p>
+            <ol class="directions">
+                <li>Begin the monologue.</li>
+                <li>Bring objects into frame. Do something.</li>
+                <li>Every few seconds, the stranger describes what it sees.</li>
+            </ol>
+            <p class="status-msg" id="status-msg" role="status" hidden></p>
+            <button class="btn" id="begin"><span class="dot"></span>Begin the monologue</button>
+            <p class="privacy" id="privacy">One still frame every 7 seconds is sent to Google's Gemini API to be described. This site doesn't store your frames or captions.</p>
+        </div>
+    </section>
+
+    <div class="live-bar">
+        <span class="live-title">Semantic Stream</span>
+        <button class="btn btn-ghost" id="stop">End</button>
+    </div>
+
+    <script type="module">
+        const CAPTION_ENDPOINT = "https://amogh-caption.semantic-stream.workers.dev";
+        const POLL_MS = 7000;
+        // After this many upstream failures in a row, stop polling and say so.
+        const MAX_CONSECUTIVE_FAILURES = 2;
+
+        const video = document.getElementById("semantic-video");
+        const beginBtn = document.getElementById("begin");
+        const stopBtn = document.getElementById("stop");
+        const captionEl = document.getElementById("caption");
+        const cueEl = document.getElementById("cue");
+        const listening = document.getElementById("listening");
+        const ambientHost = document.getElementById("ambient");
+        const statusMsg = document.getElementById("status-msg");
+
+        let running = false;
+        let inferenceInterval = null;
+        let ambientInterval = null;
+        let failures = 0;
+
+        const ambientPhrases = [
+            "two strangers cross the room",
+            "a coffee cup, half-empty, on a windowsill",
+            "shadows rehearse the choreography of dusk",
+            "the lamp asks a question only the camera can answer",
+            "an actor practises being unobserved",
+            "a hand enters the frame, then forgets why",
+            "the ceiling, blank, like an unread page",
+            "footsteps measure the distance home",
+            "a moth circles the bulb",
+            "the light is on you",
+            "someone left in a hurry",
+            "the room exhales",
+            "two cups, one warm",
+            "a stranger who has read your room",
+        ];
+
+        const spawnAmbientWord = () => {
+            if (running) return;
+            const span = document.createElement("span");
+            span.className = "ambient-word";
+            span.textContent = ambientPhrases[Math.floor(Math.random() * ambientPhrases.length)];
+            // Keep to the upper part of the screen, clear of the programme note.
+            span.style.top = (8 + Math.random() * 38) + "%";
+            span.style.left = (12 + Math.random() * 76) + "%";
+            span.style.fontSize = (1 + Math.random() * 0.9) + "rem";
+            const dur = 9 + Math.random() * 5;
+            span.style.animationDuration = dur + "s";
+            ambientHost.appendChild(span);
+            setTimeout(() => span.remove(), dur * 1000 + 200);
+        };
+        const startAmbient = () => {
+            if (ambientInterval) return;
+            for (let i = 0; i < 3; i++) setTimeout(spawnAmbientWord, i * 700);
+            ambientInterval = setInterval(spawnAmbientWord, 1600);
+        };
+        const stopAmbient = () => {
+            clearInterval(ambientInterval);
+            ambientInterval = null;
+            ambientHost.innerHTML = "";
+        };
+        startAmbient();
+
+        const captureCanvas = document.createElement("canvas");
+        const captureCtx = captureCanvas.getContext("2d");
+
+        // Crossfade a new caption in. `cue` shows above the line in mono caps.
+        const setCaption = (text, cue, isError = false) => {
+            captionEl.style.opacity = "0";
+            setTimeout(() => {
+                captionEl.textContent = text;
+                captionEl.classList.toggle("error", isError);
+                cueEl.textContent = cue;
+                captionEl.style.opacity = "1";
+            }, 220);
+        };
+
+        // Stop and explain in the programme note, which comes back with the button.
+        function narratorLost(message) {
+            stopStream();
+            statusMsg.textContent = message;
+            statusMsg.hidden = false;
+        }
+
+        async function runSemanticInference() {
+            if (!running) return;
+            // Skip if the video doesn't have a frame yet (HAVE_CURRENT_DATA = 2).
+            if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) return;
+
+            listening.classList.add("on");
+            try {
+                // Downscale: captions don't need full resolution and the worker caps payload size.
+                const scale = Math.min(1, 640 / video.videoWidth);
+                captureCanvas.width = Math.round(video.videoWidth * scale);
+                captureCanvas.height = Math.round(video.videoHeight * scale);
+                captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+                const base64Image = captureCanvas.toDataURL("image/jpeg", 0.7).split(",")[1];
+
+                const response = await fetch(CAPTION_ENDPOINT, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image: base64Image }),
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!running) return;
+
+                if (response.status === 429 && data.error === "rate_limited") {
+                    narratorLost(`The stranger needs a breather. Try again in ${data.retry_after || 60} seconds.`);
+                    return;
+                }
+                if (!response.ok || data.error || !data.caption) {
+                    failures += 1;
+                    console.warn("[semantic] caption failed:", data.error, data.detail || response.status);
+                    if (failures >= MAX_CONSECUTIVE_FAILURES) {
+                        narratorLost("The stranger has lost its voice. The narration service is offline right now, so please try again later.");
+                    }
+                    return;
+                }
+                failures = 0;
+                setCaption(data.caption, "Now showing");
+            } catch (e) {
+                failures += 1;
+                console.warn("[semantic] caption skipped:", e.message);
+                if (failures >= MAX_CONSECUTIVE_FAILURES) {
+                    narratorLost("Couldn't reach the narrator. Check your connection and try again.");
+                }
+            } finally {
+                listening.classList.remove("on");
+            }
+        }
+
+        function stopStream() {
+            running = false;
+            clearInterval(inferenceInterval);
+            inferenceInterval = null;
+            if (video.srcObject) { video.srcObject.getTracks().forEach(t => t.stop()); video.srcObject = null; }
+            document.body.classList.remove("is-live");
+            beginBtn.disabled = false;
+            startAmbient();
+        }
+
+        beginBtn.addEventListener("click", async () => {
+            beginBtn.disabled = true;
+            statusMsg.hidden = true;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                running = true;
+                failures = 0;
+                document.body.classList.add("is-live");
+                stopAmbient();
+                setCaption("Step into frame.", "Curtain up");
+
+                // Wait until the video element actually has a frame before
+                // the first inference; otherwise we'd capture a 0×0 canvas.
+                const startInference = () => {
+                    if (!running) return;
+                    runSemanticInference();
+                    inferenceInterval = setInterval(runSemanticInference, POLL_MS);
+                };
+                if (video.readyState >= 2) startInference();
+                else video.addEventListener("loadeddata", startInference, { once: true });
+            } catch (e) {
+                beginBtn.disabled = false;
+                statusMsg.textContent = e && e.name === "NotAllowedError"
+                    ? "The camera was blocked. Allow camera access for this site and try again."
+                    : "Couldn't open a camera on this device.";
+                statusMsg.hidden = false;
+            }
+        });
+        stopBtn.addEventListener("click", () => stopStream());
+    </script>
+</body>
+</html>

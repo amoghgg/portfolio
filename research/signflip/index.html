@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignFlip — Amogh Bajpai</title>
+    <meta name="description" content="SignFlip: a benchmark for meaning flips in sign language when generative video codecs redraw the signer. Research in progress.">
+    <meta name="theme-color" content="#f3efe7">
+    <link rel="canonical" href="https://www.amoghbajpai.com/research/signflip/">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="SignFlip — when generative video rewrites the signing body">
+    <meta property="og:description" content="In sign languages the face carries grammar. What happens when an AI codec redraws it?">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f3efe7'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23b0391d'/%3E%3C/svg%3E">
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/site.css">
+    <style>
+        .flip { width: 100%; min-width: 560px; height: auto; color: var(--ink); }
+        .flip .stroke { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .flip .soft { fill: none; stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 4 5; }
+        .flip .accent { stroke: var(--accent); }
+        .flip text { font-family: var(--mono); font-size: 12px; fill: var(--ink-2); }
+        .flip .gloss { font-family: var(--serif); font-size: 20px; fill: var(--ink); font-style: italic; }
+        .flip .gloss.bad { fill: var(--accent); }
+    </style>
+</head>
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="masthead">
+        <div class="wrap">
+            <a class="name" href="/">Amogh Bajpai</a>
+            <nav aria-label="Sections">
+                <a href="/#research">Research</a>
+                <a href="/#works">Works</a>
+                <a href="/#about" class="opt">About</a>
+                <a href="/#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main" class="wrap">
+        <div class="article-head">
+            <a class="crumb meta" href="/#research">← Research · 01</a>
+            <p class="label">Research · in progress</p>
+            <h1 class="display">Sign<em>Flip</em></h1>
+            <p class="dek">When generative video rewrites the signing body. A benchmark for meaning flips in sign language under AI video codecs.</p>
+        </div>
+
+        <dl class="article-meta">
+            <div><dt>Status</dt><dd>Early stage, no results yet</dd></div>
+            <div><dt>Started</dt><dd>September 2026</dd></div>
+            <div><dt>Fields</dt><dd>Computer vision, accessibility</dd></div>
+            <div><dt>Languages</dt><dd>ASL, with DGS, BSL, ISL</dd></div>
+        </dl>
+
+        <div class="article-body">
+            <section>
+                <h2>The problem</h2>
+                <div class="block">
+                    <p class="pull">In sign languages, the face is grammar. An AI codec that redraws the face can change what a sentence means.</p>
+                    <p>
+                        A new kind of video codec is arriving in calls. Instead of sending pixels, the sender transmits a
+                        compact description of how the face and head move, and the receiver <em>regenerates</em> the
+                        person from a reference image. It saves enormous bandwidth, and it is being built into commercial
+                        products and a video coding standard.
+                    </p>
+                    <p>
+                        These systems are designed and evaluated around hearing people talking. For Deaf signers the
+                        stakes are different. Hands carry the words, and hands are exactly where these codecs are known to
+                        fail. The face carries the grammar: raised eyebrows mark a yes/no question, furrowed brows a
+                        wh-question, a head shake negation. If a codec smooths away an eyebrow raise, it hasn't made the
+                        video look worse. It has made the sentence say something else.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>The failure mode</h2>
+                <figure class="figure block">
+                    <div class="plate">
+                        <svg class="flip" viewBox="0 0 720 300" role="img" aria-labelledby="flip-title flip-desc">
+                            <title id="flip-title">Illustration of a meaning flip</title>
+                            <desc id="flip-desc">On the left, the sender signs with raised eyebrows, meaning "Are you coming?". The motion is sent as compact codes. On the right, the regenerated signer has flat eyebrows, which reads as "You're coming."</desc>
+                            <!-- sender -->
+                            <text x="110" y="24" text-anchor="middle">SENDER</text>
+                            <circle class="stroke" cx="110" cy="110" r="50"/>
+                            <path class="stroke" d="M82 86 Q92 70 102 84"/>
+                            <path class="stroke" d="M118 84 Q128 70 138 86"/>
+                            <circle cx="92" cy="104" r="3" fill="currentColor"/>
+                            <circle cx="128" cy="104" r="3" fill="currentColor"/>
+                            <path class="stroke" d="M96 132 Q110 140 124 132"/>
+                            <circle class="stroke" cx="48" cy="196" r="16"/>
+                            <circle class="stroke" cx="172" cy="196" r="16"/>
+                            <text x="110" y="248" text-anchor="middle">brows raised</text>
+                            <text class="gloss" x="110" y="282" text-anchor="middle">“Are you coming?”</text>
+
+                            <!-- channel -->
+                            <path class="soft" d="M214 118 H500"/>
+                            <path class="stroke" d="M490 110 L502 118 L490 126"/>
+                            <rect x="284" y="92" width="152" height="52" rx="4" fill="var(--paper)" stroke="var(--ink-3)"/>
+                            <text x="360" y="114" text-anchor="middle">generative codec</text>
+                            <text x="360" y="132" text-anchor="middle">motion codes only</text>
+
+                            <!-- receiver -->
+                            <text x="610" y="24" text-anchor="middle">RECEIVER</text>
+                            <circle class="stroke" cx="610" cy="110" r="50"/>
+                            <path class="stroke accent" d="M582 84 H602"/>
+                            <path class="stroke accent" d="M618 84 H638"/>
+                            <circle cx="592" cy="104" r="3" fill="currentColor"/>
+                            <circle cx="628" cy="104" r="3" fill="currentColor"/>
+                            <path class="stroke" d="M596 132 Q610 140 624 132"/>
+                            <circle class="stroke" cx="548" cy="196" r="16" stroke-dasharray="3 4"/>
+                            <circle class="stroke" cx="672" cy="196" r="16" stroke-dasharray="3 4"/>
+                            <text x="610" y="248" text-anchor="middle">brows lost · hands blurred</text>
+                            <text class="gloss bad" x="610" y="282" text-anchor="middle">“You're coming.”</text>
+                        </svg>
+                    </div>
+                    <figcaption class="meta">Illustration of the failure mode under study, not a measured result. In ASL, raised eyebrows are the grammatical marker of a yes/no question.</figcaption>
+                </figure>
+            </section>
+
+            <section>
+                <h2>Why now</h2>
+                <div class="block">
+                    <p>
+                        Generative and avatar-based video has moved from papers into products such as NVIDIA's AI face
+                        codec and Apple Vision Pro Personas, and generative face video coding is being standardised. Meanwhile a 2025 field
+                        study of Vision Pro with Deaf and hard-of-hearing users found that Personas lose signs made near
+                        the face <a href="#r5">[5]</a>.
+                    </p>
+                    <p>
+                        A survey of more than forty generative face-coding methods names expression and emotion fidelity
+                        as an open problem <a href="#r4">[4]</a>. I found no published work that tests these codecs on
+                        sign language, or measures whether grammatical facial markers survive them.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Questions</h2>
+                <div class="block">
+                    <ol>
+                        <li>How much sign-language intelligibility do current generative codecs lose, at which bitrates, and for which signs?</li>
+                        <li>How often do they <em>flip</em> meaning by dropping or inventing a grammatical facial marker (question, negation, mouthing)?</li>
+                        <li>Can a small, sign-aware side channel or training objective prevent those flips at the same bitrate?</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section>
+                <h2>Approach</h2>
+                <div class="block">
+                    <p><strong>1. Benchmark.</strong> Run open generative codecs over public sign-language datasets (How2Sign and WLASL for ASL, with PHOENIX-2014T, BOBSL and iSign for German, British and Indian Sign Language). Compare sign recognition and translation on original versus regenerated video, and add a dedicated detector for grammatical facial markers so meaning flips can be counted, not just quality loss.</p>
+                    <p><strong>2. A sign-aware codec.</strong> Carry the few signals that carry grammar (brows, head, mouth, hand keypoints) in a tiny side channel, or train with a loss that penalises losing them, and let the receiver check each frame against them.</p>
+                    <p><strong>3. With Deaf signers.</strong> Test comprehension over realistic low-bandwidth connections, designed together with Deaf collaborators.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Principles</h2>
+                <div class="block">
+                    <p class="note">
+                        This research is about how Deaf people experience technology, so Deaf signers' judgement is the
+                        measurement. Deaf consultants are paid for their time, and anyone who shapes the work is credited
+                        as a co-author.
+                    </p>
+                    <p>
+                        If you're a Deaf signer, an interpreter or a sign-language researcher and this interests you, I'd
+                        like to hear from you: <a href="mailto:hi@amoghbajpai.com">hi@amoghbajpai.com</a>.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Builds on</h2>
+                <div class="block">
+                    <ol class="refs">
+                        <li id="r1">VC4ASL. <em>Enabling ASL Communication Under Low Data Rates.</em> 2025. <a href="https://arxiv.org/abs/2510.23056">arXiv:2510.23056</a>: pose-based sign transmission for calls.</li>
+                        <li id="r2">Moryossef et al. <em>Pose-Based Sign Language Appearance Transfer.</em> 2024. <a href="https://arxiv.org/abs/2410.13675">arXiv:2410.13675</a>: recognition loss on re-rendered signers.</li>
+                        <li id="r3">Vahdati et al. <em>Unmasking Puppeteers.</em> NeurIPS 2025. <a href="https://arxiv.org/abs/2510.03548">arXiv:2510.03548</a>: identity verification in talking-head codecs.</li>
+                        <li id="r4">Chen et al. <em>Generative Models at the Frontier of Compression: A Survey on Generative Face Video Coding.</em> 2025. <a href="https://arxiv.org/abs/2506.07369">arXiv:2506.07369</a></li>
+                        <li id="r5"><em>In-the-Wild Accessibility Evaluation of Apple Vision Pro for DHH Users.</em> VRST 2025. <a href="https://dl.acm.org/doi/full/10.1145/3756884.3765997">doi:10.1145/3756884.3765997</a></li>
+                        <li id="r6"><em>Towards AI-driven Sign Language Generation with Non-manual Markers.</em> CHI 2025. <a href="https://arxiv.org/abs/2502.05661">arXiv:2502.05661</a></li>
+                    </ol>
+                </div>
+            </section>
+        </div>
+
+        <nav class="next" aria-label="More research">
+            <a href="/#research">← All research</a>
+            <a href="/research/lights/">Lights →</a>
+        </nav>
+
+        <footer class="footer meta">
+            <span>© 2026 Amogh Bajpai</span>
+            <nav aria-label="Elsewhere">
+                <a href="mailto:hi@amoghbajpai.com">Email</a>
+                <a href="https://github.com/amoghgg" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </footer>
+    </main>
+    <script src="/assets/site.js" defer></script>
+</body>
+</html>
