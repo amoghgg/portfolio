@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/site.css">
+    <link rel="stylesheet" href="/assets/face/face.css">
 </head>
 <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -37,7 +38,7 @@
                 <p class="label rise">Research · 2026</p>
                 <h1 class="display rise">Where machine perception <em>breaks.</em></h1>
                 </div>
-                <img class="face" src="/assets/face/page/research.webp" alt="Amogh Bajpai, eyebrows raised, looking off to one side" width="560" height="560" loading="lazy" decoding="async">
+                <div class="face-art head-face" id="page-face" role="img" aria-label="A drawn caricature of Amogh Bajpai"></div>
             </div>
 
             <div class="page-intro rise">
@@ -96,5 +97,16 @@
         </nav>
     </main>
     <script src="/assets/site.js" defer></script>
+    <script type="module">
+        import { createFace } from "/assets/face/face.js";
+        const face = createFace(document.getElementById("page-face"), { expression: "curious" });
+        // The caricature watches the cursor, and looks back at the reader when it stops.
+        let idle = null;
+        window.addEventListener("pointermove", (e) => {
+            face.lookAt(e.clientX, e.clientY);
+            clearTimeout(idle);
+            idle = setTimeout(() => face.lookAt(innerWidth / 2, innerHeight / 2), 2600);
+        }, { passive: true });
+    </script>
 </body>
 </html>

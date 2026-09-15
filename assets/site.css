@@ -245,3 +245,5 @@ a:hover { color: var(--accent); }
     .head-grid { grid-template-columns: 1fr; gap: 20px; }
     .head-grid .face { width: clamp(150px, 42vw, 220px); justify-self: end; order: -1; margin-bottom: 0; }
 }
+.head-grid .head-face { width: 100%; align-self: end; }
+@media (max-width: 760px) { .head-grid .head-face { width: clamp(150px, 42vw, 210px); justify-self: end; order: -1; } }

@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/site.css">
+    <link rel="stylesheet" href="/assets/face/face.css">
     <style>
         body.landing { background: var(--stage); color: var(--stage-ink); overflow: hidden; height: 100svh; cursor: crosshair; }
         body.landing ::selection { background: var(--stage-ink); color: var(--stage); }
@@ -23,6 +24,22 @@
         body.landing :focus-visible { outline-color: var(--tungsten); }
 
         #spot { position: fixed; inset: 0; width: 100%; height: 100%; }
+
+        /* The caricature on the dark stage: a dim layer always present, and a lit
+           layer revealed only where the follow spot falls. */
+        .land-face { position: fixed; left: 50%; top: 9vh; transform: translateX(-50%); z-index: 2;
+            width: min(46vw, 56vh, 470px); pointer-events: none; }
+        .land-face .layer { position: absolute; inset: 0; }
+        .land-face .layer.dim { opacity: 0.28; position: relative; }
+        .land-face .layer.lit {
+            -webkit-mask-image: radial-gradient(circle var(--r, 320px) at var(--sx, 50%) var(--sy, 45%), #000 0%, rgba(0,0,0,0.88) 42%, rgba(0,0,0,0) 74%);
+            mask-image: radial-gradient(circle var(--r, 320px) at var(--sx, 50%) var(--sy, 45%), #000 0%, rgba(0,0,0,0.88) 42%, rgba(0,0,0,0) 74%);
+        }
+        .land-face .face-art {
+            --f-skin: #dcc09a; --f-line: #1a1208; --f-hair: #2b2219;
+            --f-specs: #e9b872; --f-eye: #f7f0e3; --f-coat: #191510; --f-shirt: #c07f30;
+        }
+        @media (max-width: 720px) { .land-face { width: min(74vw, 40vh, 330px); top: 13vh; } }
 
         .land-top, .land-foot {
             position: fixed; left: 0; right: 0; z-index: 5;
@@ -87,6 +104,10 @@
 </head>
 <body class="landing">
     <canvas id="spot" aria-hidden="true"></canvas>
+    <div class="land-face" id="land-face" aria-hidden="true">
+        <div class="layer dim"><div class="face-art" id="face-dim"></div></div>
+        <div class="layer lit"><div class="face-art" id="face-lit"></div></div>
+    </div>
     <div class="vignette" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
 
@@ -115,44 +136,23 @@
 
     <div class="house" aria-hidden="true"></div>
 
-    <script>
+    <script type="module">
+    import { createFace, EXPRESSION_NAMES } from "/assets/face/face.js";
     (function () {
         const canvas = document.getElementById("spot");
         const ctx = canvas.getContext("2d");
         const readout = document.getElementById("readout");
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        // ── the expression × gaze sprite set ───────────────────────────────
-        // Frames are this face with its expression and eye direction edited;
-        // the page picks the one whose gaze points at the follow spot.
-        const EXPRESSIONS = ["resting", "curious", "amused", "wry", "direct", "warm"];
-        const GAZE_COLS = 5, GAZE_ROWS = 3;   // ix: 0 = looking left … 4 = right; iy: 0 = down … 2 = up
-        const CENTER = { ix: 2, iy: 1 };
-        const HOLD_MS = 4500;                 // how long an expression is held
-        const FADE_MS = 260;
+        const EXPRESSIONS = EXPRESSION_NAMES;
+        const HOLD_MS = 4200;                 // how long an expression is held
 
-        const frames = new Map();
-        const frameKey = (e, ix, iy) => `${e}_${ix}${iy}`;
-        function loadFrame(e, ix, iy) {
-            const key = frameKey(e, ix, iy);
-            let img = frames.get(key);
-            if (img) return img;
-            img = new Image();
-            img.decoding = "async";
-            img.src = `/assets/face/stage/${key}.webp`;
-            frames.set(key, img);
-            return img;
-        }
-        const ready = (img) => img && img.complete && img.naturalWidth > 0;
-        // Nearest loaded neighbour, so the face never blanks while frames arrive.
-        function bestFrame(e, ix, iy) {
-            const exact = loadFrame(e, ix, iy);
-            if (ready(exact)) return exact;
-            const centre = frames.get(frameKey(e, CENTER.ix, CENTER.iy));
-            if (ready(centre)) return centre;
-            const resting = frames.get(frameKey("resting", CENTER.ix, CENTER.iy));
-            return ready(resting) ? resting : null;
-        }
+        const faceEl = document.getElementById("land-face");
+        const faces = [
+            createFace(document.getElementById("face-dim"), { expression: "resting" }),
+            createFace(document.getElementById("face-lit"), { expression: "resting" }),
+        ];
+        const litLayer = faceEl.querySelector(".layer.lit");
 
         const INK = [237, 232, 221];
         const TUNGSTEN = [233, 184, 114];
@@ -164,10 +164,8 @@
         let master = 0, masterTarget = 1;     // house level: 0 = blackout
         let start = performance.now();
 
-        let current = "resting", previous = null, switchedAt = -1e9;
+        let current = "resting", switchedAt = -1e9;
         const dust = [];
-        const lit = document.createElement("canvas");
-        const lctx = lit.getContext("2d");
 
         function setReadout(text) { if (readout.textContent !== text) readout.textContent = text; }
 
@@ -178,18 +176,16 @@
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             R = Math.max(150, Math.min(W, H) * 0.3);
 
-            const size = Math.min(W < 720 ? W * 0.82 : W * 0.4, H * 0.56, 620);
-            faceBox = { size, x: (W - size) / 2, y: H * (W < 720 ? 0.16 : 0.14) };
-            lit.width = Math.round(size * dpr); lit.height = Math.round(size * dpr);
-            lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            document.documentElement.style.setProperty("--name-bottom", Math.round(faceBox.y + size * 0.99) + "px");
+            const r = faceEl.getBoundingClientRect();
+            faceBox = { size: r.width, x: r.left, y: r.top };
+            document.documentElement.style.setProperty("--name-bottom", Math.round(r.bottom - r.width * 0.06) + "px");
 
             if (!dust.length) {
                 for (let i = 0; i < 90; i++) {
                     dust.push({ x: Math.random(), y: Math.random(), r: 0.4 + Math.random() * 1.1, s: 0.02 + Math.random() * 0.05, p: Math.random() * 6.28 });
                 }
             }
-            if (spot.x === 0) { spot.x = spot.tx = W * 0.5; spot.y = spot.ty = faceBox.y + size * 0.42; }
+            if (spot.x === 0) { spot.x = spot.tx = W * 0.5; spot.y = spot.ty = faceBox.y + faceBox.size * 0.42; }
         }
 
         // Where the eyes should point, given where the spot is.
@@ -204,44 +200,15 @@
             };
         }
 
-        function drawFace(now) {
-            const { ix, iy } = gazeIndex();
-            const img = bestFrame(current, ix, iy);
-            if (!img) return;
-            const prev = previous ? bestFrame(previous, ix, iy) : null;
-            const mix = Math.min(1, (now - switchedAt) / FADE_MS);
-            const { x, y, size } = faceBox;
-
-            lctx.clearRect(0, 0, size, size);
-            if (prev && mix < 1) {
-                lctx.globalAlpha = 1; lctx.drawImage(prev, 0, 0, size, size);
-                lctx.globalAlpha = mix; lctx.drawImage(img, 0, 0, size, size);
-            } else {
-                lctx.globalAlpha = 1; lctx.drawImage(img, 0, 0, size, size);
-            }
-            lctx.globalAlpha = 1;
-
-            // Keep only what the spot is touching, then warm it like a tungsten lamp.
-            const sx = spot.x - x, sy = spot.y - y;
-            const mask = lctx.createRadialGradient(sx, sy, R * 0.12, sx, sy, R * 0.92);
-            mask.addColorStop(0, "rgba(0,0,0,1)");
-            mask.addColorStop(0.55, "rgba(0,0,0,0.72)");
-            mask.addColorStop(1, "rgba(0,0,0,0)");
-            lctx.globalCompositeOperation = "destination-in";
-            lctx.fillStyle = mask;
-            lctx.fillRect(0, 0, size, size);
-            lctx.globalCompositeOperation = "source-atop";
-            lctx.fillStyle = `rgba(${TUNGSTEN[0]},${TUNGSTEN[1]},${TUNGSTEN[2]},0.16)`;
-            lctx.fillRect(0, 0, size, size);
-            lctx.globalCompositeOperation = "source-over";
-
-            // A face in the dark: barely there, then fully present in the light.
-            ctx.save();
-            ctx.globalAlpha = 0.14 * master;
-            ctx.drawImage(img, x, y, size, size);
-            ctx.globalAlpha = master;
-            ctx.drawImage(lit, x, y, size, size);
-            ctx.restore();
+        // The spot both reveals the lit layer and tells the eyes where to look.
+        function lightFace() {
+            const r = faceEl.getBoundingClientRect();
+            if (!r.width) return;
+            litLayer.style.setProperty("--sx", (spot.x - r.left).toFixed(1) + "px");
+            litLayer.style.setProperty("--sy", (spot.y - r.top).toFixed(1) + "px");
+            litLayer.style.setProperty("--r", (R * 0.95).toFixed(0) + "px");
+            faceEl.style.opacity = master.toFixed(3);
+            for (const f of faces) f.lookAt(spot.x, spot.y);
         }
 
         function drawDust(now) {
@@ -287,8 +254,8 @@
             // Change expression every few seconds.
             if (!reduced && master > 0.85 && now - switchedAt > HOLD_MS) {
                 const others = EXPRESSIONS.filter((e) => e !== current);
-                previous = current;
                 current = others[Math.floor(Math.random() * others.length)];
+                for (const f of faces) f.setExpression(current);
                 switchedAt = now;
             }
 
@@ -327,7 +294,7 @@
             ctx.fillStyle = g;
             ctx.fillRect(0, 0, W, H);
 
-            drawFace(now);
+            lightFace();
             drawDust(now);
         }
 
@@ -368,30 +335,7 @@
             resizeTimer = setTimeout(layout, 150);
         });
 
-        // Centre frames first so the face appears fast, then the rest of the grid
-        // in the background so the eyes can track anywhere.
-        function preload() {
-            const first = EXPRESSIONS.map((e) => loadFrame(e, CENTER.ix, CENTER.iy));
-            const rest = [];
-            for (const e of EXPRESSIONS) {
-                for (let iy = 0; iy < GAZE_ROWS; iy++) {
-                    for (let ix = 0; ix < GAZE_COLS; ix++) {
-                        if (ix === CENTER.ix && iy === CENTER.iy) continue;
-                        rest.push([e, ix, iy]);
-                    }
-                }
-            }
-            let i = 0;
-            const pump = () => {
-                for (let n = 0; n < 4 && i < rest.length; n++, i++) loadFrame(...rest[i]);
-                if (i < rest.length) setTimeout(pump, 120);
-            };
-            const kick = () => setTimeout(pump, 400);
-            if (ready(first[0])) kick(); else first[0].addEventListener("load", kick, { once: true });
-        }
-
         layout();
-        preload();
         start = performance.now();
         switchedAt = performance.now();
         requestAnimationFrame(() => document.body.classList.add("up"));

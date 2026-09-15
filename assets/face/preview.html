@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>face preview</title>
+<link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/face/face.css">
+<style>
+ body{background:#f3efe7;margin:0;padding:24px;font-family:var(--mono)}
+ .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px}
+ .cell{background:#ebe5d9;padding:10px;border:1px solid rgba(0,0,0,.12)}
+ .cell p{margin:0 0 6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#857e72}
+ .dark{background:#0b0a08}
+ .dark .face-art{--f-skin:#d8b98f;--f-line:#1b140c;--f-hair:#2a2119;--f-specs:#e9b872;--f-eye:#f6efe2;--f-coat:#14120e;--f-shirt:#b8752e}
+ .dark p{color:#857e72}
+</style></head><body>
+<div class="grid" id="grid"></div>
+<script type="module">
+import { createFace, EXPRESSION_NAMES } from "/assets/face/face.js";
+const grid = document.getElementById("grid");
+for (const name of EXPRESSION_NAMES) {
+  const cell = document.createElement("div");
+  cell.className = "cell" + (EXPRESSION_NAMES.indexOf(name) > 2 ? " dark" : "");
+  cell.innerHTML = `<p>${name}</p><div class="face-art"></div>`;
+  grid.appendChild(cell);
+  const f = createFace(cell.querySelector(".face-art"), { expression: name });
+  f.lookAt(innerWidth * (EXPRESSION_NAMES.indexOf(name) % 3) / 2, 200);
+}
+</script></body></html>
