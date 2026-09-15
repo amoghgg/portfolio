@@ -1,36 +1,47 @@
 /* ─────────────────────────────────────────────────────────────
-   A drawn caricature of Amogh: big hair, big square glasses.
+   A drawn caricature of Amogh, from his own photographs: a round
+   face, tight curls that rise and taper at the sides, heavy black
+   rectangular glasses, light stubble, a silver chain.
+
    Everything expressive is a live parameter — brows, lids, mouth,
    head tilt, and pupils that track a point on the screen.
 
-   const face = createFace(el);
-   face.setExpression("amused");
-   face.lookAt(clientX, clientY);
+       const face = createFace(el, { expression: "curious" });
+       face.setExpression("amused");
+       face.lookAt(clientX, clientY);
    ───────────────────────────────────────────────────────────── */
 
 const VB = { w: 360, h: 400 };
 
-// browY: negative = raised. eyeOpen: 1 = wide. mouthCurve: bigger = happier.
+// browL/browR: negative = raised, positive = furrowed.
+// eyeOpen: 1 = normal. curve: mouth corners up. open: lips apart. skew: one-sided.
 const EXPRESSIONS = {
-    resting: { browL: 0, browR: 0, eyeOpen: 1.0, curve: 6, open: 1, width: 28, skew: 0, tilt: 0 },
-    curious: { browL: -14, browR: -9, eyeOpen: 1.08, curve: 9, open: 5, width: 25, skew: 3, tilt: -4 },
-    amused: { browL: -8, browR: -8, eyeOpen: 0.72, curve: 26, open: 15, width: 36, skew: 0, tilt: 3 },
-    wry: { browL: -13, browR: 5, eyeOpen: 0.86, curve: 12, open: 2, width: 30, skew: 10, tilt: 4 },
-    direct: { browL: 8, browR: 8, eyeOpen: 1.04, curve: -3, open: 0, width: 24, skew: 0, tilt: 0 },
-    warm: { browL: -6, browR: -5, eyeOpen: 0.9, curve: 20, open: 7, width: 33, skew: -3, tilt: -2 },
+    resting: { browL: 0, browR: 0, eyeOpen: 1.0, curve: 5, open: 0, width: 25, skew: 2, tilt: 0 },
+    curious: { browL: -13, browR: -8, eyeOpen: 1.08, curve: 7, open: 3, width: 24, skew: 3, tilt: -4 },
+    amused: { browL: -7, browR: -7, eyeOpen: 0.7, curve: 24, open: 13, width: 34, skew: 0, tilt: 3 },
+    wry: { browL: -12, browR: 5, eyeOpen: 0.85, curve: 11, open: 1, width: 29, skew: 11, tilt: 4 },
+    direct: { browL: 7, browR: 7, eyeOpen: 1.04, curve: -2, open: 0, width: 23, skew: 0, tilt: 0 },
+    warm: { browL: -5, browR: -4, eyeOpen: 0.9, curve: 18, open: 5, width: 32, skew: -3, tilt: -2 },
+    // reactions
+    dazzled: { browL: 6, browR: 6, eyeOpen: 0.42, curve: 9, open: 2, width: 27, skew: 0, tilt: -2 },
+    amazed: { browL: -17, browR: -17, eyeOpen: 1.25, curve: 10, open: 16, width: 26, skew: 0, tilt: -1 },
+    unsettled: { browL: -14, browR: 8, eyeOpen: 1.2, curve: -8, open: 4, width: 22, skew: 4, tilt: 5 },
+    talking: { browL: -6, browR: -4, eyeOpen: 1.0, curve: 6, open: 19, width: 24, skew: 0, tilt: -2 },
 };
 
-export const EXPRESSION_NAMES = Object.keys(EXPRESSIONS);
+export const EXPRESSION_NAMES = ["resting", "curious", "amused", "wry", "direct", "warm"];
 
-// The hair is the biggest thing about him, so it gets drawn twice: a mass behind
-// the head, and a fringe of curls falling over the forehead.
+// The curls rise off the crown and taper down the sides, rather than ballooning
+// into a circle. Back layer first, then the ones that fall over the forehead.
 const HAIR_BACK = [
-    [180, 118, 82], [112, 140, 58], [248, 140, 58], [86, 186, 42], [274, 186, 42],
-    [138, 88, 52], [222, 88, 52], [180, 76, 46], [96, 232, 30], [264, 232, 30],
+    [180, 104, 60], [134, 116, 46], [226, 116, 46], [104, 152, 36], [256, 152, 36],
+    [150, 88, 40], [210, 88, 40], [92, 190, 26], [268, 190, 26], [180, 82, 44],
+    [116, 178, 28], [244, 178, 28], [98, 216, 18], [262, 216, 18],
 ];
 const HAIR_FRONT = [
-    [124, 132, 28], [160, 120, 30], [202, 120, 30], [238, 134, 27],
-    [104, 158, 22], [256, 158, 22], [142, 142, 20], [220, 142, 20], [181, 138, 18],
+    [128, 132, 26], [162, 120, 27], [200, 120, 27], [234, 134, 25],
+    [110, 158, 21], [250, 158, 21], [145, 140, 18], [216, 140, 18],
+    [181, 136, 16], [122, 186, 16], [240, 186, 16],
 ];
 
 const svg = (s) => s.replace(/\s+/g, " ").trim();
@@ -39,64 +50,68 @@ function markup(id) {
     return svg(`
     <svg class="face-svg" viewBox="0 0 ${VB.w} ${VB.h}" role="img" aria-label="A drawn caricature of Amogh Bajpai">
       <defs>
-        <clipPath id="eyeL-${id}"><ellipse cx="141" cy="207" rx="20" ry="14"/></clipPath>
-        <clipPath id="eyeR-${id}"><ellipse cx="219" cy="207" rx="20" ry="14"/></clipPath>
+        <clipPath id="eyeL-${id}"><ellipse cx="142" cy="209" rx="18" ry="12.5"/></clipPath>
+        <clipPath id="eyeR-${id}"><ellipse cx="218" cy="209" rx="18" ry="12.5"/></clipPath>
       </defs>
 
-      <!-- shoulders, jacket and the printed collar -->
-      <path class="f-coat" d="M28 400 C 44 340 106 316 180 316 C 254 316 316 340 332 400 Z"/>
-      <path class="f-shirt" d="M152 318 C 160 356 200 356 208 318 L 196 312 L 180 336 L 164 312 Z"/>
-      <path class="f-coat-line" d="M150 320 L 180 396 M210 320 L 180 396"/>
-      <rect class="f-neck" x="156" y="276" width="48" height="50" rx="18"/>
+      <!-- oversized tee and the chain he always wears -->
+      <path class="f-tee" d="M22 400 C 40 344 104 320 180 320 C 256 320 320 344 338 400 Z"/>
+      <path class="f-tee-neck" d="M143 324 C 155 350 205 350 217 324 C 205 332 155 332 143 324 Z"/>
+      <path class="f-chain" d="M150 322 C 162 352 198 352 210 322"/>
+      <circle class="f-chain-drop" cx="180" cy="351" r="3.4"/>
+      <path class="f-neck" d="M152 272 L 152 314 C 152 326 208 326 208 314 L 208 272 Z"/>
+      <path class="f-neck-shade" d="M152 272 L 208 272 L 208 288 C 190 300 170 300 152 288 Z"/>
 
       <g id="head-${id}">
-        <!-- hair behind the head -->
+        <!-- curls behind the head -->
         <g class="f-hair">${HAIR_BACK.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("")}</g>
 
-        <!-- ears -->
-        <ellipse class="f-skin f-line" cx="97" cy="216" rx="13" ry="20"/>
-        <ellipse class="f-skin f-line" cx="263" cy="216" rx="13" ry="20"/>
+        <ellipse class="f-skin f-line" cx="97" cy="218" rx="12" ry="19"/>
+        <ellipse class="f-skin f-line" cx="263" cy="218" rx="12" ry="19"/>
 
-        <!-- face -->
-        <path class="f-skin f-line" d="M98 190 C 98 136 130 116 180 116 C 230 116 262 136 262 190
-              C 262 242 248 282 214 298 C 198 306 162 306 146 298 C 112 282 98 242 98 190 Z"/>
-        <path class="f-stubble" d="M112 232 C 118 278 146 302 180 302 C 214 302 242 278 248 232
-              C 244 276 214 292 180 292 C 146 292 116 276 112 232 Z"/>
+        <!-- a round, full face: wide cheeks, soft jaw, rounded chin -->
+        <path class="f-skin f-line" d="M96 196 C 96 142 130 120 180 120 C 230 120 264 142 264 196
+              C 264 240 254 272 232 290 C 216 303 196 310 180 310 C 164 310 144 303 128 290
+              C 106 272 96 240 96 196 Z"/>
+        <path class="f-jaw" d="M133 286 C 148 300 212 300 227 286"/>
 
-        <!-- the fringe, falling over the forehead -->
+        <!-- stubble along the jaw, and the little patch under the lip -->
+        <path class="f-stubble" d="M112 238 C 120 286 148 306 180 306 C 212 306 240 286 248 238
+              C 242 282 212 296 180 296 C 148 296 118 282 112 238 Z"/>
+        <path class="f-stubble" d="M166 278 C 172 288 188 288 194 278 C 190 272 170 272 166 278 Z"/>
+
+        <!-- curls over the forehead -->
         <g class="f-hair">${HAIR_FRONT.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("")}</g>
 
-        <!-- brows, heavy -->
-        <path id="browL-${id}" class="f-brow" d="M112 182 Q 139 170 166 180"/>
-        <path id="browR-${id}" class="f-brow" d="M194 180 Q 221 170 248 182"/>
+        <path id="browL-${id}" class="f-brow" d="M116 174 Q 142 166 168 172"/>
+        <path id="browR-${id}" class="f-brow" d="M192 172 Q 218 166 244 174"/>
 
-        <!-- eyes -->
-        <ellipse class="f-eye" cx="141" cy="207" rx="20" ry="14"/>
-        <ellipse class="f-eye" cx="219" cy="207" rx="20" ry="14"/>
+        <ellipse class="f-eye" cx="142" cy="209" rx="18" ry="12.5"/>
+        <ellipse class="f-eye" cx="218" cy="209" rx="18" ry="12.5"/>
         <g clip-path="url(#eyeL-${id})">
-          <circle id="pupilL-${id}" class="f-pupil" cx="141" cy="207" r="8"/>
-          <rect id="lidL-${id}" class="f-skin" x="119" y="174" width="44" height="22"/>
+          <circle id="pupilL-${id}" class="f-pupil" cx="142" cy="209" r="7.6"/>
+          <circle class="f-spark" cx="145" cy="205" r="2.2"/>
+          <rect id="lidL-${id}" class="f-skin" x="120" y="176" width="44" height="22"/>
         </g>
         <g clip-path="url(#eyeR-${id})">
-          <circle id="pupilR-${id}" class="f-pupil" cx="219" cy="207" r="8"/>
-          <rect id="lidR-${id}" class="f-skin" x="197" y="174" width="44" height="22"/>
+          <circle id="pupilR-${id}" class="f-pupil" cx="218" cy="209" r="7.6"/>
+          <circle class="f-spark" cx="221" cy="205" r="2.2"/>
+          <rect id="lidR-${id}" class="f-skin" x="196" y="176" width="44" height="22"/>
         </g>
-        <ellipse class="f-eye-line" cx="141" cy="207" rx="20" ry="14"/>
-        <ellipse class="f-eye-line" cx="219" cy="207" rx="20" ry="14"/>
 
-        <!-- the glasses, oversized on purpose -->
+        <!-- heavy black rectangular frames, flat across the top -->
         <g class="f-specs">
-          <rect x="102" y="184" width="76" height="52" rx="9"/>
-          <rect x="182" y="184" width="76" height="52" rx="9"/>
-          <path d="M178 198 L 182 198"/>
-          <path d="M102 196 L 86 204"/>
-          <path d="M258 196 L 274 204"/>
+          <path class="f-specs-fill" d="M100 188 L 176 188 L 176 230 Q 176 236 170 236 L 106 236 Q 100 236 100 230 Z"/>
+          <path class="f-specs-fill" d="M184 188 L 260 188 L 260 230 Q 260 236 254 236 L 190 236 Q 184 236 184 230 Z"/>
+          <path d="M96 188 L 264 188"/>
+          <path d="M176 200 L 184 200"/>
+          <path d="M96 192 L 84 202"/>
+          <path d="M264 192 L 276 202"/>
         </g>
 
-        <!-- nose and mouth -->
-        <path class="f-nose" d="M182 216 C 179 236 174 246 181 252 C 187 256 194 253 196 248"/>
-        <path class="f-stache" d="M156 262 Q 180 254 204 262"/>
-        <path id="mouth-${id}" class="f-mouth" d="M154 274 Q 180 284 206 274"/>
+        <path class="f-nose" d="M181 216 C 178 238 172 248 180 253 C 186 256 192 254 194 249"/>
+        <path class="f-stache" d="M158 264 Q 180 257 202 264"/>
+        <path id="mouth-${id}" class="f-mouth" d="M155 274 Q 180 283 205 274"/>
       </g>
     </svg>`);
 }
@@ -113,25 +128,33 @@ export function createFace(el, opts = {}) {
     };
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const state = { ...EXPRESSIONS.resting, gx: 0, gy: 0, blink: 1 };
+    const base = opts.expression && EXPRESSIONS[opts.expression] ? opts.expression : "resting";
+    const state = { ...EXPRESSIONS[base], gx: 0, gy: 0, blink: 1 };
     const target = { ...state };
+    let resting = base;                 // what he returns to when a reaction ends
     let blinkAt = performance.now() + 2200;
     let blinkPhase = 0;
     let raf = null;
 
-    function setExpression(name) {
+    function setExpression(name, { hold = false } = {}) {
         const e = EXPRESSIONS[name] || EXPRESSIONS.resting;
+        if (hold) resting = name;
         Object.assign(target, e);
     }
+    // A reaction that decays back to whatever he was doing before.
+    function react(name, ms = 1400) {
+        setExpression(name);
+        clearTimeout(react._t);
+        react._t = setTimeout(() => setExpression(resting), ms);
+    }
 
-    // Point the eyes at a page coordinate.
     function lookAt(clientX, clientY) {
         const r = el.getBoundingClientRect();
         if (!r.width) return;
         const cx = r.left + r.width * 0.5;
-        const cy = r.top + r.height * 0.5;
-        target.gx = Math.max(-1, Math.min(1, (clientX - cx) / (r.width * 1.5)));
-        target.gy = Math.max(-1, Math.min(1, (clientY - cy) / (r.height * 1.6)));
+        const cy = r.top + r.height * 0.45;
+        target.gx = Math.max(-1, Math.min(1, (clientX - cx) / (r.width * 1.4)));
+        target.gy = Math.max(-1, Math.min(1, (clientY - cy) / (r.height * 1.5)));
     }
 
     function render(now) {
@@ -141,7 +164,6 @@ export function createFace(el, opts = {}) {
             state[k] += (target[k] - state[k]) * (k === "gx" || k === "gy" ? 0.18 : 0.09);
         }
 
-        // Blink: quick close, quick open, at human-ish intervals.
         if (!reduced) {
             if (blinkPhase === 0 && now > blinkAt) { blinkPhase = 1; blinkAt = now; }
             if (blinkPhase === 1) {
@@ -159,23 +181,19 @@ export function createFace(el, opts = {}) {
 
         refs.head.setAttribute("transform", `rotate(${state.tilt.toFixed(2)} 180 250)`);
 
-        // Brows ride above the glasses; negative browY is raised.
-        refs.browL.setAttribute("d", `M112 ${182 + state.browL} Q 139 ${170 + state.browL * 1.3} 166 ${180 + state.browL * 0.6}`);
-        refs.browR.setAttribute("d", `M194 ${180 + state.browR * 0.6} Q 221 ${170 + state.browR * 1.3} 248 ${182 + state.browR}`);
+        refs.browL.setAttribute("d", `M116 ${174 + state.browL} Q 142 ${166 + state.browL * 1.3} 168 ${172 + state.browL * 0.6}`);
+        refs.browR.setAttribute("d", `M192 ${172 + state.browR * 0.6} Q 218 ${166 + state.browR * 1.3} 244 ${174 + state.browR}`);
 
-        // Pupils move inside the eye; the clip keeps them from escaping.
-        const px = state.gx * 9.5, py = state.gy * 6;
-        refs.pupilL.setAttribute("cx", (141 + px).toFixed(2));
-        refs.pupilL.setAttribute("cy", (207 + py).toFixed(2));
-        refs.pupilR.setAttribute("cx", (219 + px).toFixed(2));
-        refs.pupilR.setAttribute("cy", (207 + py).toFixed(2));
+        const px = state.gx * 8.5, py = state.gy * 5.5;
+        refs.pupilL.setAttribute("cx", (142 + px).toFixed(2));
+        refs.pupilL.setAttribute("cy", (209 + py).toFixed(2));
+        refs.pupilR.setAttribute("cx", (218 + px).toFixed(2));
+        refs.pupilR.setAttribute("cy", (209 + py).toFixed(2));
 
-        // Lids drop from above the eye.
-        const lidY = 193 - 29 + (1 - openness) * 29;
+        const lidY = 196 - 30 + (1 - openness) * 30;
         refs.lidL.setAttribute("y", lidY.toFixed(2));
         refs.lidR.setAttribute("y", lidY.toFixed(2));
 
-        // Mouth: a curve that opens into a shape when he grins.
         const w = state.width, c = state.curve, o = state.open, sk = state.skew;
         const x0 = 180 - w, x1 = 180 + w, y0 = 274 + sk * 0.4, y1 = 274 - sk * 0.4;
         const d = o > 0.6
@@ -185,13 +203,12 @@ export function createFace(el, opts = {}) {
         refs.mouth.classList.toggle("is-open", o > 0.6);
     }
 
-    setExpression(opts.expression || "resting");
-    Object.assign(state, EXPRESSIONS[opts.expression || "resting"]);
     raf = requestAnimationFrame(render);
 
     return {
         el,
         setExpression,
+        react,
         lookAt,
         destroy() { cancelAnimationFrame(raf); el.innerHTML = ""; },
     };

@@ -10,12 +10,13 @@
     <meta property="og:type" content="article">
     <meta property="og:title" content="Lights — gestural cue triggering for theatrical lighting">
     <meta property="og:description" content="One false trigger blacks out a live show. So the number that matters is false triggers per hour.">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f3efe7'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23b0391d'/%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f3efe7'/%3E%3Cpath d='M6 13c0-5 4-8 10-8s10 3 10 8v3c0 6-4 11-10 11S6 22 6 16z' fill='%23191410'/%3E%3Cpath d='M9 15c0-4 3-7 7-7s7 3 7 7v3c0 5-3 8-7 8s-7-3-7-8z' fill='%23e3bd95'/%3E%3Crect x='7' y='13' width='8' height='6' rx='1.4' fill='none' stroke='%23120f0c' stroke-width='2'/%3E%3Crect x='17' y='13' width='8' height='6' rx='1.4' fill='none' stroke='%23120f0c' stroke-width='2'/%3E%3Cpath d='M6 13h20' stroke='%23120f0c' stroke-width='2'/%3E%3C/svg%3E">
     <script>document.documentElement.classList.add("js");</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/site.css">
+    <link rel="stylesheet" href="/assets/face/face.css">
     <style>
         .article-body .stages, .stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(96px, 1fr)); gap: 10px; min-width: 540px; counter-reset: st; }
         .stages li { counter-increment: st; border: 1px solid var(--rule-strong); background: var(--paper); padding: 12px 12px 14px; font-size: 16px !important; line-height: 1.3 !important; margin: 0 !important; }
@@ -28,6 +29,15 @@
         .cues td:first-child { font-style: italic; white-space: nowrap; }
         .cues td:last-child { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
         .scroll-x { overflow-x: auto; }
+        .cues tr[data-cue] { cursor: crosshair; }
+        .cues tr[data-cue]:hover td { background: var(--paper-2); }
+        /* the rig, firing on his face */
+        .head-face { transition: filter 0.45s var(--ease), opacity 0.35s var(--ease); }
+        .head-face.cue-blackout { opacity: 0.06; filter: brightness(0.3); }
+        .head-face.cue-cover { filter: brightness(1.12) saturate(1.05); }
+        .head-face.cue-special { filter: brightness(1.2) contrast(1.15); -webkit-mask-image: radial-gradient(circle at 50% 42%, #000 34%, rgba(0,0,0,0.25) 62%, rgba(0,0,0,0.08) 78%); mask-image: radial-gradient(circle at 50% 42%, #000 34%, rgba(0,0,0,0.25) 62%, rgba(0,0,0,0.08) 78%); }
+        .head-face.cue-dim { filter: brightness(0.6); }
+        .head-face.cue-colour { filter: hue-rotate(-38deg) saturate(1.9) brightness(1.06); }
     </style>
 </head>
 <body>
@@ -47,9 +57,14 @@
     <main id="main" class="wrap">
         <div class="article-head">
             <a class="crumb meta" href="/research/">← Research · 02</a>
-            <p class="label">Research · paper in preparation</p>
-            <h1 class="display"><em>Lights</em></h1>
-            <p class="dek">Markerless gestural cue triggering for theatrical lighting. A hand in the wings calls the cue, and the camera has to be right when a mistake blacks out the stage.</p>
+            <div class="head-grid">
+                <div>
+                <p class="label">Research · paper in preparation</p>
+                <h1 class="display"><em>Lights</em></h1>
+                <p class="dek">Markerless gestural cue triggering for theatrical lighting. A hand in the wings calls the cue, and the camera has to be right when a mistake blacks out the stage.</p>
+                </div>
+                <div class="face-art head-face" id="page-face" role="img" aria-label="A drawn caricature of Amogh Bajpai"></div>
+            </div>
         </div>
 
         <dl class="article-meta">
@@ -99,15 +114,16 @@
                         The vocabulary is deliberately small and designed so the gestures are structurally hard to
                         confuse: static and dynamic, one hand and two.
                     </p>
+                    <p class="meta" style="margin-bottom: 10px;">Hover a cue to fire it at him.</p>
                     <div class="scroll-x">
                         <table class="cues">
                             <thead><tr><th>Cue</th><th>Gesture</th><th>Kind</th></tr></thead>
                             <tbody>
-                                <tr><td>Blackout</td><td>Double clap</td><td>Dynamic · two hands</td></tr>
-                                <tr><td>General cover</td><td>Both palms open, raised</td><td>Static · two hands</td></tr>
-                                <tr><td>Centre special</td><td>Index finger pointing, held</td><td>Static · one hand</td></tr>
-                                <tr><td>Master dim</td><td>Flat palm height sets the level</td><td>Continuous · one hand</td></tr>
-                                <tr><td>Colour state</td><td>Lateral swipe</td><td>Dynamic · one hand</td></tr>
+                                <tr data-cue="blackout"><td>Blackout</td><td>Double clap</td><td>Dynamic · two hands</td></tr>
+                                <tr data-cue="cover"><td>General cover</td><td>Both palms open, raised</td><td>Static · two hands</td></tr>
+                                <tr data-cue="special"><td>Centre special</td><td>Index finger pointing, held</td><td>Static · one hand</td></tr>
+                                <tr data-cue="dim"><td>Master dim</td><td>Flat palm height sets the level</td><td>Continuous · one hand</td></tr>
+                                <tr data-cue="colour"><td>Colour state</td><td>Lateral swipe</td><td>Dynamic · one hand</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -156,11 +172,27 @@
         <footer class="footer meta">
             <span>© 2026 Amogh Bajpai</span>
             <nav aria-label="Elsewhere">
-                <a href="mailto:hi@amoghbajpai.com">Email</a>
+                <a href="mailto:amoghbajpau8@gmail.com">Email</a>
                 <a href="https://github.com/amoghgg" target="_blank" rel="noopener">GitHub</a>
             </nav>
         </footer>
     </main>
     <script src="/assets/site.js" defer></script>
+    <script type="module">
+        import { initPageFace } from "/assets/face/page-face.js";
+        const face = initPageFace({ expression: "dazzled" });
+        const art = document.getElementById("page-face");
+        const CUE_FACE = { blackout: "unsettled", cover: "dazzled", special: "dazzled", dim: "resting", colour: "amused" };
+        document.querySelectorAll("tr[data-cue]").forEach((row) => {
+            row.addEventListener("pointerenter", () => {
+                art.className = `face-art head-face cue-${row.dataset.cue}`;
+                if (face) face.setExpression(CUE_FACE[row.dataset.cue] || "resting");
+            });
+            row.addEventListener("pointerleave", () => {
+                art.className = "face-art head-face";
+                if (face) face.setExpression("dazzled");
+            });
+        });
+    </script>
 </body>
 </html>
