@@ -128,6 +128,55 @@
         .glossary { cursor: help; border-bottom: 1px dotted var(--dark); }
 
         @media (max-width: 768px) { .hero-name { font-size: 4rem !important; line-height: 0.9 !important; } #cursor { display: none; } #canvas-container { height: 400px; } }
+
+        /* ───────── PROJECT 04 · BACKROOMS ───────── */
+        #project-04 { background: #0a0a07; }
+        .br-room { position: absolute; inset: 0; overflow: hidden; background: #0c0b06; perspective: 42vh; perspective-origin: 50% 44%; z-index: 0; }
+        /* Corridor "drift" is one GPU transform on the whole tube — no per-frame
+           repaint. Paused entirely unless the section is on screen (.br-vis). */
+        .br-hall { position: absolute; top: 50%; left: 50%; transform-style: preserve-3d; }
+        #project-04.br-vis .br-hall { animation: br-dolly 16s ease-in-out infinite alternate; }
+        .br-plane { position: absolute; top: 50%; left: 50%; width: 120vmax; height: 120vmax; margin-left: -60vmax; margin-top: -60vmax; transform-origin: 50% 50%; backface-visibility: hidden; }
+        .br-left  { transform: rotateY(90deg)  translateZ(-42vw); }
+        .br-right { transform: rotateY(-90deg) translateZ(-42vw); }
+        .br-floor { transform: rotateX(-90deg) translateZ(-30vh); }
+        .br-ceil  { transform: rotateX(90deg)  translateZ(-30vh); }
+        .br-wall {
+            background-color: #b3a766;
+            background-image:
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0 2px, rgba(0,0,0,0) 2px 120px),
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0 1px, rgba(0,0,0,0) 1px 9px),
+                linear-gradient(0deg, rgba(55,46,18,0.55), rgba(55,46,18,0) 42%);
+        }
+        .br-floor {
+            background-color: #544d3e;
+            background-image:
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.28) 0 1px, rgba(0,0,0,0) 1px 24px),
+                repeating-linear-gradient(0deg,  rgba(0,0,0,0.28) 0 1px, rgba(0,0,0,0) 1px 24px),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.025) 0 3px, rgba(0,0,0,0) 3px 7px);
+        }
+        .br-ceil {
+            background-color: #c8bd84;
+            background-image:
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.18) 0 2px, rgba(0,0,0,0) 2px 160px),
+                repeating-linear-gradient(0deg,  rgba(0,0,0,0.18) 0 2px, rgba(0,0,0,0) 2px 160px);
+        }
+        .br-lights {
+            transform: rotateX(90deg) translateZ(-29.6vh);
+            background-image: repeating-linear-gradient(0deg, rgba(255,250,205,0) 0 320px, rgba(255,250,210,0.78) 320px 384px, rgba(255,250,205,0) 384px 700px);
+            will-change: opacity; pointer-events: none;
+        }
+        @keyframes br-dolly { from { transform: translateZ(0); } to { transform: translateZ(22vh); } }
+        .br-fog { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+            background: radial-gradient(ellipse 72% 66% at 50% 44%, rgba(8,7,3,0) 34%, rgba(8,7,3,0.62) 72%, #050402 100%); }
+        #br-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; mix-blend-mode: screen; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
+        #br-video { position: absolute; bottom: 0; left: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; }
+        .br-meter { position: absolute; top: 24px; left: 24px; width: 280px; max-width: calc(100% - 48px); height: 24px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,235,140,0.25); border-radius: 2px; overflow: hidden; z-index: 25; }
+        .br-meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #8a8050, #ecec9e); transition: width 0.12s linear; }
+        .br-meter-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Fragment Mono', 'JetBrains Mono', monospace; font-size: 8px; color: #fff; mix-blend-mode: difference; text-transform: uppercase; letter-spacing: 0.2em; pointer-events: none; }
+        #project-04.br-live #br-calib { opacity: 1 !important; pointer-events: auto !important; }
+        #project-04.br-nobg .br-room, #project-04.br-nobg .br-fog { display: none; }
+        #project-04.br-nobg #br-canvas { mix-blend-mode: normal; background: #000; }
     </style>
 </head>
 <body class="selection:bg-white selection:text-black">
@@ -275,6 +324,72 @@
                             </p>
                             <div class="flex gap-4 flex-wrap">
                                 <a href="https://pixel.amoghbajpai.com" target="_blank" rel="noopener" class="btn-ai uppercase inline-block" data-label="LIVE">[ pixel.amoghbajpai.com ]</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 04: Backrooms -->
+                <div class="reveal project-screen border-t border-black/10" id="project-04">
+                    <div class="br-room" aria-hidden="true">
+                        <div class="br-hall">
+                            <div class="br-plane br-wall br-left"></div>
+                            <div class="br-plane br-wall br-right"></div>
+                            <div class="br-plane br-floor"></div>
+                            <div class="br-plane br-ceil"></div>
+                            <div class="br-plane br-lights"></div>
+                        </div>
+                    </div>
+                    <div class="br-fog" aria-hidden="true"></div>
+                    <canvas id="br-canvas"></canvas>
+                    <video id="br-video" autoplay playsinline muted></video>
+
+                    <div class="br-meter" id="br-meter">
+                        <div class="br-meter-fill" id="br-meter-fill"></div>
+                        <div class="br-meter-label" id="br-meter-label">No_signal</div>
+                    </div>
+
+                    <div id="br-calib" class="absolute top-6 right-6 z-30 flex flex-col gap-2 opacity-0 pointer-events-none transition-opacity bg-black/40 backdrop-blur-sm p-4 rounded border border-white/10">
+                        <p class="mono text-[8px] text-white opacity-50 mb-2 uppercase tracking-widest">Deformation</p>
+                        <div class="flex gap-2 justify-end">
+                            <button class="calib-btn" id="br-melt-minus">- warp</button>
+                            <button class="calib-btn" id="br-melt-plus">+ warp</button>
+                            <button class="calib-btn" id="br-axis">[ Re-deform ]</button>
+                        </div>
+                        <div class="flex gap-2 justify-end mt-2 border-t border-white/10 pt-2">
+                            <button class="calib-btn" id="br-flip">[ Flip_POV ]</button>
+                        </div>
+                        <div class="flex gap-2 justify-end">
+                            <button class="calib-btn" id="br-room">[ Room: off ]</button>
+                            <button class="calib-btn" id="br-mute">[ Hum: on ]</button>
+                        </div>
+                    </div>
+
+                    <div class="screen-scrim"></div>
+                    <div class="screen-overlay max-w-7xl mx-auto w-full">
+                        <p class="mono text-[10px] uppercase opacity-70 tracking-widest italic">A scene with no exit · you have noclipped out of the theatre · the house lights will not come up</p>
+                        <div class="flex flex-col lg:flex-row lg:items-end gap-10 lg:gap-16">
+                            <div class="lg:w-1/2 min-w-0">
+                                <h2 class="italic-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight hover-trigger" data-label="ENTER">Back <br> Rooms</h2>
+                                <p id="br-cue" class="mono text-[10px] uppercase tracking-[0.2em] opacity-70 mt-6 transition-opacity duration-700">Level 0 · ~600 million sq mi of empty rooms · find a face in the wallpaper</p>
+                            </div>
+                            <div class="lg:w-1/2 min-w-0 max-w-xl">
+                                <p class="text-xl md:text-2xl lg:text-3xl leading-tight font-medium tracking-tight mb-5">
+                                    Stand too close to the lens and you slip through. Same yellow hum, same damp carpet, forever. The thing that finds you here is wearing your face.
+                                </p>
+                                <p class="text-sm md:text-base italic opacity-90 mb-6 leading-relaxed">
+                                    Best with the lights off and the sound on.
+                                </p>
+                                <div class="space-y-2 mb-7">
+                                    <p class="mono text-[10px] uppercase opacity-70 tracking-widest">Stage directions</p>
+                                    <ul class="mono text-[10px] md:text-[11px] opacity-90 space-y-1 uppercase leading-relaxed">
+                                        <li>01. Noclip in. Let it catalogue your face.</li>
+                                        <li>02. It keeps your features — and rearranges them.</li>
+                                        <li>03. Two eyes become three. A nose where none belongs.</li>
+                                        <li>04. Move freely. The wrongness holds its place.</li>
+                                    </ul>
+                                </div>
+                                <button id="br-activate" class="btn-ai-light uppercase" data-label="LEVEL_0">[ Noclip_In ]</button>
                             </div>
                         </div>
                     </div>
@@ -1188,6 +1303,261 @@
                 }
             }
         });
+    </script>
+
+    <script type="module">
+        // ───────── PROJECT 04 · BACKROOMS ─────────
+        // Live face → its features (eyes / nose / mouth) are copied and stamped at
+        // FIXED random offsets generated once per session: misplaced and duplicated,
+        // while the face shape itself stays live and tracked. Self-contained.
+        import * as THREE from "https://esm.sh/three@0.158.0?v=5.3";
+        import { FaceLandmarker, FilesetResolver } from "https://esm.sh/@mediapipe/tasks-vision@0.10.3?v=5.3";
+
+        const section   = document.getElementById('project-04');
+        const canvas    = document.getElementById('br-canvas');
+        const video     = document.getElementById('br-video');
+        const btn       = document.getElementById('br-activate');
+        const cueEl     = document.getElementById('br-cue');
+        const meterFill = document.getElementById('br-meter-fill');
+        const meterLabel= document.getElementById('br-meter-label');
+        const lights    = document.querySelector('.br-lights');
+
+        let renderer, scene, cam, tex, faceLandmarker, mat, quad;
+        let running = false, started = false, sectionVisible = false;
+        let mirror = 1;                // 1 = selfie mirror on
+        let warpScale = 1.0;           // ± warp scales how far features are misplaced
+        let presence = 0, presenceTarget = 0;
+        const face = { x: 0.5, y: 0.5, r: 0.18 };
+        let hum = null, humGain = null, muted = false;
+        let showBg = false;            // corridor hidden by default — show the clear face
+
+        // ── Spliced-faces deformation (the poster look): the live face is fused with a
+        //    transformed second copy of itself along a jagged, rectilinear seam, with
+        //    tan circuit-lines tracing the splice. The seam + offset are rolled ONCE per
+        //    session and frozen; the whole fused face tracks your head as it moves.
+        let deformReady = false, faceW = 0.3;
+        let seed = 1.0, bOffX = 0.18, bOffY = 0.05, bScale = 1.04;   // frozen splice recipe
+
+        const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`;
+        // One face, spliced with a SHIFTED COPY OF ITSELF across a jagged, rectilinear
+        // seam → a feature duplicates / sits at the wrong height. Tan circuit-lines
+        // trace the splice; flat olive grade. Same person throughout.
+        const FRAG = `
+            precision highp float;
+            varying vec2 vUv;
+            uniform sampler2D uTex;
+            uniform vec2 uRes, uTexRes, uFace, uBOff;
+            uniform float uMirror, uClear, uPresence, uFaceR, uWarp, uSeed, uBScale;
+            float hash(vec2 p){ p = fract(p*vec2(123.34, 345.45)); p += dot(p, p+34.345); return fract(p.x*p.y); }
+            vec3 sampleDisp(vec2 p){ return texture2D(uTex, vec2(uMirror > 0.5 ? 1.0 - p.x : p.x, p.y)).rgb; }
+            void main(){
+                float ca = uRes.x/uRes.y, ta = uTexRes.x/uTexRes.y;     // cover-fit screen → video
+                vec2 s = ca < ta ? vec2(ta/ca, 1.0) : vec2(1.0, ca/ta);
+                vec2 p = (vUv - 0.5)/s + 0.5;
+
+                vec3 A = sampleDisp(p);                                  // your face
+                vec3 B = sampleDisp(uFace + (p - uFace)*uBScale + uBOff); // the same face, shifted
+
+                // jagged, rectilinear vertical seam centred on the face
+                float bandY = floor(p.y * 8.0);
+                float fineY = floor(p.y * 24.0);
+                float splitX = uFace.x
+                    + (hash(vec2(bandY, uSeed)) - 0.5) * 0.26 * uWarp
+                    + (hash(vec2(fineY, uSeed + 5.0)) - 0.5) * 0.07 * uWarp;
+                float W = 0.04 + 0.04 * uWarp;
+                float tmix = smoothstep(-W, W, p.x - splitX);
+                vec3 col = mix(A, B, tmix);                              // fuse, with a soft overlap band
+
+                // only fuse within the head; outside, keep your real face
+                vec2 fd = p - uFace; fd.x *= ta;
+                float fr = length(fd);
+                float facemask = smoothstep(uFaceR*2.0, uFaceR*1.1, fr);
+                col = mix(A, col, facemask);
+
+                // tan circuit-lines tracing the splice
+                float seamLine = smoothstep(0.010, 0.0, abs(p.x - splitX) * ta);
+                float near = smoothstep(0.22, 0.0, abs(p.x - splitX));
+                vec2 gg = abs(fract(p * 16.0) - 0.5);
+                float grid = smoothstep(0.45, 0.5, max(gg.x, gg.y));
+                float lines = max(seamLine, near * grid) * facemask;
+
+                // flat olive / tan liminal grade
+                float l = dot(col, vec3(0.299, 0.587, 0.114));
+                col = mix(col, vec3(l), 0.40);
+                col *= vec3(1.02, 0.99, 0.72);
+                col += lines * vec3(0.86, 0.80, 0.55) * 0.35;
+                col += (hash(vUv * uRes) - 0.5) * 0.03;
+
+                if (uClear > 0.5){
+                    gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);     // room off: full frame
+                } else {
+                    float key = smoothstep(uFaceR*2.4, uFaceR*0.3, fr) * smoothstep(0.04, 0.20, l);
+                    gl_FragColor = vec4(clamp(col, 0.0, 1.0) * key * (0.5 + 0.5*uPresence), 1.0);
+                }
+            }`;
+
+        function size(){
+            const w = section.clientWidth, h = section.clientHeight;
+            renderer.setSize(w, h, false);
+            if (mat) mat.uniforms.uRes.value.set(w, h);
+        }
+
+        function initGL(){
+            renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x000000, 1);
+            scene = new THREE.Scene();
+            cam = new THREE.Camera();
+            mat = new THREE.ShaderMaterial({
+                uniforms: {
+                    uTex: { value: null }, uRes: { value: new THREE.Vector2(1, 1) }, uTexRes: { value: new THREE.Vector2(4, 3) },
+                    uFace: { value: new THREE.Vector2(0.5, 0.5) }, uMirror: { value: 1.0 }, uClear: { value: 1.0 },
+                    uPresence: { value: 0 }, uFaceR: { value: 0.2 }, uWarp: { value: 1.0 },
+                    uSeed: { value: 1.0 }, uBOff: { value: new THREE.Vector2(0.18, 0.05) }, uBScale: { value: 1.04 }
+                },
+                vertexShader: VERT, fragmentShader: FRAG
+            });
+            quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
+            scene.add(quad);
+            size();
+            window.addEventListener('resize', () => { if (renderer) size(); });
+            renderLoop();
+        }
+
+        function renderLoop(){
+            requestAnimationFrame(renderLoop);
+            if (!sectionVisible) return;          // no GPU work while off-screen
+            presence += (presenceTarget - presence) * 0.05;
+            mat.uniforms.uPresence.value = presence;
+            mat.uniforms.uFace.value.set(face.x, face.y);
+            mat.uniforms.uFaceR.value += (face.r - mat.uniforms.uFaceR.value) * 0.3;
+            mat.uniforms.uMirror.value = mirror > 0 ? 1.0 : 0.0;
+            mat.uniforms.uClear.value = showBg ? 0.0 : 1.0;
+            mat.uniforms.uWarp.value = warpScale;
+            mat.uniforms.uSeed.value = seed;
+            mat.uniforms.uBScale.value = bScale;
+            mat.uniforms.uBOff.value.set(bOffX * faceW * warpScale, bOffY * faceW * warpScale);
+            if (tex) tex.needsUpdate = true;
+            renderer.render(scene, cam);
+            meterFill.style.width = (deformReady ? 100 : 0) + '%';
+            meterLabel.innerText = !running ? 'No_signal' : (deformReady ? '[ Splice_locked ]' : 'Searching…');
+        }
+
+        async function setupFace(){
+            const fs = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
+            faceLandmarker = await FaceLandmarker.createFromOptions(fs, {
+                baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`, delegate: "GPU" },
+                runningMode: "VIDEO", numFaces: 1
+            });
+        }
+
+        function generateSplice(){                            // frozen splice recipe — rolled once per session
+            seed = Math.random() * 97.0;
+            const a = Math.random() * Math.PI * 2;
+            const mag = 0.16 + Math.random() * 0.18;          // how far the shifted copy is offset
+            bOffX = Math.cos(a) * mag;
+            bOffY = Math.sin(a) * mag;
+            bScale = 1.0 + (Math.random() - 0.5) * 0.14;
+            deformReady = true;
+        }
+
+        // Live tracking: the splice + offset are frozen, but the whole fused face
+        // follows your head as it moves.
+        function detectLoop(){
+            if (!running) return;
+            if (!sectionVisible){ requestAnimationFrame(detectLoop); return; }   // pause inference off-screen
+            if (video.readyState >= 2 && faceLandmarker){
+                const res = faceLandmarker.detectForVideo(video, performance.now());
+                const lms = res.faceLandmarks && res.faceLandmarks[0];
+                if (lms){
+                    let minx = 1, miny = 1, maxx = 0, maxy = 0;
+                    for (const p of lms){ minx = Math.min(minx, p.x); maxx = Math.max(maxx, p.x); miny = Math.min(miny, p.y); maxy = Math.max(maxy, p.y); }
+                    faceW = Math.max(maxx - minx, 1e-3);
+                    face.x = mirror > 0 ? 1 - (minx + maxx) / 2 : (minx + maxx) / 2;
+                    face.y = 1 - (miny + maxy) / 2;
+                    face.r = Math.min(Math.max(Math.max(maxx - minx, maxy - miny) * 0.6, 0.08), 0.6);
+                    if (!deformReady) generateSplice();
+                    presenceTarget = 1.0;
+                    cueEl.style.opacity = '0';
+                } else {
+                    presenceTarget = 0.0;
+                    cueEl.style.opacity = '1';
+                }
+            }
+            requestAnimationFrame(detectLoop);
+        }
+
+        function startHum(){
+            try {
+                const Ctx = window.AudioContext || window.webkitAudioContext; if (!Ctx) return;
+                const ac = new Ctx();
+                const o1 = ac.createOscillator(); o1.type = 'sawtooth'; o1.frequency.value = 60;
+                const o2 = ac.createOscillator(); o2.type = 'sine';     o2.frequency.value = 120;
+                const g = ac.createGain(); g.gain.value = 0;
+                o1.connect(g); o2.connect(g); g.connect(ac.destination);
+                o1.start(); o2.start();
+                g.gain.linearRampToValueAtTime(muted ? 0 : 0.015, ac.currentTime + 2.5);
+                hum = { ac, o1, o2 }; humGain = g;
+            } catch (e) {}
+        }
+        function stopHum(){ if (hum){ try { hum.o1.stop(); hum.o2.stop(); hum.ac.close(); } catch (e) {} hum = null; humGain = null; } }
+
+        async function start(){
+            if (!started){ initGL(); await setupFace(); started = true; }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 960 }, height: { ideal: 720 } } });
+                video.srcObject = stream;
+                await video.play();
+                tex = new THREE.VideoTexture(video);
+                tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter; tex.generateMipmaps = false;
+                mat.uniforms.uTex.value = tex;
+                mat.uniforms.uTexRes.value.set(video.videoWidth || 640, video.videoHeight || 480);
+                deformReady = false;                                // fresh splice each session
+                running = true;
+                canvas.style.opacity = '1';
+                section.classList.add('br-live');
+                btn.innerText = '[ Clip_Out ]';
+                startHum();
+                detectLoop();
+            } catch (e){
+                cueEl.textContent = 'camera denied — there is no way out but in';
+                cueEl.style.opacity = '1';
+            }
+        }
+        function stop(){
+            running = false; presenceTarget = 0;
+            if (video.srcObject){ video.srcObject.getTracks().forEach(t => t.stop()); video.srcObject = null; }
+            canvas.style.opacity = '0';
+            section.classList.remove('br-live');
+            btn.innerText = '[ Noclip_In ]';
+            stopHum();
+        }
+
+        btn.addEventListener('click', () => running ? stop() : start());
+        document.getElementById('br-melt-plus').onclick  = () => warpScale = Math.min(warpScale + 0.2, 3);
+        document.getElementById('br-melt-minus').onclick = () => warpScale = Math.max(warpScale - 0.2, 0);
+        document.getElementById('br-flip').onclick = () => mirror *= -1;
+        document.getElementById('br-mute').onclick = (e) => { muted = !muted; if (humGain) humGain.gain.value = muted ? 0 : 0.015; e.target.textContent = muted ? '[ Hum: off ]' : '[ Hum: on ]'; };
+        document.getElementById('br-room').onclick = (e) => { showBg = !showBg; section.classList.toggle('br-nobg', !showBg); e.target.textContent = showBg ? '[ Room: on ]' : '[ Room: off ]'; };
+        document.getElementById('br-axis').onclick = () => { deformReady = false; };   // roll a new random deformation
+        section.classList.add('br-nobg');              // start with the corridor hidden
+
+        // Everything corridor-related is gated to visibility. While Project 04 is
+        // off-screen: no dolly animation, no flicker timer, no render, no inference —
+        // so the rest of the site runs exactly as it did before.
+        let flickerTimer = null;
+        const visObs = new IntersectionObserver((entries) => {
+            sectionVisible = entries[0].isIntersecting;
+            section.classList.toggle('br-vis', sectionVisible);
+            if (sectionVisible && !flickerTimer){
+                flickerTimer = setInterval(() => {
+                    if (lights) lights.style.opacity = Math.random() < 0.07 ? '0.25' : (0.85 + Math.random()*0.15).toFixed(2);
+                }, 120);
+            } else if (!sectionVisible && flickerTimer){
+                clearInterval(flickerTimer); flickerTimer = null;
+            }
+        }, { threshold: 0.01 });
+        visObs.observe(section);
     </script>
 
     <script>
