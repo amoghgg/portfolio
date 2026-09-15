@@ -5,220 +5,381 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amogh Bajpai — performance × machine perception</title>
     <meta name="description" content="Amogh Bajpai researches what happens to meaning when machines see, compress and regenerate expressive human bodies. Research, live pieces and tools.">
-    <meta name="theme-color" content="#f3efe7">
+    <meta name="theme-color" content="#0b0a08">
     <link rel="canonical" href="https://www.amoghbajpai.com/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Amogh Bajpai">
     <meta property="og:description" content="Performance as a stress test for machine perception.">
     <meta property="og:url" content="https://www.amoghbajpai.com/">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f3efe7'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23b0391d'/%3E%3C/svg%3E">
-    <script>document.documentElement.classList.add("js");</script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0a08'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23e9b872'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/site.css">
-</head>
-<body>
-    <a class="skip" href="#research">Skip to work</a>
+    <style>
+        body.landing { background: var(--stage); color: var(--stage-ink); overflow: hidden; height: 100svh; cursor: crosshair; }
+        body.landing ::selection { background: var(--stage-ink); color: var(--stage); }
+        body.landing a:hover { color: var(--tungsten); }
+        body.landing :focus-visible { outline-color: var(--tungsten); }
 
-    <header class="masthead">
-        <div class="wrap">
-            <a class="name" href="/">Amogh Bajpai</a>
-            <nav aria-label="Sections">
-                <a href="#research">Research</a>
-                <a href="#works">Works</a>
-                <a href="#about" class="opt">About</a>
-                <a href="#contact">Contact</a>
-            </nav>
-        </div>
+        #spot { position: fixed; inset: 0; width: 100%; height: 100%; }
+
+        .land-top, .land-foot {
+            position: fixed; left: 0; right: 0; z-index: 5;
+            display: flex; justify-content: space-between; align-items: center; gap: 16px;
+            padding: 18px var(--gutter);
+            font-family: var(--mono); font-size: 12px; color: var(--stage-ink-2);
+        }
+        .land-top { top: 0; }
+        .land-foot { bottom: 0; color: var(--stage-ink-3); }
+        .land-top a { text-decoration: none; color: inherit; }
+        .land-top nav { display: flex; gap: clamp(14px, 3vw, 32px); }
+        .land-mark { color: var(--stage-ink-3); }
+        @media (max-width: 560px) { .land-mark { display: none; } .land-top { justify-content: flex-end; } }
+
+        /* film grain + vignette: cheap, static, drawn by CSS rather than per frame */
+        .grain {
+            position: fixed; inset: -50%; z-index: 3; pointer-events: none; opacity: 0.07;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grain 1.2s steps(6) infinite;
+        }
+        @keyframes grain {
+            0% { transform: translate(0, 0); } 20% { transform: translate(-3%, 2%); } 40% { transform: translate(2%, -3%); }
+            60% { transform: translate(-2%, -1%); } 80% { transform: translate(3%, 3%); } 100% { transform: translate(0, 0); }
+        }
+        .vignette { position: fixed; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse 80% 75% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%); }
+        @media (max-width: 560px) { .land-top nav .opt { display: none; } .land-foot .hint { display: none; } }
+
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+        .land-under {
+            position: fixed; left: 0; right: 0; top: var(--name-bottom, 62%); z-index: 4;
+            display: flex; flex-direction: column; align-items: center; gap: clamp(22px, 4vh, 40px);
+            padding-inline: var(--gutter); text-align: center; pointer-events: none;
+        }
+        .land-line {
+            margin: 0; font-size: clamp(18px, 2.1vw, 28px); line-height: 1.35; font-style: italic; font-weight: 320;
+            font-variation-settings: "opsz" 72, "SOFT" 100; color: var(--stage-ink-2);
+            opacity: 0; transform: translateY(8px); transition: opacity 1.4s var(--ease) 1.5s, transform 1.4s var(--ease) 1.5s;
+        }
+        .land-enter {
+            pointer-events: auto; display: inline-flex; align-items: center; gap: 12px;
+            font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; text-decoration: none;
+            color: var(--stage-ink) !important; padding: 12px 22px; border: 1px solid var(--stage-rule); border-radius: 999px;
+            opacity: 0; transition: opacity 1.2s var(--ease) 2.1s, border-color 0.3s ease, background-color 0.3s ease;
+        }
+        .land-enter:hover { border-color: var(--tungsten); background: rgba(233, 184, 114, 0.08); }
+        .land-enter .arr { transition: transform 0.3s var(--ease); }
+        .land-enter:hover .arr { transform: translateX(4px); }
+        body.up .land-line { opacity: 1; transform: none; }
+        body.up .land-enter { opacity: 1; }
+
+        /* house lights up: paper floods in before moving to a page */
+        .house { position: fixed; inset: 0; z-index: 50; background: var(--paper); opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+        body.leaving .house { opacity: 1; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .land-line, .land-enter { transition: none; }
+            .house { transition: none; }
+            .grain { animation: none; }
+        }
+    </style>
+</head>
+<body class="landing">
+    <canvas id="spot" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="land-top">
+        <span class="land-mark">Research &amp; live pieces · 2026</span>
+        <nav aria-label="Sections">
+            <a href="/research/">Research</a>
+            <a href="/works/">Works</a>
+            <a href="/about/" class="opt">About</a>
+            <a href="/contact/">Contact</a>
+        </nav>
     </header>
 
     <main>
-        <section class="hero wrap">
-            <p class="label kicker rise">Research &amp; live pieces · 2026</p>
-            <h1 class="display rise">Performance as a <em>stress test</em> for machine perception.</h1>
-
-            <div class="statement rise">
-                <p class="label">Research statement</p>
-                <div>
-                    <p>
-                        Machines are learning to watch us: to track a hand, read a face, compress a body and draw it
-                        again on the other side of a call. Most of that technology is tuned for people sitting still,
-                        evenly lit, doing ordinary things. Performance is the opposite. Every eyebrow and finger carries
-                        meaning, the light is deliberately hostile, and one wrong read ruins the moment.
-                    </p>
-                    <p>
-                        I use performance as a stress test, to find where machine perception breaks, who it breaks for,
-                        and how to build systems that hold. <a href="/research/lights/">Lights</a> asks whether a camera
-                        can take a lighting cue from a performer's hand when a single false trigger blacks out a live
-                        show. <a href="/research/signflip/">SignFlip</a> asks what happens to sign language when
-                        generative video redraws the signer, where a lost eyebrow raise turns a question into a
-                        statement. The live pieces below ask the same question for an audience of one.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section wrap" id="research" aria-labelledby="research-h">
-            <div class="section-head rise">
-                <h2 id="research-h">Research</h2>
-                <span class="meta">2 projects</span>
-            </div>
-            <ol class="index">
-                <li class="rise">
-                    <a class="row" href="/research/signflip/">
-                        <span class="num">01</span>
-                        <span>
-                            <span class="title">SignFlip</span>
-                            <span class="line">When generative video codecs redraw a signer, grammar lives in the face. A benchmark for meaning flips in sign language.</span>
-                        </span>
-                        <span class="kind">Benchmark · CV<span class="status">In progress</span></span>
-                        <span class="year">2026</span>
-                        <span class="arrow" aria-hidden="true">→</span>
-                    </a>
-                </li>
-                <li class="rise">
-                    <a class="row" href="/research/lights/">
-                        <span class="num">02</span>
-                        <span>
-                            <span class="title">Lights</span>
-                            <span class="line">Markerless gestural cue triggering for theatrical lighting, measured in false triggers per hour, not accuracy.</span>
-                        </span>
-                        <span class="kind">Paper · HCI<span class="status">In preparation</span></span>
-                        <span class="year">2026</span>
-                        <span class="arrow" aria-hidden="true">→</span>
-                    </a>
-                </li>
-            </ol>
-        </section>
-
-        <section class="section wrap" id="works" aria-labelledby="works-h">
-            <div class="section-head rise">
-                <h2 id="works-h">Works</h2>
-                <span class="meta">Live pieces need a webcam</span>
-            </div>
-            <ol class="index" start="3">
-                <li class="rise">
-                    <a class="row" href="/works/pixel-manifold/">
-                        <span class="num">03</span>
-                        <span>
-                            <span class="title">Pixel Manifold</span>
-                            <span class="line">A solo for one face, two hands and 1,298 particles. Open your hands and the body blooms into colour.</span>
-                        </span>
-                        <span class="kind">Live piece<span class="status">Webcam · in browser</span></span>
-                        <span class="year">2026</span>
-                        <span class="arrow" aria-hidden="true">→</span>
-                    </a>
-                </li>
-                <li class="rise">
-                    <a class="row" href="/works/backrooms/">
-                        <span class="num">04</span>
-                        <span>
-                            <span class="title">Backrooms</span>
-                            <span class="line">Your face, spliced with a shifted copy of itself along a seam that follows you. The thing that finds you here is wearing your face.</span>
-                        </span>
-                        <span class="kind">Live piece<span class="status">Webcam · in browser</span></span>
-                        <span class="year">2026</span>
-                        <span class="arrow" aria-hidden="true">→</span>
-                    </a>
-                </li>
-                <li class="rise">
-                    <a class="row" href="/works/semantic-stream/">
-                        <span class="num">05</span>
-                        <span>
-                            <span class="title">Semantic Stream</span>
-                            <span class="line">A stranger watches your room and narrates it back to you, one sentence every few seconds.</span>
-                        </span>
-                        <span class="kind">Live piece<span class="status">Webcam · Gemini</span></span>
-                        <span class="year">2026</span>
-                        <span class="arrow" aria-hidden="true">→</span>
-                    </a>
-                </li>
-                <li class="rise">
-                    <a class="row" href="https://pixel.amoghbajpai.com" target="_blank" rel="noopener">
-                        <span class="num">06</span>
-                        <span>
-                            <span class="title">Lores</span>
-                            <span class="line">Drop an image, get authentic 8-bit output. Ten palettes, Floyd–Steinberg and Bayer dithering, nothing uploaded.</span>
-                        </span>
-                        <span class="kind">Tool<span class="status">pixel.amoghbajpai.com</span></span>
-                        <span class="year">2026</span>
-                        <span class="arrow" aria-hidden="true">↗</span>
-                    </a>
-                </li>
-            </ol>
-        </section>
-
-        <section class="section wrap" id="about" aria-labelledby="about-h">
-            <div class="section-head rise">
-                <h2 id="about-h">About</h2>
-                <span class="meta">Noida, India</span>
-            </div>
-            <div class="split rise">
-                <p class="label">The company</p>
-                <div>
-                    <div class="prose">
-                        <p>
-                            I came to engineering through theatre. Rehearsal rooms taught me how bodies move through
-                            space, how timing carries emotion, and how a small gesture can change what a scene means.
-                            That way of thinking never left. It moved into the systems I build.
-                        </p>
-                        <p>
-                            By day I'm an Assistant Product Manager at
-                            <a href="https://innovatiview.com" target="_blank" rel="noopener">Innovatiview</a>, where I
-                            design and ship identity-verification systems (face matching, liveness, on-site enrolment)
-                            used to verify staff at national examinations in India. So I know what machine perception
-                            does at scale, in bad light, on cheap phones, when it matters.
-                        </p>
-                    </div>
-
-                    <div class="facts">
-                        <div>
-                            <h3 class="label">Currently</h3>
-                            <p>Building the SignFlip benchmark. Starting to learn American Sign Language. Looking for Deaf collaborators and research mentors.</p>
-                        </div>
-                        <div>
-                            <h3 class="label">Perception</h3>
-                            <p>MediaPipe, InsightFace, OpenCV, PyTorch, pgvector face search</p>
-                        </div>
-                        <div>
-                            <h3 class="label">Image &amp; light</h3>
-                            <p>Three.js, GLSL, WebGPU, TouchDesigner</p>
-                        </div>
-                        <div>
-                            <h3 class="label">Engine room</h3>
-                            <p>Python, FastAPI, Django, Go, TypeScript, Postgres, Docker</p>
-                        </div>
-                    </div>
-
-                    <div class="facts">
-                        <div style="grid-column: 1 / -1">
-                            <h3 class="label">Open-source engineering</h3>
-                            <ul class="links">
-                                <li><a href="https://github.com/amoghgg/face-biometrics-api" target="_blank" rel="noopener">face-biometrics-api</a><span class="meta">Liveness, 1:1 and 1:N face recognition · FastAPI</span></li>
-                                <li><a href="https://github.com/amoghgg/lights" target="_blank" rel="noopener">lights</a><span class="meta">Gesture-driven lighting rig · browser, CPU-only</span></li>
-                                <li><a href="https://github.com/amoghgg/biometric-city" target="_blank" rel="noopener">biometric-city</a><span class="meta">Real-time 3D city data · Three.js</span></li>
-                                <li><a href="https://github.com/amoghgg/lores" target="_blank" rel="noopener">lores</a><span class="meta">Pixel-art tool · Next.js</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="contact wrap" id="contact" aria-labelledby="contact-h">
-            <h2 id="contact-h" class="label rise">Stage door</h2>
-            <a class="big display rise" href="mailto:hi@amoghbajpai.com">hi@amoghbajpai.com</a>
-            <footer class="footer meta">
-                <span>© 2026 Amogh Bajpai</span>
-                <nav aria-label="Elsewhere">
-                    <a href="https://github.com/amoghgg" target="_blank" rel="noopener">GitHub</a>
-                    <a href="https://linkedin.com/in/amoghbajpai" target="_blank" rel="noopener">LinkedIn</a>
-                </nav>
-            </footer>
-        </section>
+        <h1 class="sr-only">Amogh Bajpai</h1>
+        <div class="land-under">
+            <p class="land-line">Performance as a stress test for machine perception.</p>
+            <a class="land-enter" href="/research/">Enter the programme <span class="arr" aria-hidden="true">→</span></a>
+        </div>
     </main>
 
-    <script src="/assets/site.js" defer></script>
+    <footer class="land-foot">
+        <span id="readout">House lights coming up</span>
+        <span class="hint">Double-click for a blackout</span>
+    </footer>
+
+    <div class="house" aria-hidden="true"></div>
+
+    <script>
+    (function () {
+        const canvas = document.getElementById("spot");
+        const ctx = canvas.getContext("2d");
+        const readout = document.getElementById("readout");
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const INK = [237, 232, 221];      // stage ink
+        const TUNGSTEN = [233, 184, 114];
+        const BUCKETS = 18;               // particles are batched by brightness into this many fills
+
+        let W = 0, H = 0, dpr = 1;
+        let particles = [];
+        let R = 300;                      // follow-spot radius
+        const spot = { x: 0, y: 0, tx: 0, ty: 0 };
+        let lastPointer = -1e9;
+        let master = 0, masterTarget = 1; // house level: 0 = blackout
+        let start = performance.now();
+
+        function setReadout(text) { if (readout.textContent !== text) readout.textContent = text; }
+
+        // Render the name offscreen and sample its pixels into particle homes.
+        function build() {
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            W = window.innerWidth; H = window.innerHeight;
+            canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            R = Math.max(150, Math.min(W, H) * 0.3);
+
+            const off = document.createElement("canvas");
+            off.width = W; off.height = H;
+            const o = off.getContext("2d");
+            o.fillStyle = "#fff";
+            o.textAlign = "center";
+            o.textBaseline = "alphabetic";
+
+            const narrow = W < 720;
+            let size, lines;
+            if (narrow) {
+                size = Math.min(W * 0.27, H * 0.17);
+                lines = [["Amogh", "normal"], ["Bajpai", "italic"]];
+            } else {
+                size = Math.min(W * 0.135, H * 0.26);
+                lines = [["Amogh ", "normal"], ["Bajpai", "italic"]];
+            }
+            const centreY = H * (narrow ? 0.4 : 0.44);
+            let bottom;
+
+            if (narrow) {
+                const lh = size * 0.92;
+                lines.forEach(([txt, style], i) => {
+                    o.font = `${style} 340 ${size}px Fraunces, Georgia, serif`;
+                    o.fillText(txt, W / 2, centreY - lh * 0.5 + lh * i + size * 0.34);
+                });
+                bottom = centreY + lh * 0.5 + size * 0.68;   // clear the descenders of "Bajpai"
+            } else {
+                // One line, roman + italic, measured so the pair is centred together.
+                o.font = `normal 340 ${size}px Fraunces, Georgia, serif`;
+                const a = o.measureText(lines[0][0]).width;
+                o.font = `italic 340 ${size}px Fraunces, Georgia, serif`;
+                const b = o.measureText(lines[1][0]).width;
+                const x0 = W / 2 - (a + b) / 2;
+                const base = centreY + size * 0.34;
+                o.textAlign = "left";
+                o.font = `normal 340 ${size}px Fraunces, Georgia, serif`;
+                o.fillText(lines[0][0], x0, base);
+                o.font = `italic 340 ${size}px Fraunces, Georgia, serif`;
+                o.fillText(lines[1][0], x0 + a, base);
+                bottom = base + size * 0.36;
+            }
+            document.documentElement.style.setProperty("--name-bottom", Math.round(bottom) + "px");
+
+            const img = o.getImageData(0, 0, W, H).data;
+            let step = Math.max(3, Math.round(size / 46));
+            let homes;
+            // Keep the count bounded so slow machines stay smooth.
+            for (;;) {
+                homes = [];
+                for (let y = 0; y < H; y += step) {
+                    for (let x = 0; x < W; x += step) {
+                        if (img[(y * W + x) * 4 + 3] > 140) homes.push(x + (Math.random() - 0.5) * step * 0.6, y + (Math.random() - 0.5) * step * 0.6);
+                    }
+                }
+                if (homes.length / 2 <= 9000) break;
+                step += 1;
+            }
+
+            const old = particles;
+            particles = new Array(homes.length / 2);
+            for (let i = 0; i < particles.length; i++) {
+                const prev = old[i];
+                const hx = homes[i * 2], hy = homes[i * 2 + 1];
+                particles[i] = {
+                    hx, hy,
+                    // First build: start scattered so the name assembles as the lights come up.
+                    x: prev ? prev.x : (reduced ? hx : Math.random() * W),
+                    y: prev ? prev.y : (reduced ? hy : Math.random() * H),
+                    vx: 0, vy: 0,
+                    phase: Math.random() * Math.PI * 2,
+                    size: 0.8 + Math.random() * 0.9,
+                };
+            }
+            if (!old.length) { spot.x = spot.tx = W * 0.5; spot.y = spot.ty = H * 0.44; }
+        }
+
+        function wander(t) {
+            spot.tx = W * (0.5 + 0.3 * Math.sin(t * 0.00031));
+            spot.ty = H * (0.44 + 0.13 * Math.sin(t * 0.00053 + 1.2));
+        }
+
+        const paths = Array.from({ length: BUCKETS }, () => []);
+
+        function frame(now) {
+            requestAnimationFrame(frame);
+            const t = now - start;
+            const idle = now - lastPointer > 2600;
+
+            if (reduced) { spot.tx = W * 0.5; spot.ty = H * 0.44; }
+            else if (idle) wander(now);
+
+            setReadout(master < 0.2 && masterTarget === 0 ? "Cue · blackout"
+                : t < 2200 ? "House lights coming up"
+                : idle ? "Follow spot · looking for a performer" : "Follow spot · tracking you");
+
+            // A real follow spot lags its operator a little.
+            const follow = idle ? 0.035 : 0.09;
+            spot.x += (spot.tx - spot.x) * follow;
+            spot.y += (spot.ty - spot.y) * follow;
+            master += (masterTarget - master) * (masterTarget === 0 ? 0.25 : 0.035);
+
+            ctx.fillStyle = "#0b0a08";
+            ctx.fillRect(0, 0, W, H);
+
+            // The beam, thrown from a booth above the audience down to the pool of light.
+            const ox = W * 0.5, oy = -H * 0.2;
+            const bx = spot.x - ox, by = spot.y - oy;
+            const blen = Math.hypot(bx, by) || 1;
+            const px = -by / blen, py = bx / blen;
+            // Stacked widths give the beam soft edges without a per-frame blur filter.
+            const ex = spot.x + (bx / blen) * R * 0.25, ey = spot.y + (by / blen) * R * 0.25;
+            const beam = ctx.createLinearGradient(ox, oy, ex, ey);
+            beam.addColorStop(0, "rgba(233,184,114,0)");
+            beam.addColorStop(0.7, `rgba(233,184,114,${0.012 * master})`);
+            beam.addColorStop(0.9, `rgba(233,184,114,${0.016 * master})`);
+            beam.addColorStop(1, "rgba(233,184,114,0)");
+            ctx.fillStyle = beam;
+            for (const w of [1.0, 0.8, 0.62, 0.46]) {
+                const pr = R * 0.62 * w;
+                ctx.beginPath();
+                ctx.moveTo(ox + px * 6 * w, oy + py * 6 * w);
+                ctx.lineTo(ex + px * pr, ey + py * pr);
+                ctx.lineTo(ex - px * pr, ey - py * pr);
+                ctx.lineTo(ox - px * 6 * w, oy - py * 6 * w);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Haze in the pool.
+            const g = ctx.createRadialGradient(spot.x, spot.y, 0, spot.x, spot.y, R * 1.25);
+            g.addColorStop(0, `rgba(233,184,114,${0.085 * master})`);
+            g.addColorStop(0.55, `rgba(233,184,114,${0.03 * master})`);
+            g.addColorStop(1, "rgba(233,184,114,0)");
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, W, H);
+
+            for (const p of paths) p.length = 0;
+
+            const sigma2 = 2 * (R * 0.5) * (R * 0.5);
+            const pushR = R * 0.42;
+            const assembling = t < 2600;
+            const k = assembling ? 0.02 + 0.05 * (t / 2600) : 0.075;   // spring stiffness
+            const ambient = 0.13;
+            const shimmer = reduced ? 0 : 0.45;
+
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                const dx = p.x - spot.x, dy = p.y - spot.y;
+                const d2 = dx * dx + dy * dy;
+                const light = Math.exp(-d2 / sigma2);
+
+                let fx = (p.hx - p.x) * k, fy = (p.hy - p.y) * k;
+                if (!reduced && d2 < pushR * pushR && master > 0.5) {
+                    const d = Math.sqrt(d2) || 1;
+                    const f = (1 - d / pushR) * 1.6;
+                    fx += (dx / d) * f; fy += (dy / d) * f;
+                }
+                p.vx = (p.vx + fx) * 0.82;
+                p.vy = (p.vy + fy) * 0.82;
+                p.x += p.vx; p.y += p.vy;
+
+                const b = (ambient + light * (1 - ambient)) * master;
+                const bucket = Math.min(BUCKETS - 1, Math.floor(b * BUCKETS));
+                if (bucket < 1 && b < 0.02) continue;
+                const s = p.size * (1 + light * 0.9);
+                const jx = shimmer * light * Math.sin(now * 0.004 + p.phase);
+                paths[bucket].push(p.x + jx, p.y, s);
+            }
+
+            for (let bk = 0; bk < BUCKETS; bk++) {
+                const arr = paths[bk];
+                if (!arr.length) continue;
+                const level = (bk + 0.5) / BUCKETS;
+                const warm = Math.min(1, level * 1.35);   // brighter = warmer, toward tungsten
+                const r = Math.round(INK[0] + (TUNGSTEN[0] - INK[0]) * warm);
+                const gg = Math.round(INK[1] + (TUNGSTEN[1] - INK[1]) * warm);
+                const bl = Math.round(INK[2] + (TUNGSTEN[2] - INK[2]) * warm);
+                ctx.fillStyle = `rgba(${r},${gg},${bl},${Math.min(1, 0.12 + level * 1.05)})`;
+                ctx.beginPath();
+                for (let j = 0; j < arr.length; j += 3) ctx.rect(arr[j], arr[j + 1], arr[j + 2], arr[j + 2]);
+                ctx.fill();
+            }
+        }
+
+        window.addEventListener("pointermove", (e) => {
+            spot.tx = e.clientX; spot.ty = e.clientY; lastPointer = performance.now();
+        }, { passive: true });
+        window.addEventListener("pointerdown", (e) => {
+            spot.tx = e.clientX; spot.ty = e.clientY; lastPointer = performance.now();
+        }, { passive: true });
+
+        // Cue: blackout. Lights snap out, then fade back up.
+        let blackoutTimer = null;
+        function blackout() {
+            masterTarget = 0;
+            clearTimeout(blackoutTimer);
+            blackoutTimer = setTimeout(() => { masterTarget = 1; }, 900);
+        }
+        window.addEventListener("dblclick", (e) => { if (!e.target.closest("a")) blackout(); });
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "b" || e.key === "B") blackout();
+            if (e.key === "Enter" && document.activeElement === document.body) document.querySelector(".land-enter").click();
+        });
+
+        // House lights up, then go.
+        document.querySelectorAll("a[href^='/']").forEach((a) => {
+            a.addEventListener("click", (e) => {
+                if (reduced || e.metaKey || e.ctrlKey || e.shiftKey || a.getAttribute("href") === "/") return;
+                e.preventDefault();
+                document.body.classList.add("leaving");
+                setTimeout(() => { window.location.href = a.href; }, 480);
+            });
+        });
+        window.addEventListener("pageshow", () => document.body.classList.remove("leaving"));
+
+        let resizeTimer = null;
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(build, 150);
+        });
+
+        const go = () => {
+            build();
+            start = performance.now();
+            requestAnimationFrame(() => document.body.classList.add("up"));
+            requestAnimationFrame(frame);
+        };
+        // Wait for Fraunces so the particles take the real letterforms (but never hang on it).
+        Promise.race([
+            Promise.all([
+                document.fonts.load("340 100px Fraunces"),
+                document.fonts.load("italic 340 100px Fraunces"),
+            ]),
+            new Promise((r) => setTimeout(r, 1800)),
+        ]).then(go, go);
+    })();
+    </script>
 </body>
 </html>
