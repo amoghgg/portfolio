@@ -91,7 +91,7 @@
     <div class="grain" aria-hidden="true"></div>
 
     <header class="land-top">
-        <span class="land-mark">Research &amp; live pieces · 2026</span>
+        <span class="land-mark">Amogh Bajpai · research &amp; live pieces</span>
         <nav aria-label="Sections">
             <a href="/research/">Research</a>
             <a href="/works/">Works</a>
@@ -122,138 +122,185 @@
         const readout = document.getElementById("readout");
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        const INK = [237, 232, 221];      // stage ink
-        const TUNGSTEN = [233, 184, 114];
-        const BUCKETS = 18;               // particles are batched by brightness into this many fills
+        // ── the expression × gaze sprite set ───────────────────────────────
+        // Frames are this face with its expression and eye direction edited;
+        // the page picks the one whose gaze points at the follow spot.
+        const EXPRESSIONS = ["resting", "curious", "amused", "wry", "direct", "warm"];
+        const GAZE_COLS = 5, GAZE_ROWS = 3;   // ix: 0 = looking left … 4 = right; iy: 0 = down … 2 = up
+        const CENTER = { ix: 2, iy: 1 };
+        const HOLD_MS = 4500;                 // how long an expression is held
+        const FADE_MS = 260;
 
-        let W = 0, H = 0, dpr = 1;
-        let particles = [];
-        let R = 300;                      // follow-spot radius
+        const frames = new Map();
+        const frameKey = (e, ix, iy) => `${e}_${ix}${iy}`;
+        function loadFrame(e, ix, iy) {
+            const key = frameKey(e, ix, iy);
+            let img = frames.get(key);
+            if (img) return img;
+            img = new Image();
+            img.decoding = "async";
+            img.src = `/assets/face/stage/${key}.webp`;
+            frames.set(key, img);
+            return img;
+        }
+        const ready = (img) => img && img.complete && img.naturalWidth > 0;
+        // Nearest loaded neighbour, so the face never blanks while frames arrive.
+        function bestFrame(e, ix, iy) {
+            const exact = loadFrame(e, ix, iy);
+            if (ready(exact)) return exact;
+            const centre = frames.get(frameKey(e, CENTER.ix, CENTER.iy));
+            if (ready(centre)) return centre;
+            const resting = frames.get(frameKey("resting", CENTER.ix, CENTER.iy));
+            return ready(resting) ? resting : null;
+        }
+
+        const INK = [237, 232, 221];
+        const TUNGSTEN = [233, 184, 114];
+
+        let W = 0, H = 0, dpr = 1, R = 300;
+        let faceBox = { x: 0, y: 0, size: 0 };
         const spot = { x: 0, y: 0, tx: 0, ty: 0 };
         let lastPointer = -1e9;
-        let master = 0, masterTarget = 1; // house level: 0 = blackout
+        let master = 0, masterTarget = 1;     // house level: 0 = blackout
         let start = performance.now();
+
+        let current = "resting", previous = null, switchedAt = -1e9;
+        const dust = [];
+        const lit = document.createElement("canvas");
+        const lctx = lit.getContext("2d");
 
         function setReadout(text) { if (readout.textContent !== text) readout.textContent = text; }
 
-        // Render the name offscreen and sample its pixels into particle homes.
-        function build() {
+        function layout() {
             dpr = Math.min(window.devicePixelRatio || 1, 2);
             W = window.innerWidth; H = window.innerHeight;
             canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             R = Math.max(150, Math.min(W, H) * 0.3);
 
-            const off = document.createElement("canvas");
-            off.width = W; off.height = H;
-            const o = off.getContext("2d");
-            o.fillStyle = "#fff";
-            o.textAlign = "center";
-            o.textBaseline = "alphabetic";
+            const size = Math.min(W < 720 ? W * 0.82 : W * 0.4, H * 0.56, 620);
+            faceBox = { size, x: (W - size) / 2, y: H * (W < 720 ? 0.16 : 0.14) };
+            lit.width = Math.round(size * dpr); lit.height = Math.round(size * dpr);
+            lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            document.documentElement.style.setProperty("--name-bottom", Math.round(faceBox.y + size * 0.99) + "px");
 
-            const narrow = W < 720;
-            let size, lines;
-            if (narrow) {
-                size = Math.min(W * 0.27, H * 0.17);
-                lines = [["Amogh", "normal"], ["Bajpai", "italic"]];
-            } else {
-                size = Math.min(W * 0.135, H * 0.26);
-                lines = [["Amogh ", "normal"], ["Bajpai", "italic"]];
-            }
-            const centreY = H * (narrow ? 0.4 : 0.44);
-            let bottom;
-
-            if (narrow) {
-                const lh = size * 0.92;
-                lines.forEach(([txt, style], i) => {
-                    o.font = `${style} 340 ${size}px Fraunces, Georgia, serif`;
-                    o.fillText(txt, W / 2, centreY - lh * 0.5 + lh * i + size * 0.34);
-                });
-                bottom = centreY + lh * 0.5 + size * 0.68;   // clear the descenders of "Bajpai"
-            } else {
-                // One line, roman + italic, measured so the pair is centred together.
-                o.font = `normal 340 ${size}px Fraunces, Georgia, serif`;
-                const a = o.measureText(lines[0][0]).width;
-                o.font = `italic 340 ${size}px Fraunces, Georgia, serif`;
-                const b = o.measureText(lines[1][0]).width;
-                const x0 = W / 2 - (a + b) / 2;
-                const base = centreY + size * 0.34;
-                o.textAlign = "left";
-                o.font = `normal 340 ${size}px Fraunces, Georgia, serif`;
-                o.fillText(lines[0][0], x0, base);
-                o.font = `italic 340 ${size}px Fraunces, Georgia, serif`;
-                o.fillText(lines[1][0], x0 + a, base);
-                bottom = base + size * 0.36;
-            }
-            document.documentElement.style.setProperty("--name-bottom", Math.round(bottom) + "px");
-
-            const img = o.getImageData(0, 0, W, H).data;
-            let step = Math.max(3, Math.round(size / 46));
-            let homes;
-            // Keep the count bounded so slow machines stay smooth.
-            for (;;) {
-                homes = [];
-                for (let y = 0; y < H; y += step) {
-                    for (let x = 0; x < W; x += step) {
-                        if (img[(y * W + x) * 4 + 3] > 140) homes.push(x + (Math.random() - 0.5) * step * 0.6, y + (Math.random() - 0.5) * step * 0.6);
-                    }
+            if (!dust.length) {
+                for (let i = 0; i < 90; i++) {
+                    dust.push({ x: Math.random(), y: Math.random(), r: 0.4 + Math.random() * 1.1, s: 0.02 + Math.random() * 0.05, p: Math.random() * 6.28 });
                 }
-                if (homes.length / 2 <= 9000) break;
-                step += 1;
             }
+            if (spot.x === 0) { spot.x = spot.tx = W * 0.5; spot.y = spot.ty = faceBox.y + size * 0.42; }
+        }
 
-            const old = particles;
-            particles = new Array(homes.length / 2);
-            for (let i = 0; i < particles.length; i++) {
-                const prev = old[i];
-                const hx = homes[i * 2], hy = homes[i * 2 + 1];
-                particles[i] = {
-                    hx, hy,
-                    // First build: start scattered so the name assembles as the lights come up.
-                    x: prev ? prev.x : (reduced ? hx : Math.random() * W),
-                    y: prev ? prev.y : (reduced ? hy : Math.random() * H),
-                    vx: 0, vy: 0,
-                    phase: Math.random() * Math.PI * 2,
-                    size: 0.8 + Math.random() * 0.9,
-                };
+        // Where the eyes should point, given where the spot is.
+        function gazeIndex() {
+            const cx = faceBox.x + faceBox.size / 2;
+            const cy = faceBox.y + faceBox.size * 0.42;
+            const nx = Math.max(-1, Math.min(1, (spot.x - cx) / (W * 0.34)));
+            const ny = Math.max(-1, Math.min(1, (cy - spot.y) / (H * 0.3)));
+            return {
+                ix: Math.round((nx + 1) / 2 * (GAZE_COLS - 1)),
+                iy: Math.round((ny + 1) / 2 * (GAZE_ROWS - 1)),
+            };
+        }
+
+        function drawFace(now) {
+            const { ix, iy } = gazeIndex();
+            const img = bestFrame(current, ix, iy);
+            if (!img) return;
+            const prev = previous ? bestFrame(previous, ix, iy) : null;
+            const mix = Math.min(1, (now - switchedAt) / FADE_MS);
+            const { x, y, size } = faceBox;
+
+            lctx.clearRect(0, 0, size, size);
+            if (prev && mix < 1) {
+                lctx.globalAlpha = 1; lctx.drawImage(prev, 0, 0, size, size);
+                lctx.globalAlpha = mix; lctx.drawImage(img, 0, 0, size, size);
+            } else {
+                lctx.globalAlpha = 1; lctx.drawImage(img, 0, 0, size, size);
             }
-            if (!old.length) { spot.x = spot.tx = W * 0.5; spot.y = spot.ty = H * 0.44; }
+            lctx.globalAlpha = 1;
+
+            // Keep only what the spot is touching, then warm it like a tungsten lamp.
+            const sx = spot.x - x, sy = spot.y - y;
+            const mask = lctx.createRadialGradient(sx, sy, R * 0.12, sx, sy, R * 0.92);
+            mask.addColorStop(0, "rgba(0,0,0,1)");
+            mask.addColorStop(0.55, "rgba(0,0,0,0.72)");
+            mask.addColorStop(1, "rgba(0,0,0,0)");
+            lctx.globalCompositeOperation = "destination-in";
+            lctx.fillStyle = mask;
+            lctx.fillRect(0, 0, size, size);
+            lctx.globalCompositeOperation = "source-atop";
+            lctx.fillStyle = `rgba(${TUNGSTEN[0]},${TUNGSTEN[1]},${TUNGSTEN[2]},0.16)`;
+            lctx.fillRect(0, 0, size, size);
+            lctx.globalCompositeOperation = "source-over";
+
+            // A face in the dark: barely there, then fully present in the light.
+            ctx.save();
+            ctx.globalAlpha = 0.14 * master;
+            ctx.drawImage(img, x, y, size, size);
+            ctx.globalAlpha = master;
+            ctx.drawImage(lit, x, y, size, size);
+            ctx.restore();
+        }
+
+        function drawDust(now) {
+            if (reduced) return;
+            ctx.save();
+            for (const d of dust) {
+                const px = d.x * W, py = ((d.y + (now * 0.00002 * d.s * 40)) % 1) * H;
+                const dx = px - spot.x, dy = py - spot.y;
+                const light = Math.exp(-(dx * dx + dy * dy) / (2 * (R * 0.7) * (R * 0.7)));
+                if (light < 0.04) continue;
+                const a = light * 0.5 * master * (0.6 + 0.4 * Math.sin(now * 0.001 + d.p));
+                ctx.fillStyle = `rgba(${TUNGSTEN[0]},${TUNGSTEN[1]},${TUNGSTEN[2]},${a})`;
+                ctx.beginPath();
+                ctx.arc(px + Math.sin(now * 0.0003 + d.p) * 12, py, d.r, 0, 6.2832);
+                ctx.fill();
+            }
+            ctx.restore();
         }
 
         function wander(t) {
-            spot.tx = W * (0.5 + 0.3 * Math.sin(t * 0.00031));
-            spot.ty = H * (0.44 + 0.13 * Math.sin(t * 0.00053 + 1.2));
+            const cx = faceBox.x + faceBox.size / 2;
+            spot.tx = cx + Math.sin(t * 0.00031) * W * 0.26;
+            spot.ty = faceBox.y + faceBox.size * (0.42 + 0.22 * Math.sin(t * 0.00053 + 1.2));
         }
-
-        const paths = Array.from({ length: BUCKETS }, () => []);
 
         function frame(now) {
             requestAnimationFrame(frame);
             const t = now - start;
             const idle = now - lastPointer > 2600;
 
-            if (reduced) { spot.tx = W * 0.5; spot.ty = H * 0.44; }
+            if (reduced) { spot.tx = faceBox.x + faceBox.size / 2; spot.ty = faceBox.y + faceBox.size * 0.42; }
             else if (idle) wander(now);
 
             setReadout(master < 0.2 && masterTarget === 0 ? "Cue · blackout"
                 : t < 2200 ? "House lights coming up"
-                : idle ? "Follow spot · looking for a performer" : "Follow spot · tracking you");
+                : idle ? "Follow spot · looking for a performer" : "Follow spot · he is watching you");
 
-            // A real follow spot lags its operator a little.
-            const follow = idle ? 0.035 : 0.09;
+            const follow = idle ? 0.035 : 0.09;   // a real follow spot lags its operator
             spot.x += (spot.tx - spot.x) * follow;
             spot.y += (spot.ty - spot.y) * follow;
-            master += (masterTarget - master) * (masterTarget === 0 ? 0.25 : 0.035);
+            master += (masterTarget - master) * (masterTarget === 0 ? 0.25 : 0.03);
+
+            // Change expression every few seconds.
+            if (!reduced && master > 0.85 && now - switchedAt > HOLD_MS) {
+                const others = EXPRESSIONS.filter((e) => e !== current);
+                previous = current;
+                current = others[Math.floor(Math.random() * others.length)];
+                switchedAt = now;
+            }
 
             ctx.fillStyle = "#0b0a08";
             ctx.fillRect(0, 0, W, H);
 
-            // The beam, thrown from a booth above the audience down to the pool of light.
+            // The beam, thrown from a booth above the audience. Stacked widths give
+            // it soft edges without a per-frame blur filter.
             const ox = W * 0.5, oy = -H * 0.2;
             const bx = spot.x - ox, by = spot.y - oy;
             const blen = Math.hypot(bx, by) || 1;
             const px = -by / blen, py = bx / blen;
-            // Stacked widths give the beam soft edges without a per-frame blur filter.
             const ex = spot.x + (bx / blen) * R * 0.25, ey = spot.y + (by / blen) * R * 0.25;
             const beam = ctx.createLinearGradient(ox, oy, ex, ey);
             beam.addColorStop(0, "rgba(233,184,114,0)");
@@ -274,58 +321,14 @@
 
             // Haze in the pool.
             const g = ctx.createRadialGradient(spot.x, spot.y, 0, spot.x, spot.y, R * 1.25);
-            g.addColorStop(0, `rgba(233,184,114,${0.085 * master})`);
-            g.addColorStop(0.55, `rgba(233,184,114,${0.03 * master})`);
+            g.addColorStop(0, `rgba(233,184,114,${0.07 * master})`);
+            g.addColorStop(0.55, `rgba(233,184,114,${0.025 * master})`);
             g.addColorStop(1, "rgba(233,184,114,0)");
             ctx.fillStyle = g;
             ctx.fillRect(0, 0, W, H);
 
-            for (const p of paths) p.length = 0;
-
-            const sigma2 = 2 * (R * 0.5) * (R * 0.5);
-            const pushR = R * 0.42;
-            const assembling = t < 2600;
-            const k = assembling ? 0.02 + 0.05 * (t / 2600) : 0.075;   // spring stiffness
-            const ambient = 0.13;
-            const shimmer = reduced ? 0 : 0.45;
-
-            for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-                const dx = p.x - spot.x, dy = p.y - spot.y;
-                const d2 = dx * dx + dy * dy;
-                const light = Math.exp(-d2 / sigma2);
-
-                let fx = (p.hx - p.x) * k, fy = (p.hy - p.y) * k;
-                if (!reduced && d2 < pushR * pushR && master > 0.5) {
-                    const d = Math.sqrt(d2) || 1;
-                    const f = (1 - d / pushR) * 1.6;
-                    fx += (dx / d) * f; fy += (dy / d) * f;
-                }
-                p.vx = (p.vx + fx) * 0.82;
-                p.vy = (p.vy + fy) * 0.82;
-                p.x += p.vx; p.y += p.vy;
-
-                const b = (ambient + light * (1 - ambient)) * master;
-                const bucket = Math.min(BUCKETS - 1, Math.floor(b * BUCKETS));
-                if (bucket < 1 && b < 0.02) continue;
-                const s = p.size * (1 + light * 0.9);
-                const jx = shimmer * light * Math.sin(now * 0.004 + p.phase);
-                paths[bucket].push(p.x + jx, p.y, s);
-            }
-
-            for (let bk = 0; bk < BUCKETS; bk++) {
-                const arr = paths[bk];
-                if (!arr.length) continue;
-                const level = (bk + 0.5) / BUCKETS;
-                const warm = Math.min(1, level * 1.35);   // brighter = warmer, toward tungsten
-                const r = Math.round(INK[0] + (TUNGSTEN[0] - INK[0]) * warm);
-                const gg = Math.round(INK[1] + (TUNGSTEN[1] - INK[1]) * warm);
-                const bl = Math.round(INK[2] + (TUNGSTEN[2] - INK[2]) * warm);
-                ctx.fillStyle = `rgba(${r},${gg},${bl},${Math.min(1, 0.12 + level * 1.05)})`;
-                ctx.beginPath();
-                for (let j = 0; j < arr.length; j += 3) ctx.rect(arr[j], arr[j + 1], arr[j + 2], arr[j + 2]);
-                ctx.fill();
-            }
+            drawFace(now);
+            drawDust(now);
         }
 
         window.addEventListener("pointermove", (e) => {
@@ -351,7 +354,7 @@
         // House lights up, then go.
         document.querySelectorAll("a[href^='/']").forEach((a) => {
             a.addEventListener("click", (e) => {
-                if (reduced || e.metaKey || e.ctrlKey || e.shiftKey || a.getAttribute("href") === "/") return;
+                if (reduced || e.metaKey || e.ctrlKey || e.shiftKey) return;
                 e.preventDefault();
                 document.body.classList.add("leaving");
                 setTimeout(() => { window.location.href = a.href; }, 480);
@@ -362,23 +365,37 @@
         let resizeTimer = null;
         window.addEventListener("resize", () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(build, 150);
+            resizeTimer = setTimeout(layout, 150);
         });
 
-        const go = () => {
-            build();
-            start = performance.now();
-            requestAnimationFrame(() => document.body.classList.add("up"));
-            requestAnimationFrame(frame);
-        };
-        // Wait for Fraunces so the particles take the real letterforms (but never hang on it).
-        Promise.race([
-            Promise.all([
-                document.fonts.load("340 100px Fraunces"),
-                document.fonts.load("italic 340 100px Fraunces"),
-            ]),
-            new Promise((r) => setTimeout(r, 1800)),
-        ]).then(go, go);
+        // Centre frames first so the face appears fast, then the rest of the grid
+        // in the background so the eyes can track anywhere.
+        function preload() {
+            const first = EXPRESSIONS.map((e) => loadFrame(e, CENTER.ix, CENTER.iy));
+            const rest = [];
+            for (const e of EXPRESSIONS) {
+                for (let iy = 0; iy < GAZE_ROWS; iy++) {
+                    for (let ix = 0; ix < GAZE_COLS; ix++) {
+                        if (ix === CENTER.ix && iy === CENTER.iy) continue;
+                        rest.push([e, ix, iy]);
+                    }
+                }
+            }
+            let i = 0;
+            const pump = () => {
+                for (let n = 0; n < 4 && i < rest.length; n++, i++) loadFrame(...rest[i]);
+                if (i < rest.length) setTimeout(pump, 120);
+            };
+            const kick = () => setTimeout(pump, 400);
+            if (ready(first[0])) kick(); else first[0].addEventListener("load", kick, { once: true });
+        }
+
+        layout();
+        preload();
+        start = performance.now();
+        switchedAt = performance.now();
+        requestAnimationFrame(() => document.body.classList.add("up"));
+        requestAnimationFrame(frame);
     })();
     </script>
 </body>

@@ -232,3 +232,16 @@ a:hover { color: var(--accent); }
     .js .rise { opacity: 1; transform: none; transition: none; }
     .row, .row .arrow { transition: none; }
 }
+
+/* ── portrait on the section pages ────────────────────────── */
+
+.head-grid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(190px, 24vw, 300px); gap: clamp(24px, 4vw, 56px); align-items: end; }
+.head-grid .face {
+    width: 100%; height: auto; align-self: end; margin-bottom: 4px;
+    mix-blend-mode: multiply;   /* the matte melts into the paper */
+    opacity: 0.94;
+}
+@media (max-width: 760px) {
+    .head-grid { grid-template-columns: 1fr; gap: 20px; }
+    .head-grid .face { width: clamp(150px, 42vw, 220px); justify-self: end; order: -1; margin-bottom: 0; }
+}
