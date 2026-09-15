@@ -15,6 +15,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/site.css">
     <link rel="stylesheet" href="/assets/face/face.css">
+    <style>
+        /* Break at the @, never mid-word. */
+        .contact-mail { max-width: none; font-size: clamp(26px, 3.7vw, 56px); line-height: 1.05; }
+        .contact-mail a { text-decoration: none; }
+        .contact-mail .at { white-space: nowrap; }
+        @media (max-width: 620px) { .contact-mail .at { display: block; } }
+    </style>
 </head>
 <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -35,7 +42,7 @@
             <div class="head-grid rise">
                 <div>
                 <p class="label rise">Stage door</p>
-                <h1 class="display rise" style="max-width: none;"><a data-face="curious" href="mailto:amoghbajpai8@gmail.com" style="text-decoration: none; overflow-wrap: anywhere;">amoghbajpai8@<em>gmail</em>.com</a></h1>
+            <h1 class="display rise contact-mail"><a data-face="curious" href="mailto:amoghbajpai8@gmail.com">amoghbajpai8<span class="at">@<em>gmail</em>.com</span></a></h1>
                 </div>
                 <div class="face-art head-face" id="page-face" role="img" aria-label="A drawn caricature of Amogh Bajpai"></div>
             </div>
