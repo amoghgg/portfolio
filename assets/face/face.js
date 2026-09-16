@@ -49,17 +49,17 @@ const HAIR_FRONT = [
 // Shapes: open palm, fist, pointing index, flat palm.
 const POSES = {
     none:    { L: null, R: null },
-    think:   { L: null, R: [216, 300, -14, "fist"] },                        // knuckles at the chin
-    shield:  { L: null, R: [196, 128, -96, "open"] },                        // hand up against the light
-    wave:    { L: null, R: [300, 226, 14, "open"] },                         // hello
-    sign:    { L: null, R: [296, 250, -8, "point"] },                        // a question, held beside the face
-    palms:   { L: [56, 250, -16, "open"], R: [304, 250, 16, "open"] },       // general cover
-    clap:    { L: [150, 330, 66, "open"], R: [210, 330, -66, "open"] },      // blackout
-    point:   { L: null, R: [300, 246, 0, "point"] },                         // centre special
-    level:   { L: null, R: [308, 300, -92, "open"] },                        // master dim
-    swipe:   { L: null, R: [318, 256, 34, "open"] },                         // colour state
-    camera:  { L: [124, 336, -10, "fist"], R: [236, 336, 10, "fist"] },
-    letter:  { L: null, R: [208, 320, -8, "fist"] },
+    think:   { L: null, R: [222, 296, -20, "fist"] },                        // knuckles at the chin
+    shield:  { L: null, R: [236, 148, -62, "open"] },                        // hand up against the light
+    wave:    { L: null, R: [306, 214, 18, "open"] },                         // hello
+    sign:    { L: null, R: [300, 244, -6, "point"] },                        // a question, held beside him
+    palms:   { L: [54, 252, -22, "open"], R: [306, 252, 22, "open"] },       // general cover
+    clap:    { L: [148, 320, 62, "open"], R: [212, 320, -62, "open"] },      // blackout
+    point:   { L: null, R: [304, 240, 4, "point"] },                         // centre special
+    level:   { L: null, R: [316, 296, -92, "open"] },                        // master dim
+    swipe:   { L: null, R: [326, 250, 34, "open"] },                         // colour state
+    camera:  { L: [126, 334, -10, "fist"], R: [234, 334, 10, "fist"] },
+    letter:  { L: null, R: [214, 322, -8, "fist"] },
 };
 
 export const POSE_NAMES = Object.keys(POSES);
@@ -78,6 +78,13 @@ const HAND_SHAPES = {
            '<path d="M-18 15 C -23 -1 -15 -16 0 -16 C 15 -16 23 -1 18 15 C 11 26 -11 26 -18 15 Z"/></g>',
 };
 
+const SHOULDER = { L: [106, 350], R: [254, 350] };
+
+const armMarkup = (side, id) => `
+  <g id="arm${side}-${id}" class="f-arm" opacity="0">
+    <path id="armbare${side}-${id}" class="f-forearm" stroke="url(#armgrad${side}-${id})"/>
+  </g>`;
+
 const handMarkup = (side, id) => `
   <g id="hand${side}-${id}" class="f-hand" opacity="0">
     ${Object.entries(HAND_SHAPES).map(([name, d]) =>
@@ -90,6 +97,14 @@ function markup(id) {
     return svg(`
     <svg class="face-svg" viewBox="0 0 ${VB.w} ${VB.h}" role="img" aria-label="A drawn caricature of Amogh Bajpai">
       <defs>
+        <linearGradient id="armgradL-${id}" gradientUnits="userSpaceOnUse">
+          <stop offset="0" class="f-stop-sleeve"/><stop offset="0.3" class="f-stop-sleeve"/>
+          <stop offset="0.46" class="f-stop-skin"/><stop offset="1" class="f-stop-skin"/>
+        </linearGradient>
+        <linearGradient id="armgradR-${id}" gradientUnits="userSpaceOnUse">
+          <stop offset="0" class="f-stop-sleeve"/><stop offset="0.3" class="f-stop-sleeve"/>
+          <stop offset="0.46" class="f-stop-skin"/><stop offset="1" class="f-stop-skin"/>
+        </linearGradient>
         <clipPath id="eyeL-${id}"><ellipse cx="142" cy="209" rx="18" ry="12.5"/></clipPath>
         <clipPath id="eyeR-${id}"><ellipse cx="218" cy="209" rx="18" ry="12.5"/></clipPath>
       </defs>
@@ -154,6 +169,8 @@ function markup(id) {
         <path class="f-stache" d="M158 264 Q 180 257 202 264"/>
         <path id="mouth-${id}" class="f-mouth" d="M155 274 Q 180 283 205 274"/>
       </g>
+      ${armMarkup("L", id)}
+      ${armMarkup("R", id)}
       ${handMarkup("L", id)}
       ${handMarkup("R", id)}
       </g>
@@ -183,6 +200,9 @@ export function createFace(el, opts = {}) {
     const refs = {
         head: q("head"), browL: q("browL"), browR: q("browR"),
         handL: q("handL"), handR: q("handR"), svg: el.querySelector(".face-svg"),
+        armL: q("armL"), armR: q("armR"),
+        bareL: q("armbareL"), bareR: q("armbareR"),
+        gradL: q("armgradL"), gradR: q("armgradR"),
         pupilL: q("pupilL"), pupilR: q("pupilR"), lidL: q("lidL"), lidR: q("lidR"), mouth: q("mouth"),
     };
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -295,6 +315,19 @@ export function createFace(el, opts = {}) {
             const el = refs[`hand${side}`];
             el.setAttribute("transform", `translate(${h.x.toFixed(1)} ${h.y.toFixed(1)}) rotate(${h.r.toFixed(1)})`);
             el.setAttribute("opacity", h.on.toFixed(3));
+
+            // The arm follows: a sleeve at the shoulder, then a bare forearm to the wrist.
+            const [sx, sy] = SHOULDER[side];
+            const dx = h.x - sx, dy = h.y - sy;
+            const len = Math.hypot(dx, dy) || 1;
+            const bow = side === "L" ? -1 : 1;                       // elbow swings outward
+            const cx2 = sx + dx * 0.5 + (-dy / len) * 26 * bow;
+            const cy2 = sy + dy * 0.5 + (dx / len) * 26 * bow;
+            refs[`bare${side}`].setAttribute("d", `M${sx} ${sy} Q ${cx2.toFixed(1)} ${cy2.toFixed(1)} ${h.x.toFixed(1)} ${h.y.toFixed(1)}`);
+            const g = refs[`grad${side}`];
+            g.setAttribute("x1", sx); g.setAttribute("y1", sy);
+            g.setAttribute("x2", h.x.toFixed(1)); g.setAttribute("y2", h.y.toFixed(1));
+            refs[`arm${side}`].setAttribute("opacity", h.on.toFixed(3));
         }
     }
 

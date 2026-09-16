@@ -49,3 +49,6 @@
 .face-art .f-prop-fold { fill: none; stroke: var(--f-line); stroke-width: 2.5; }
 .face-art .f-prop-strap { fill: none; stroke: #2b2520; stroke-width: 7; stroke-linecap: round; }
 .face-art .f-prop-shutter { fill: #8a8078; stroke: none; }
+.face-art .f-forearm { fill: none; stroke-width: 27; stroke-linecap: round; }
+.face-art .f-stop-sleeve { stop-color: var(--f-tee); }
+.face-art .f-stop-skin { stop-color: var(--f-skin); }
