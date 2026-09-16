@@ -47,7 +47,7 @@ const HAIR_FRONT = [
 // Skeleton. L and R are as the viewer sees them, so L is his right arm.
 const SHOULDER = { L: [96, 398], R: [264, 398] };
 const UPPER = 86, FORE = 84;
-const REST = { L: [64, 548], R: [296, 548] };
+const REST = { L: [82, 552], R: [278, 552] };
 
 // Wrist targets: [x, y, wrist rotation, hand shape]
 const POSES = {

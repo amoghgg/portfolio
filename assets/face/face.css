@@ -9,7 +9,12 @@
     --f-chain: #cdd2d8;
     display: block;
 }
-.face-art .face-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.face-art .face-svg {
+    display: block; width: 100%; height: auto; overflow: visible;
+    /* he dissolves into the page instead of being cut off at the hem */
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 74%, rgba(0,0,0,0) 97%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 74%, rgba(0,0,0,0) 97%);
+}
 
 .face-art .f-skin { fill: var(--f-skin); }
 .face-art .f-line { stroke: var(--f-line); stroke-width: 3; }
