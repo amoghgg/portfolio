@@ -14,12 +14,21 @@ export function initPageFace({ selector = "#page-face", expression = "resting", 
     const face = createFace(el, { expression, pose, prop });
     face.setExpression(expression, { hold: true });
 
-    let idle = null;
+    let idle = null, hide = null, ducked = false;
+    const wake = () => {
+        if (ducked) { face.duck(false); ducked = false; }
+        clearTimeout(hide);
+        // Peek-a-boo: if the reader goes quiet, he drops out of frame and waits.
+        hide = setTimeout(() => { face.duck(true); ducked = true; }, 14000);
+    };
     window.addEventListener("pointermove", (e) => {
         face.lookAt(e.clientX, e.clientY);
+        wake();
         clearTimeout(idle);
         idle = setTimeout(() => face.lookAt(innerWidth / 2, innerHeight / 2), 2600);
     }, { passive: true });
+    window.addEventListener("scroll", wake, { passive: true });
+    wake();
 
     document.querySelectorAll("[data-face]").forEach((row) => {
         const enter = () => {

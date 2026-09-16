@@ -235,7 +235,7 @@ a:hover { color: var(--accent); }
 
 /* ── portrait on the section pages ────────────────────────── */
 
-.head-grid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(190px, 24vw, 300px); gap: clamp(24px, 4vw, 56px); align-items: end; }
+.head-grid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(150px, 19vw, 230px); gap: clamp(24px, 4vw, 56px); align-items: end; }
 .head-grid .face {
     width: 100%; height: auto; align-self: end; margin-bottom: 4px;
     mix-blend-mode: multiply;   /* the matte melts into the paper */
@@ -245,5 +245,6 @@ a:hover { color: var(--accent); }
     .head-grid { grid-template-columns: 1fr; gap: 20px; }
     .head-grid .face { width: clamp(150px, 42vw, 220px); justify-self: end; order: -1; margin-bottom: 0; }
 }
-.head-grid .head-face { width: 100%; align-self: end; }
+.head-grid .head-face { width: 100%; align-self: end; aspect-ratio: 360 / 560; overflow: hidden; }
+.head-grid .head-face .face-svg { width: 100%; }
 @media (max-width: 760px) { .head-grid .head-face { width: clamp(150px, 42vw, 210px); justify-self: end; order: -1; } }

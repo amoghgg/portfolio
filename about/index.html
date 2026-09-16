@@ -74,7 +74,7 @@
                     <p>MediaPipe, InsightFace, OpenCV, PyTorch, pgvector face search</p>
                 </div>
                 <div>
-                    <h3 class="label" data-face="dazzled">Image &amp; light</h3>
+                    <h3 class="label" data-face="dazzled" data-pose="palms">Image &amp; light</h3>
                     <p>Three.js, GLSL, WebGPU, TouchDesigner</p>
                 </div>
                 <div>
@@ -103,7 +103,8 @@
     <script src="/assets/site.js" defer></script>
     <script type="module">
         import { initPageFace } from "/assets/face/page-face.js";
-        initPageFace({ expression: "direct", pose: "think" });
+        const face = initPageFace({ expression: "direct", pose: "wave" });
+        setTimeout(() => face && face.setPose("think"), 3000);   // a wave on arrival, then he thinks
     </script>
 </body>
 </html>

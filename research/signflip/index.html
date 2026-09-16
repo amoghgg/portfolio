@@ -20,7 +20,9 @@
     <style>
         .flip-plate { display: grid; grid-template-columns: 1fr 150px 1fr; gap: clamp(12px, 3vw, 36px); align-items: center; }
         .flip-side { margin: 0; text-align: center; }
-        .flip-face { width: 100%; max-width: 200px; margin: 6px auto 10px; }
+        .flip-face { width: 100%; max-width: 190px; margin: 6px auto 10px; aspect-ratio: 360 / 480; overflow: hidden; }
+        /* what the codec did to him: the signing hand blurs away, the grammar with it */
+        .flip-face.is-lost .f-hand, .flip-face.is-lost .f-forearm { opacity: 0.32; filter: blur(2.5px); }
         .flip-side .gloss { font-size: clamp(17px, 1.7vw, 22px); font-style: italic; margin: 6px 0 0; }
         .flip-side .gloss.is-bad { color: var(--accent); }
         .flip-side .meta { margin: 0; }
@@ -109,11 +111,11 @@
                         <figure class="flip-side">
                             <p class="label">Receiver</p>
                             <div class="face-art flip-face is-lost" id="face-receiver"></div>
-                            <p class="meta">brows flattened by the codec</p>
+                            <p class="meta">brows flattened · hand smeared</p>
                             <p class="gloss is-bad">“You're coming.”</p>
                         </figure>
                     </div>
-                    <figcaption class="meta">Illustration of the failure mode under study, not a measured result. In ASL, raised eyebrows are the grammatical marker of a yes/no question. Same face, same person: only the brows differ, and with them the sentence.</figcaption>
+                    <figcaption class="meta">Illustration of the failure mode under study, not a measured result. In ASL, raised eyebrows are the grammatical marker of a yes/no question. Same person, same sign: the codec keeps the head and loses the brows and the hand, and with them the question.</figcaption>
                 </figure>
             </section>
 
@@ -205,8 +207,8 @@
 
         // The same face on both sides: on the left the question is on his brows,
         // on the right the codec has flattened them and the question is gone.
-        const sender = createFace(document.getElementById("face-sender"), { expression: "question" });
-        const receiver = createFace(document.getElementById("face-receiver"), { expression: "flattened" });
+        const sender = createFace(document.getElementById("face-sender"), { expression: "question", pose: "sign" });
+        const receiver = createFace(document.getElementById("face-receiver"), { expression: "flattened", pose: "sign" });
         sender.setExpression("question", { hold: true });
         receiver.setExpression("flattened", { hold: true });
         window.addEventListener("pointermove", (e) => {

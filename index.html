@@ -27,8 +27,10 @@
 
         /* The caricature on the dark stage: a dim layer always present, and a lit
            layer revealed only where the follow spot falls. */
-        .land-face { position: fixed; left: 50%; top: 9vh; transform: translateX(-50%); z-index: 2;
-            width: min(46vw, 56vh, 470px); pointer-events: none; }
+        .land-face { position: fixed; left: 50%; top: 10vh; transform: translateX(-50%); z-index: 2;
+            width: min(32vw, 48vh, 350px); aspect-ratio: 360 / 430;   /* crop below the chest */
+            pointer-events: none; overflow: hidden; }
+        .land-face .face-svg { width: 100%; }
         .land-face .layer { position: absolute; inset: 0; }
         .land-face .layer.dim { opacity: 0.28; position: relative; }
         .land-face .layer.lit {
@@ -39,7 +41,7 @@
             --f-skin: #dcb891; --f-line: #22160c; --f-hair: #2d241a;
             --f-specs: #2a231a; --f-eye: #f7f0e3; --f-tee: #1b1712; --f-chain: #9aa0a8;
         }
-        @media (max-width: 720px) { .land-face { width: min(74vw, 40vh, 330px); top: 13vh; } }
+        @media (max-width: 720px) { .land-face { width: min(60vw, 36vh, 260px); top: 12vh; } }
 
         .land-top, .land-foot {
             position: fixed; left: 0; right: 0; z-index: 5;
@@ -318,8 +320,12 @@
         let blackoutTimer = null;
         function blackout() {
             masterTarget = 0;
+            for (const f of faces) f.duck(true);              // he ducks off in the dark…
             clearTimeout(blackoutTimer);
-            blackoutTimer = setTimeout(() => { masterTarget = 1; }, 900);
+            blackoutTimer = setTimeout(() => {
+                masterTarget = 1;
+                for (const f of faces) f.duck(false);          // …and pops back when the lights return
+            }, 900);
         }
         window.addEventListener("dblclick", (e) => { if (!e.target.closest("a")) blackout(); });
         window.addEventListener("keydown", (e) => {

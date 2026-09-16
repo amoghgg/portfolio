@@ -20,6 +20,27 @@
 .face-art .f-chain-drop { fill: var(--f-chain); opacity: 0.9; }
 .face-art .f-neck { fill: var(--f-skin); stroke: var(--f-line); stroke-width: 3; }
 .face-art .f-neck-shade { fill: var(--f-line); opacity: 0.14; }
+.face-art .f-tee-fold { fill: none; stroke: var(--f-line); stroke-width: 2.5; opacity: 0.18; }
+
+/* arms: upper arm under a short sleeve, bare forearm, hand at the wrist */
+.face-art .f-upperarm, .face-art .f-forearm { fill: none; stroke: var(--f-skin); stroke-linecap: round; }
+.face-art .f-upperarm { stroke-width: 34; }
+.face-art .f-forearm { stroke-width: 29; }
+.face-art .f-sleeve { fill: none; stroke: var(--f-tee); stroke-width: 48; stroke-linecap: round; }
+.face-art .f-hand { fill: var(--f-skin); stroke: var(--f-line); stroke-width: 3; stroke-linejoin: round; }
+.face-art .f-hand .f-knuckle { fill: none; stroke: var(--f-line); stroke-width: 2; opacity: 0.3; }
+.face-art .f-ink { opacity: 0.72; }
+
+/* props */
+.face-art .f-prop { opacity: 0; transition: opacity 0.3s ease; fill: var(--f-tee); stroke: var(--f-line); stroke-width: 3; }
+.face-art .face-svg.has-camera .f-prop-camera,
+.face-art .face-svg.has-letter .f-prop-letter { opacity: 1; }
+.face-art .f-prop-strap { fill: none; stroke: #2b2520; stroke-width: 7; stroke-linecap: round; }
+.face-art .f-prop-lens { fill: #2a2520; }
+.face-art .f-prop-glass { fill: #6d7c86; }
+.face-art .f-prop-shutter { fill: #8a8078; stroke: none; }
+.face-art .f-prop-letter { fill: #efe7d6; }
+.face-art .f-prop-fold { fill: none; stroke: var(--f-line); stroke-width: 2.5; }
 .face-art .f-jaw { fill: none; stroke: var(--f-line); stroke-width: 2; opacity: 0.25; }
 .face-art .f-eye { fill: var(--f-eye); }
 .face-art .f-pupil { fill: #241a12; }
