@@ -30,6 +30,10 @@ export function initPageFace({ selector = "#page-face", expression = "resting", 
     window.addEventListener("scroll", wake, { passive: true });
     wake();
 
+    // Click him and he winks back.
+    el.style.cursor = "pointer";
+    el.addEventListener("click", () => face.wink("R"));
+
     document.querySelectorAll("[data-face]").forEach((row) => {
         const enter = () => {
             face.setExpression(row.dataset.face);

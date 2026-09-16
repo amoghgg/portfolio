@@ -28,9 +28,7 @@
         /* The caricature on the dark stage: a dim layer always present, and a lit
            layer revealed only where the follow spot falls. */
         .land-face { position: fixed; left: 50%; top: 10vh; transform: translateX(-50%); z-index: 2;
-            width: min(32vw, 48vh, 350px); aspect-ratio: 360 / 430;   /* crop below the chest */
-            pointer-events: none; overflow: hidden; }
-        .land-face .face-svg { width: 100%; }
+            width: min(42vw, 52vh, 420px); pointer-events: none; }
         .land-face .layer { position: absolute; inset: 0; }
         .land-face .layer.dim { opacity: 0.28; position: relative; }
         .land-face .layer.lit {
@@ -41,7 +39,7 @@
             --f-skin: #dcb891; --f-line: #22160c; --f-hair: #2d241a;
             --f-specs: #2a231a; --f-eye: #f7f0e3; --f-tee: #1b1712; --f-chain: #9aa0a8;
         }
-        @media (max-width: 720px) { .land-face { width: min(60vw, 36vh, 260px); top: 12vh; } }
+        @media (max-width: 720px) { .land-face { width: min(72vw, 40vh, 320px); top: 12vh; } }
 
         .land-top, .land-foot {
             position: fixed; left: 0; right: 0; z-index: 5;

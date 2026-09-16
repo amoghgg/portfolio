@@ -74,12 +74,12 @@
     <script src="/assets/site.js" defer></script>
     <script type="module">
         import { initPageFace } from "/assets/face/page-face.js";
-        const face = initPageFace({ expression: "warm", pose: "letter", prop: "letter" });
+        const face = initPageFace({ expression: "warm" });
         // He grins when you actually take the address.
         document.querySelectorAll('a[href^="mailto:"]').forEach((a) =>
             a.addEventListener("click", () => {
                 if (!face) return;
-                face.react("amused", 2600);
+                face.wink("R"); face.react("laughing", 2200);
             }));
     </script>
 </body>

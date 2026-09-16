@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/face/face.css">
 <style>
  body{background:#f3efe7;margin:0;padding:24px;font-family:var(--mono)}
- .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px}
+ .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:1340px}
  .cell{background:#ebe5d9;padding:10px;border:1px solid rgba(0,0,0,.12)}
  .cell p{margin:0 0 6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#857e72}
  .dark{background:#0b0a08}
@@ -13,11 +13,11 @@
 <div class="grid" id="grid"></div>
 <script type="module">
 import { createFace } from "/assets/face/face.js";
-const EXPRESSION_NAMES = ["resting","curious","amused","wry","direct","warm","dazzled","amazed","unsettled"];
+const EXPRESSION_NAMES = ["resting","curious","amused","wry","direct","warm","smirk","skeptical","thinking","laughing","sleepy","reading","dazzled","amazed","unsettled"];
 const grid = document.getElementById("grid");
 for (const name of EXPRESSION_NAMES) {
   const cell = document.createElement("div");
-  cell.className = "cell" + (EXPRESSION_NAMES.indexOf(name) > 2 ? " dark" : "");
+  cell.className = "cell" + (EXPRESSION_NAMES.indexOf(name) >= 10 ? " dark" : "");
   cell.innerHTML = `<p>${name}</p><div class="face-art"></div>`;
   grid.appendChild(cell);
   const f = createFace(cell.querySelector(".face-art"), { expression: name });

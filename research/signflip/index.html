@@ -111,11 +111,11 @@
                         <figure class="flip-side">
                             <p class="label">Receiver</p>
                             <div class="face-art flip-face is-lost" id="face-receiver"></div>
-                            <p class="meta">brows flattened · hand smeared</p>
+                            <p class="meta">brows flattened by the codec</p>
                             <p class="gloss is-bad">“You're coming.”</p>
                         </figure>
                     </div>
-                    <figcaption class="meta">Illustration of the failure mode under study, not a measured result. In ASL, raised eyebrows are the grammatical marker of a yes/no question. Same person, same sign: the codec keeps the head and loses the brows and the hand, and with them the question.</figcaption>
+                    <figcaption class="meta">Illustration of the failure mode under study, not a measured result. In ASL, raised eyebrows are the grammatical marker of a yes/no question. Same person, same face: the codec keeps the head and loses the brows, and with them the question.</figcaption>
                 </figure>
             </section>
 
@@ -203,12 +203,12 @@
     <script type="module">
         import { createFace } from "/assets/face/face.js";
         import { initPageFace } from "/assets/face/page-face.js";
-        initPageFace({ expression: "curious", pose: "sign" });
+        initPageFace({ expression: "curious" });
 
         // The same face on both sides: on the left the question is on his brows,
         // on the right the codec has flattened them and the question is gone.
-        const sender = createFace(document.getElementById("face-sender"), { expression: "question", pose: "sign" });
-        const receiver = createFace(document.getElementById("face-receiver"), { expression: "flattened", pose: "sign" });
+        const sender = createFace(document.getElementById("face-sender"), { expression: "question" });
+        const receiver = createFace(document.getElementById("face-receiver"), { expression: "flattened" });
         sender.setExpression("question", { hold: true });
         receiver.setExpression("flattened", { hold: true });
         window.addEventListener("pointermove", (e) => {

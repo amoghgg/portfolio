@@ -114,7 +114,7 @@
                         The vocabulary is deliberately small and designed so the gestures are structurally hard to
                         confuse: static and dynamic, one hand and two.
                     </p>
-                    <p class="meta" style="margin-bottom: 10px;">Hover a cue: he throws the gesture, the rig answers.</p>
+                    <p class="meta" style="margin-bottom: 10px;">Hover a cue: the rig fires it at him.</p>
                     <div class="scroll-x">
                         <table class="cues">
                             <thead><tr><th>Cue</th><th>Gesture</th><th>Kind</th></tr></thead>
@@ -180,25 +180,25 @@
     <script src="/assets/site.js" defer></script>
     <script type="module">
         import { initPageFace } from "/assets/face/page-face.js";
-        const face = initPageFace({ expression: "dazzled", pose: "none" });
+        const face = initPageFace({ expression: "dazzled" });
         const art = document.getElementById("page-face");
         // Each cue: the gesture that fires it, and what the rig does to his face.
         const CUES = {
-            blackout: { face: "unsettled", pose: "clap" },
-            cover: { face: "dazzled", pose: "palms" },
-            special: { face: "dazzled", pose: "point" },
-            dim: { face: "resting", pose: "level" },
-            colour: { face: "amused", pose: "swipe" },
+            blackout: { face: "unsettled" },
+            cover: { face: "dazzled" },
+            special: { face: "skeptical" },
+            dim: { face: "sleepy" },
+            colour: { face: "laughing" },
         };
         document.querySelectorAll("tr[data-cue]").forEach((row) => {
             row.addEventListener("pointerenter", () => {
                 art.className = `face-art head-face cue-${row.dataset.cue}`;
                 const cue = CUES[row.dataset.cue];
-                if (face && cue) { face.setExpression(cue.face); face.setPose(cue.pose); }
+                if (face && cue) face.setExpression(cue.face);
             });
             row.addEventListener("pointerleave", () => {
                 art.className = "face-art head-face";
-                if (face) { face.setExpression("dazzled"); face.setPose("none"); }
+                if (face) face.setExpression("dazzled");
             });
         });
     </script>
