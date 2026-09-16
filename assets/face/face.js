@@ -47,17 +47,14 @@ const HAIR_FRONT = [
 
 // Hands. Each pose places both hands: [x, y, rotation, shape] or null for "down".
 // Shapes: open palm, fist, pointing index, flat palm.
+// Only poses that work in a head-and-shoulders frame: the arm leaves the shoulder,
+// passes behind him, and the hand comes forward no higher than his cheek.
 const POSES = {
     none:    { L: null, R: null },
     think:   { L: null, R: [222, 296, -20, "fist"] },                        // knuckles at the chin
-    shield:  { L: null, R: [236, 148, -62, "open"] },                        // hand up against the light
-    wave:    { L: null, R: [306, 214, 18, "open"] },                         // hello
-    sign:    { L: null, R: [300, 244, -6, "point"] },                        // a question, held beside him
-    palms:   { L: [54, 252, -22, "open"], R: [306, 252, 22, "open"] },       // general cover
-    clap:    { L: [148, 320, 62, "open"], R: [212, 320, -62, "open"] },      // blackout
-    point:   { L: null, R: [304, 240, 4, "point"] },                         // centre special
-    level:   { L: null, R: [316, 296, -92, "open"] },                        // master dim
-    swipe:   { L: null, R: [326, 250, 34, "open"] },                         // colour state
+    sign:    { L: null, R: [292, 246, -6, "point"] },                        // a question, held beside his cheek
+    palms:   { L: [62, 250, -20, "open"], R: [298, 250, 20, "open"] },       // both palms up
+    clap:    { L: [150, 318, 60, "open"], R: [210, 318, -60, "open"] },      // hands together
     camera:  { L: [126, 334, -10, "fist"], R: [234, 334, 10, "fist"] },
     letter:  { L: null, R: [214, 322, -8, "fist"] },
 };
@@ -78,7 +75,7 @@ const HAND_SHAPES = {
            '<path d="M-18 15 C -23 -1 -15 -16 0 -16 C 15 -16 23 -1 18 15 C 11 26 -11 26 -18 15 Z"/></g>',
 };
 
-const SHOULDER = { L: [106, 350], R: [254, 350] };
+const SHOULDER = { L: [112, 340], R: [248, 340] };
 
 const armMarkup = (side, id) => `
   <g id="arm${side}-${id}" class="f-arm" opacity="0">
@@ -117,6 +114,9 @@ function markup(id) {
       <circle class="f-chain-drop" cx="180" cy="351" r="3.4"/>
       <path class="f-neck" d="M152 272 L 152 314 C 152 326 208 326 208 314 L 208 272 Z"/>
       <path class="f-neck-shade" d="M152 272 L 208 272 L 208 288 C 190 300 170 300 152 288 Z"/>
+
+      ${armMarkup("L", id)}
+      ${armMarkup("R", id)}
 
       <g id="head-${id}">
         <!-- curls behind the head -->
@@ -169,8 +169,6 @@ function markup(id) {
         <path class="f-stache" d="M158 264 Q 180 257 202 264"/>
         <path id="mouth-${id}" class="f-mouth" d="M155 274 Q 180 283 205 274"/>
       </g>
-      ${armMarkup("L", id)}
-      ${armMarkup("R", id)}
       ${handMarkup("L", id)}
       ${handMarkup("R", id)}
       </g>

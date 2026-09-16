@@ -257,10 +257,7 @@
             const inBeam = fb.width && Math.hypot(spot.x - (fb.left + fb.width / 2), spot.y - (fb.top + fb.height * 0.45)) < fb.width * 0.42;
             if (inBeam !== wasInBeam) {
                 wasInBeam = inBeam;
-                for (const f of faces) {
-                    f.setExpression(inBeam ? "dazzled" : current);
-                    f.setPose(inBeam ? "shield" : "none");
-                }
+                for (const f of faces) f.setExpression(inBeam ? "dazzled" : current);
                 if (inBeam) switchedAt = now;
             }
 

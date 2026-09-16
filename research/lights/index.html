@@ -180,15 +180,15 @@
     <script src="/assets/site.js" defer></script>
     <script type="module">
         import { initPageFace } from "/assets/face/page-face.js";
-        const face = initPageFace({ expression: "dazzled", pose: "shield" });
+        const face = initPageFace({ expression: "dazzled", pose: "none" });
         const art = document.getElementById("page-face");
         // Each cue: the gesture that fires it, and what the rig does to his face.
         const CUES = {
             blackout: { face: "unsettled", pose: "clap" },
             cover: { face: "dazzled", pose: "palms" },
-            special: { face: "dazzled", pose: "point" },
-            dim: { face: "resting", pose: "level" },
-            colour: { face: "amused", pose: "swipe" },
+            special: { face: "dazzled", pose: "sign" },
+            dim: { face: "resting", pose: "none" },
+            colour: { face: "amused", pose: "none" },
         };
         document.querySelectorAll("tr[data-cue]").forEach((row) => {
             row.addEventListener("pointerenter", () => {
@@ -198,7 +198,7 @@
             });
             row.addEventListener("pointerleave", () => {
                 art.className = "face-art head-face";
-                if (face) { face.setExpression("dazzled"); face.setPose("shield"); }
+                if (face) { face.setExpression("dazzled"); face.setPose("none"); }
             });
         });
     </script>
