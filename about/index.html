@@ -65,7 +65,7 @@
                 <h2>Notes</h2>
             </div>
             <div class="facts rise" style="border-top: 0; margin-top: 0;">
-                <div data-face="curious" tabindex="-1">
+                <div data-face="curious" data-pose="think" tabindex="-1">
                     <h3 class="label">Currently</h3>
                     <p>Building the SignFlip benchmark. Starting to learn American Sign Language. Looking for Deaf collaborators and research mentors.</p>
                 </div>
@@ -74,7 +74,7 @@
                     <p>MediaPipe, InsightFace, OpenCV, PyTorch, pgvector face search</p>
                 </div>
                 <div>
-                    <h3 class="label" data-face="dazzled">Image &amp; light</h3>
+                    <h3 class="label" data-face="dazzled" data-pose="shield">Image &amp; light</h3>
                     <p>Three.js, GLSL, WebGPU, TouchDesigner</p>
                 </div>
                 <div>
@@ -87,7 +87,7 @@
                 <h2>Open-source engineering</h2>
                 <a class="meta" href="https://github.com/amoghgg" target="_blank" rel="noopener">github.com/amoghgg ↗</a>
             </div>
-            <ul class="links rise" style="margin-top: 0;" data-face="amused">
+            <ul class="links rise" style="margin-top: 0;" data-face="amused" data-pose="camera" data-prop="camera">
                 <li style="border-top: 0;"><a href="https://github.com/amoghgg/face-biometrics-api" target="_blank" rel="noopener">face-biometrics-api</a><span class="meta">Liveness, 1:1 and 1:N face recognition · FastAPI</span></li>
                 <li><a href="https://github.com/amoghgg/lights" target="_blank" rel="noopener">lights</a><span class="meta">Gesture-driven lighting rig · browser, CPU-only</span></li>
                 <li><a href="https://github.com/amoghgg/biometric-city" target="_blank" rel="noopener">biometric-city</a><span class="meta">Real-time 3D city data · Three.js</span></li>
@@ -103,7 +103,9 @@
     <script src="/assets/site.js" defer></script>
     <script type="module">
         import { initPageFace } from "/assets/face/page-face.js";
-        initPageFace({ expression: "direct" });
+        const face = initPageFace({ expression: "direct", pose: "wave" });
+        // A wave on arrival, then he settles back into thinking.
+        setTimeout(() => face && face.setPose("think"), 2600);
     </script>
 </body>
 </html>

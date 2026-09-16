@@ -62,7 +62,7 @@
             <ul class="links rise">
                 <li><a href="mailto:amoghbajpai8@gmail.com">Email</a><span class="meta">amoghbajpai8@gmail.com</span></li>
                 <li><a href="https://github.com/amoghgg" target="_blank" rel="noopener">GitHub</a><span class="meta">github.com/amoghgg</span></li>
-                <li><a href="https://linkedin.com/in/amoghbajpai" target="_blank" rel="noopener">LinkedIn</a><span class="meta">linkedin.com/in/amoghbajpai</span></li>
+                <li><a href="https://linkedin.com/in/amogh-bajpai" target="_blank" rel="noopener">LinkedIn</a><span class="meta">linkedin.com/in/amogh-bajpai</span></li>
             </ul>
         </section>
 
@@ -74,10 +74,16 @@
     <script src="/assets/site.js" defer></script>
     <script type="module">
         import { initPageFace } from "/assets/face/page-face.js";
-        const face = initPageFace({ expression: "warm" });
+        const face = initPageFace({ expression: "warm", pose: "letter", prop: "letter" });
         // He grins when you actually take the address.
         document.querySelectorAll('a[href^="mailto:"]').forEach((a) =>
-            a.addEventListener("click", () => face && face.react("amused", 2200)));
+            a.addEventListener("click", () => {
+                if (!face) return;
+                face.react("amused", 2600);
+                face.setPose("wave");
+                face.setProp(null);
+                setTimeout(() => { face.setPose("letter"); face.setProp("letter"); }, 2600);
+            }));
     </script>
 </body>
 </html>

@@ -36,3 +36,16 @@
 
 /* Lores tribute: four-tone Game Boy green, used on hover of that row. */
 .face-art.is-pixel { filter: grayscale(1) sepia(1) hue-rotate(50deg) saturate(2.6) contrast(1.4); }
+
+/* hands and props */
+.face-art .f-hand { fill: var(--f-skin); stroke: var(--f-line); stroke-width: 3; stroke-linejoin: round; }
+.face-art .f-hand .f-knuckle { fill: none; stroke: var(--f-line); stroke-width: 2; opacity: 0.35; }
+.face-art .f-prop { opacity: 0; transition: opacity 0.35s ease; fill: var(--f-tee); stroke: var(--f-line); stroke-width: 3; }
+.face-art .face-svg.has-camera .f-prop-camera,
+.face-art .face-svg.has-letter .f-prop-letter { opacity: 1; }
+.face-art .f-prop-lens { fill: #2a2520; }
+.face-art .f-prop-glass { fill: #6d7c86; }
+.face-art .f-prop-letter { fill: #efe7d6; }
+.face-art .f-prop-fold { fill: none; stroke: var(--f-line); stroke-width: 2.5; }
+.face-art .f-prop-strap { fill: none; stroke: #2b2520; stroke-width: 7; stroke-linecap: round; }
+.face-art .f-prop-shutter { fill: #8a8078; stroke: none; }

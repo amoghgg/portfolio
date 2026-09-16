@@ -33,7 +33,7 @@
         .cues tr[data-cue]:hover td { background: var(--paper-2); }
         /* the rig, firing on his face */
         .head-face { transition: filter 0.45s var(--ease), opacity 0.35s var(--ease); }
-        .head-face.cue-blackout { opacity: 0.06; filter: brightness(0.3); }
+        .head-face.cue-blackout { opacity: 0.62; filter: brightness(0.16) saturate(0.2) contrast(1.4); }
         .head-face.cue-cover { filter: brightness(1.12) saturate(1.05); }
         .head-face.cue-special { filter: brightness(1.2) contrast(1.15); -webkit-mask-image: radial-gradient(circle at 50% 42%, #000 34%, rgba(0,0,0,0.25) 62%, rgba(0,0,0,0.08) 78%); mask-image: radial-gradient(circle at 50% 42%, #000 34%, rgba(0,0,0,0.25) 62%, rgba(0,0,0,0.08) 78%); }
         .head-face.cue-dim { filter: brightness(0.6); }
@@ -114,7 +114,7 @@
                         The vocabulary is deliberately small and designed so the gestures are structurally hard to
                         confuse: static and dynamic, one hand and two.
                     </p>
-                    <p class="meta" style="margin-bottom: 10px;">Hover a cue to fire it at him.</p>
+                    <p class="meta" style="margin-bottom: 10px;">Hover a cue: he throws the gesture, the rig answers.</p>
                     <div class="scroll-x">
                         <table class="cues">
                             <thead><tr><th>Cue</th><th>Gesture</th><th>Kind</th></tr></thead>
@@ -180,17 +180,25 @@
     <script src="/assets/site.js" defer></script>
     <script type="module">
         import { initPageFace } from "/assets/face/page-face.js";
-        const face = initPageFace({ expression: "dazzled" });
+        const face = initPageFace({ expression: "dazzled", pose: "shield" });
         const art = document.getElementById("page-face");
-        const CUE_FACE = { blackout: "unsettled", cover: "dazzled", special: "dazzled", dim: "resting", colour: "amused" };
+        // Each cue: the gesture that fires it, and what the rig does to his face.
+        const CUES = {
+            blackout: { face: "unsettled", pose: "clap" },
+            cover: { face: "dazzled", pose: "palms" },
+            special: { face: "dazzled", pose: "point" },
+            dim: { face: "resting", pose: "level" },
+            colour: { face: "amused", pose: "swipe" },
+        };
         document.querySelectorAll("tr[data-cue]").forEach((row) => {
             row.addEventListener("pointerenter", () => {
                 art.className = `face-art head-face cue-${row.dataset.cue}`;
-                if (face) face.setExpression(CUE_FACE[row.dataset.cue] || "resting");
+                const cue = CUES[row.dataset.cue];
+                if (face && cue) { face.setExpression(cue.face); face.setPose(cue.pose); }
             });
             row.addEventListener("pointerleave", () => {
                 art.className = "face-art head-face";
-                if (face) face.setExpression("dazzled");
+                if (face) { face.setExpression("dazzled"); face.setPose("shield"); }
             });
         });
     </script>

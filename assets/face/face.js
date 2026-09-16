@@ -44,6 +44,46 @@ const HAIR_FRONT = [
     [181, 136, 16], [122, 186, 16], [240, 186, 16],
 ];
 
+
+// Hands. Each pose places both hands: [x, y, rotation, shape] or null for "down".
+// Shapes: open palm, fist, pointing index, flat palm.
+const POSES = {
+    none:    { L: null, R: null },
+    think:   { L: null, R: [216, 300, -14, "fist"] },                        // knuckles at the chin
+    shield:  { L: null, R: [196, 128, -96, "open"] },                        // hand up against the light
+    wave:    { L: null, R: [300, 226, 14, "open"] },                         // hello
+    sign:    { L: null, R: [296, 250, -8, "point"] },                        // a question, held beside the face
+    palms:   { L: [56, 250, -16, "open"], R: [304, 250, 16, "open"] },       // general cover
+    clap:    { L: [150, 330, 66, "open"], R: [210, 330, -66, "open"] },      // blackout
+    point:   { L: null, R: [300, 246, 0, "point"] },                         // centre special
+    level:   { L: null, R: [308, 300, -92, "open"] },                        // master dim
+    swipe:   { L: null, R: [318, 256, 34, "open"] },                         // colour state
+    camera:  { L: [124, 336, -10, "fist"], R: [236, 336, 10, "fist"] },
+    letter:  { L: null, R: [208, 320, -8, "fist"] },
+};
+
+export const POSE_NAMES = Object.keys(POSES);
+
+const HAND_SHAPES = {
+    // palm with four fanned fingers and a thumb — reads as a hand at small sizes
+    open: '<g><rect x="-13" y="-34" width="9" height="26" rx="4.5" transform="rotate(-8 -9 -8)"/>' +
+          '<rect x="-4.5" y="-38" width="9" height="30" rx="4.5"/>' +
+          '<rect x="4" y="-36" width="9" height="28" rx="4.5" transform="rotate(5 8 -8)"/>' +
+          '<rect x="12" y="-30" width="9" height="23" rx="4.5" transform="rotate(12 16 -8)"/>' +
+          '<rect x="-19" y="-10" width="10" height="20" rx="5" transform="rotate(-42 -14 0)"/>' +
+          '<path d="M-17 -10 C -17 -16 17 -16 17 -10 L 17 12 C 17 22 -17 22 -17 12 Z"/></g>',
+    fist: '<g><path d="M-19 16 C -24 -4 -15 -21 0 -21 C 15 -21 24 -4 19 16 C 12 27 -12 27 -19 16 Z"/>' +
+          '<path class="f-knuckle" d="M-11 -7 L 11 -7 M-11 1 L 11 1"/></g>',
+    point: '<g><rect x="-6" y="-48" width="12" height="36" rx="6"/>' +
+           '<path d="M-18 15 C -23 -1 -15 -16 0 -16 C 15 -16 23 -1 18 15 C 11 26 -11 26 -18 15 Z"/></g>',
+};
+
+const handMarkup = (side, id) => `
+  <g id="hand${side}-${id}" class="f-hand" opacity="0">
+    ${Object.entries(HAND_SHAPES).map(([name, d]) =>
+        `<g class="f-hand-shape" data-shape="${name}" opacity="${name === "open" ? 1 : 0}">${d}</g>`).join("")}
+  </g>`;
+
 const svg = (s) => s.replace(/\s+/g, " ").trim();
 
 function markup(id) {
@@ -54,6 +94,7 @@ function markup(id) {
         <clipPath id="eyeR-${id}"><ellipse cx="218" cy="209" rx="18" ry="12.5"/></clipPath>
       </defs>
 
+      <g class="f-figure" transform="translate(25.2 32.2) scale(0.86)">
       <!-- oversized tee and the chain he always wears -->
       <path class="f-tee" d="M22 400 C 40 344 104 320 180 320 C 256 320 320 344 338 400 Z"/>
       <path class="f-tee-neck" d="M143 324 C 155 350 205 350 217 324 C 205 332 155 332 143 324 Z"/>
@@ -109,9 +150,26 @@ function markup(id) {
           <path d="M264 192 L 276 202"/>
         </g>
 
-        <path class="f-nose" d="M181 216 C 178 238 172 248 180 253 C 186 256 192 254 194 249"/>
+        <path class="f-nose" d="M182 220 C 180 236 175 244 182 248 C 187 250 191 248 193 245"/>
         <path class="f-stache" d="M158 264 Q 180 257 202 264"/>
         <path id="mouth-${id}" class="f-mouth" d="M155 274 Q 180 283 205 274"/>
+      </g>
+      ${handMarkup("L", id)}
+      ${handMarkup("R", id)}
+      </g>
+
+      <!-- props, shown by class on the wrapper -->
+      <g class="f-prop f-prop-camera">
+        <path class="f-prop-strap" d="M124 306 C 150 280 214 280 240 320"/>
+        <rect x="132" y="306" width="96" height="58" rx="9"/>
+        <rect x="156" y="296" width="26" height="12" rx="4"/>
+        <circle class="f-prop-lens" cx="180" cy="335" r="22"/>
+        <circle class="f-prop-glass" cx="180" cy="335" r="11"/>
+        <circle class="f-prop-shutter" cx="216" cy="302" r="4"/>
+      </g>
+      <g class="f-prop f-prop-letter">
+        <rect x="188" y="284" width="74" height="50" rx="4"/>
+        <path class="f-prop-fold" d="M188 286 L 225 312 L 262 286"/>
       </g>
     </svg>`);
 }
@@ -124,11 +182,16 @@ export function createFace(el, opts = {}) {
     const q = (name) => el.querySelector(`#${name}-${id}`);
     const refs = {
         head: q("head"), browL: q("browL"), browR: q("browR"),
+        handL: q("handL"), handR: q("handR"), svg: el.querySelector(".face-svg"),
         pupilL: q("pupilL"), pupilR: q("pupilR"), lidL: q("lidL"), lidR: q("lidR"), mouth: q("mouth"),
     };
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const base = opts.expression && EXPRESSIONS[opts.expression] ? opts.expression : "resting";
+    const HAND_REST = { L: [120, 372, 0], R: [240, 372, 0] };   // out of frame, below the shoulders
+    const handState = { L: { x: 120, y: 372, r: 0, on: 0 }, R: { x: 240, y: 372, r: 0, on: 0 } };
+    const handTarget = { L: { ...handState.L }, R: { ...handState.R } };
+
     const state = { ...EXPRESSIONS[base], gx: 0, gy: 0, blink: 1 };
     const target = { ...state };
     let resting = base;                 // what he returns to when a reaction ends
@@ -141,6 +204,27 @@ export function createFace(el, opts = {}) {
         if (hold) resting = name;
         Object.assign(target, e);
     }
+    function setPose(name) {
+        const pose = POSES[name] || POSES.none;
+        for (const side of ["L", "R"]) {
+            const p = pose[side];
+            const t = handTarget[side];
+            if (p) {
+                t.x = p[0]; t.y = p[1]; t.r = p[2]; t.on = 1;
+                refs[`hand${side}`].querySelectorAll(".f-hand-shape").forEach((g) =>
+                    g.setAttribute("opacity", g.dataset.shape === p[3] ? 1 : 0));
+            } else {
+                t.x = HAND_REST[side][0]; t.y = HAND_REST[side][1]; t.r = 0; t.on = 0;
+            }
+        }
+    }
+
+    // Props ride along with the pose.
+    function setProp(name) {
+        refs.svg.classList.remove("has-camera", "has-letter");
+        if (name) refs.svg.classList.add(`has-${name}`);
+    }
+
     // A reaction that decays back to whatever he was doing before.
     function react(name, ms = 1400) {
         setExpression(name);
@@ -201,13 +285,28 @@ export function createFace(el, opts = {}) {
             : `M${x0} ${y0} Q 180 ${274 + c} ${x1} ${y1}`;
         refs.mouth.setAttribute("d", d);
         refs.mouth.classList.toggle("is-open", o > 0.6);
+
+        for (const side of ["L", "R"]) {
+            const h = handState[side], t = handTarget[side];
+            h.x += (t.x - h.x) * 0.12;
+            h.y += (t.y - h.y) * 0.12;
+            h.r += (t.r - h.r) * 0.12;
+            h.on += (t.on - h.on) * 0.12;
+            const el = refs[`hand${side}`];
+            el.setAttribute("transform", `translate(${h.x.toFixed(1)} ${h.y.toFixed(1)}) rotate(${h.r.toFixed(1)})`);
+            el.setAttribute("opacity", h.on.toFixed(3));
+        }
     }
 
+    setPose(opts.pose || "none");
+    if (opts.prop) setProp(opts.prop);
     raf = requestAnimationFrame(render);
 
     return {
         el,
         setExpression,
+        setPose,
+        setProp,
         react,
         lookAt,
         destroy() { cancelAnimationFrame(raf); el.innerHTML = ""; },
