@@ -34,7 +34,7 @@
 
     <div class="meter" aria-live="polite">
         <div class="track"><div class="fill" id="meter-fill"></div></div>
-        <p class="read" id="meter-read">Standing by</p>
+        <p class="read" id="meter-read">Ready</p>
     </div>
 
     <details class="adjust">
@@ -56,27 +56,27 @@
 
     <section class="note-panel">
         <div>
-            <p class="label">Live piece · 2026</p>
+            <p class="label">In your browser · 2026</p>
             <h1 class="display">Pixel <em>Manifold</em></h1>
         </div>
         <div>
-            <p class="lede">A solo for one face, two hands and 1,298 particles. The audience is the performer: your face and hands are mapped, point by point, into a body of light.</p>
+            <p class="lede">Your face and hands, turned into 1,298 points of light. Everything you do, it does with you.</p>
             <ol class="directions">
-                <li>Take the stage. Face and hands enter the field.</li>
-                <li>Open your hands and the manifold blooms into colour.</li>
-                <li>Close them and it returns to white.</li>
-                <li>The meter reads how far you reach.</li>
+                <li>Press start and let the camera find your face and hands.</li>
+                <li>Open your hands and it bursts into colour.</li>
+                <li>Close them and it goes back to white.</li>
+                <li>The meter shows how far you are reaching.</li>
             </ol>
             <p class="status-msg" id="status-msg" role="status" hidden></p>
-            <button class="btn" id="begin"><span class="dot"></span>Take the stage</button>
+            <button class="btn" id="begin"><span class="dot"></span>Start</button>
             <p class="privacy">Runs entirely in your browser. Camera frames never leave your device.</p>
         </div>
     </section>
 
     <div class="live-bar">
         <span class="live-title">Pixel Manifold</span>
-        <span class="status" id="live-status">Warming up</span>
-        <button class="btn btn-ghost" id="stop">Step off</button>
+        <span class="status" id="live-status">Getting ready</span>
+        <button class="btn btn-ghost" id="stop">Stop</button>
     </div>
 
     <script type="module">
@@ -371,7 +371,7 @@
             if (video.srcObject) { video.srcObject.getTracks().forEach(t => t.stop()); video.srcObject = null; }
             document.body.classList.remove("is-live");
             beginBtn.disabled = false;
-            setRead("Standing by");
+            setRead("Ready");
         }
 
         async function takeStage() {
@@ -380,7 +380,7 @@
             document.body.classList.add("is-live");
             stageWarming = true;
             showWarmingOverlay();
-            setRead("Warming up");
+            setRead("Getting ready");
             try {
                 await setupAI();
                 if (!stageWarming) return; // stepped off while loading
@@ -487,7 +487,7 @@
                     setRead(`Open ${pct}% · colour`);
                 } else {
                     meterFill.style.background = "";
-                    setRead(handsDetected.length === 0 ? "Show your hands" : `Reach ${pct}%`);
+                    setRead(handsDetected.length === 0 ? "Show me your hands" : `Reach ${pct}%`);
                 }
 
                 // Re-center each frame on the landmark centroid so the face

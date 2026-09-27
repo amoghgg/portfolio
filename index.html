@@ -9,7 +9,7 @@
     <link rel="canonical" href="https://www.amoghbajpai.com/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Amogh Bajpai">
-    <meta property="og:description" content="Performance as a stress test for machine perception.">
+    <meta property="og:description" content="I build systems that watch people, and study where they get it wrong.">
     <meta property="og:url" content="https://www.amoghbajpai.com/">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0a08'/%3E%3Cpath d='M6 13c0-5 4-8 10-8s10 3 10 8v3c0 6-4 11-10 11S6 22 6 16z' fill='%23191410'/%3E%3Cpath d='M9 15c0-4 3-7 7-7s7 3 7 7v3c0 5-3 8-7 8s-7-3-7-8z' fill='%23dcb891'/%3E%3Crect x='7' y='13' width='8' height='6' rx='1.4' fill='none' stroke='%23120f0c' stroke-width='2'/%3E%3Crect x='17' y='13' width='8' height='6' rx='1.4' fill='none' stroke='%23120f0c' stroke-width='2'/%3E%3Cpath d='M6 13h20' stroke='%23120f0c' stroke-width='2'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -112,7 +112,7 @@
     <div class="grain" aria-hidden="true"></div>
 
     <header class="land-top">
-        <span class="land-mark">Amogh Bajpai · research &amp; live pieces</span>
+        <span class="land-mark">Amogh Bajpai · research and things you can try</span>
         <nav aria-label="Sections">
             <a href="/research/">Research</a>
             <a href="/works/">Works</a>
@@ -124,14 +124,14 @@
     <main>
         <h1 class="sr-only">Amogh Bajpai</h1>
         <div class="land-under">
-            <p class="land-line">Performance as a stress test for machine perception.</p>
-            <a class="land-enter" href="/research/">Enter the programme <span class="arr" aria-hidden="true">→</span></a>
+            <p class="land-line">I build systems that watch people, and study where they get it wrong.</p>
+            <a class="land-enter" href="/research/">Have a look <span class="arr" aria-hidden="true">→</span></a>
         </div>
     </main>
 
     <footer class="land-foot">
-        <span id="readout">House lights coming up</span>
-        <span class="hint">Double-click for a blackout</span>
+        <span id="readout">Turning the lights on</span>
+        <span class="hint">Double-click to turn the lights off</span>
     </footer>
 
     <div class="house" aria-hidden="true"></div>
@@ -242,9 +242,9 @@
             if (reduced) { spot.tx = faceBox.x + faceBox.size / 2; spot.ty = faceBox.y + faceBox.size * 0.42; }
             else if (idle) wander(now);
 
-            setReadout(master < 0.2 && masterTarget === 0 ? "Cue · blackout"
-                : t < 2200 ? "House lights coming up"
-                : idle ? "Follow spot · looking for a performer" : "Follow spot · he is watching you");
+            setReadout(master < 0.2 && masterTarget === 0 ? "Lights out"
+                : t < 2200 ? "Turning the lights on"
+                : idle ? "Waiting for you to move" : "He is watching you");
 
             const follow = idle ? 0.035 : 0.09;   // a real follow spot lags its operator
             spot.x += (spot.tx - spot.x) * follow;

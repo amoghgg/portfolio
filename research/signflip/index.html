@@ -59,14 +59,14 @@
                 <div>
                 <p class="label">Research · in progress</p>
                 <h1 class="display">Sign<em>Flip</em></h1>
-                <p class="dek">When generative video rewrites the signing body. A benchmark for meaning flips in sign language under AI video codecs.</p>
+                <p class="dek">What happens to sign language when AI redraws the person signing it.</p>
                 </div>
                 <div class="face-art head-face" id="page-face" role="img" aria-label="A drawn caricature of Amogh Bajpai"></div>
             </div>
         </div>
 
         <dl class="article-meta">
-            <div><dt>Status</dt><dd>Early stage, no results yet</dd></div>
+            <div><dt>Status</dt><dd>Early days, no results yet</dd></div>
             <div><dt>Started</dt><dd>September 2026</dd></div>
             <div><dt>Fields</dt><dd>Computer vision, accessibility</dd></div>
             <div><dt>Languages</dt><dd>ASL, with DGS, BSL, ISL</dd></div>
@@ -78,17 +78,18 @@
                 <div class="block">
                     <p class="pull">In sign languages, the face is grammar. An AI codec that redraws the face can change what a sentence means.</p>
                     <p>
-                        A new kind of video codec is arriving in calls. Instead of sending pixels, the sender transmits a
-                        compact description of how the face and head move, and the receiver <em>regenerates</em> the
-                        person from a reference image. It saves enormous bandwidth, and it is being built into commercial
-                        products and a video coding standard.
+                        A new kind of video call is arriving. Instead of sending the picture, your phone sends a short
+                        description of how your face and head are moving, and the other end <em>redraws</em> you from a
+                        single photo. It saves an enormous amount of data, and it is already going into real products
+                        and into a video standard.
                     </p>
                     <p>
-                        These systems are designed and evaluated around hearing people talking. For Deaf signers the
-                        stakes are different. Hands carry the words, and hands are exactly where these codecs are known to
-                        fail. The face carries the grammar: raised eyebrows mark a yes/no question, furrowed brows a
-                        wh-question, a head shake negation. If a codec smooths away an eyebrow raise, it hasn't made the
-                        video look worse. It has made the sentence say something else.
+                        All of it is built and tested around hearing people talking. For Deaf signers the stakes are
+                        different. The hands carry the words, and hands are exactly where these systems are known to
+                        fail. The face carries the grammar: raised eyebrows make it a yes/no question, lowered brows make
+                        it a "who, what, where" question, a head shake makes it a negative. If the system smooths away an
+                        eyebrow raise, it has not made the video look worse. It has made the sentence mean something
+                        else.
                     </p>
                 </div>
             </section>
@@ -137,18 +138,18 @@
             </section>
 
             <section>
-                <h2>Questions</h2>
+                <h2>What I want to know</h2>
                 <div class="block">
                     <ol>
-                        <li>How much sign-language intelligibility do current generative codecs lose, at which bitrates, and for which signs?</li>
-                        <li>How often do they <em>flip</em> meaning by dropping or inventing a grammatical facial marker (question, negation, mouthing)?</li>
-                        <li>Can a small, sign-aware side channel or training objective prevent those flips at the same bitrate?</li>
+                        <li>How much harder is signing to understand after these systems redraw it, and which signs suffer most?</li>
+                        <li>How often does the meaning actually <em>flip</em>, because the face lost or invented a question, a negative, or a mouth pattern?</li>
+                        <li>Can a little extra information, sent alongside, stop those flips without using more data?</li>
                     </ol>
                 </div>
             </section>
 
             <section>
-                <h2>Approach</h2>
+                <h2>How I plan to do it</h2>
                 <div class="block">
                     <p><strong>1. Benchmark.</strong> Run open generative codecs over public sign-language datasets (How2Sign and WLASL for ASL, with PHOENIX-2014T, BOBSL and iSign for German, British and Indian Sign Language). Compare sign recognition and translation on original versus regenerated video, and add a dedicated detector for grammatical facial markers so meaning flips can be counted, not just quality loss.</p>
                     <p><strong>2. A sign-aware codec.</strong> Carry the few signals that carry grammar (brows, head, mouth, hand keypoints) in a tiny side channel, or train with a loss that penalises losing them, and let the receiver check each frame against them.</p>
@@ -157,7 +158,7 @@
             </section>
 
             <section>
-                <h2>Principles</h2>
+                <h2>How I want to work</h2>
                 <div class="block">
                     <p class="note">
                         This research is about how Deaf people experience technology, so Deaf signers' judgement is the
@@ -172,7 +173,7 @@
             </section>
 
             <section>
-                <h2>Builds on</h2>
+                <h2>Reading</h2>
                 <div class="block">
                     <ol class="refs">
                         <li id="r1">VC4ASL. <em>Enabling ASL Communication Under Low Data Rates.</em> 2025. <a href="https://arxiv.org/abs/2510.23056">arXiv:2510.23056</a>: pose-based sign transmission for calls.</li>

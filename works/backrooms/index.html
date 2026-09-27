@@ -75,7 +75,7 @@
         </div>
         <div class="br-fog"></div>
         <canvas id="br-canvas"></canvas>
-        <p class="br-cue" id="br-cue">Find a face in the wallpaper. Step into the light.</p>
+        <p class="br-cue" id="br-cue">Step into the light.</p>
     </div>
     <div class="stage-scrim"></div>
     <video id="br-video" autoplay playsinline muted hidden></video>
@@ -87,7 +87,7 @@
 
     <div class="meter" aria-live="polite">
         <div class="track"><div class="fill" id="br-meter-fill"></div></div>
-        <p class="read" id="br-meter-read">No signal</p>
+        <p class="read" id="br-meter-read">Nothing yet</p>
     </div>
 
     <details class="adjust">
@@ -108,19 +108,19 @@
 
     <section class="note-panel">
         <div>
-            <p class="label">Live piece · 2026</p>
+            <p class="label">In your browser · 2026</p>
             <h1 class="display">Back<em>rooms</em></h1>
         </div>
         <div>
-            <p class="lede">Stand too close to the lens and you slip through. Same yellow hum, same damp carpet, forever. The thing that finds you here is wearing your face.</p>
+            <p class="lede">Get too close to the camera and you slip through. Same yellow light, same damp carpet, forever. Whatever finds you in here is wearing your face.</p>
             <ol class="directions">
-                <li>Noclip in. Let it catalogue your face.</li>
-                <li>It keeps your features and rearranges them along a seam.</li>
-                <li>Move freely. The wrongness holds its place.</li>
-                <li>Best with the lights off and the sound on.</li>
+                <li>Step in and let it study your face.</li>
+                <li>It keeps your features and moves them around.</li>
+                <li>Move around. The wrongness stays put.</li>
+                <li>Best with your lights off and the sound on.</li>
             </ol>
             <p class="status-msg" id="status-msg" role="status" hidden></p>
-            <button class="btn" id="br-activate"><span class="dot"></span>Noclip in</button>
+            <button class="btn" id="br-activate"><span class="dot"></span>Step in</button>
             <p class="privacy">Runs entirely in your browser. Camera frames never leave your device.</p>
         </div>
     </section>
@@ -128,7 +128,7 @@
     <div class="live-bar">
         <span class="live-title">Backrooms</span>
         <span class="status" id="br-live-status">Searching</span>
-        <button class="btn btn-ghost" id="br-stop">Clip out</button>
+        <button class="btn btn-ghost" id="br-stop">Leave</button>
     </div>
 
     <script type="module">
@@ -264,7 +264,7 @@
             if (tex) tex.needsUpdate = true;
             renderer.render(scene, cam);
             meterFill.style.width = (deformReady ? 100 : 0) + "%";
-            setRead(!running ? "No signal" : (deformReady ? "Splice locked" : "Searching"));
+            setRead(!running ? "Nothing yet" : (deformReady ? "Locked on" : "Searching"));
         }
 
         async function setupFace(){
@@ -329,7 +329,7 @@
             btn.disabled = true;
             statusMsg.hidden = true;
             document.body.classList.add("is-live");
-            cueEl.textContent = "Opening the door…";
+            cueEl.textContent = "One moment…";
             try {
                 if (!started){ initGL(); await setupFace(); started = true; }
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 960 }, height: { ideal: 720 } } });
@@ -348,8 +348,8 @@
             } catch (e){
                 stop();
                 statusMsg.textContent = e && e.name === "NotAllowedError"
-                    ? "Camera denied. There is no way out but in: allow camera access and try again."
-                    : "Couldn't open the door on this device. Try a recent Chrome, Edge or Safari with a webcam.";
+                    ? "The camera is blocked. Allow it for this site and try again."
+                    : "This one will not run on this device. Try a recent Chrome, Edge or Safari with a webcam.";
                 statusMsg.hidden = false;
             }
         }

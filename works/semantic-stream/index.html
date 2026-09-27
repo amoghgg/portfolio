@@ -66,24 +66,24 @@
     </header>
 
     <div class="caption-block" aria-live="polite">
-        <p class="cue"><span id="cue">Curtain up</span><span class="listening" id="listening"></span></p>
-        <p id="caption">Step into frame.</p>
+        <p class="cue"><span id="cue">Watching</span><span class="listening" id="listening"></span></p>
+        <p id="caption">Step into the frame.</p>
     </div>
 
     <section class="note-panel">
         <div>
-            <p class="label">Live piece · 2026</p>
+            <p class="label">In your browser · 2026</p>
             <h1 class="display">Semantic <em>Stream</em></h1>
         </div>
         <div>
-            <p class="lede">A monologue rehearsed in real time, between you and a stranger that has read your room. A vision-language model watches through your camera and tries to put you into words.</p>
+            <p class="lede">An AI watches your room through the camera and tries to put what it sees into words. One sentence every few seconds.</p>
             <ol class="directions">
-                <li>Begin the monologue.</li>
-                <li>Bring objects into frame. Do something.</li>
-                <li>Every few seconds, the stranger describes what it sees.</li>
+                <li>Press start.</li>
+                <li>Hold something up. Do something.</li>
+                <li>Every few seconds it tells you what it sees.</li>
             </ol>
             <p class="status-msg" id="status-msg" role="status" hidden></p>
-            <button class="btn" id="begin"><span class="dot"></span>Begin the monologue</button>
+            <button class="btn" id="begin"><span class="dot"></span>Start</button>
             <p class="privacy" id="privacy">One still frame every 7 seconds is sent to Google's Gemini API to be described. This site doesn't store your frames or captions.</p>
         </div>
     </section>
@@ -200,24 +200,24 @@
                 if (!running) return;
 
                 if (response.status === 429 && data.error === "rate_limited") {
-                    narratorLost(`The stranger needs a breather. Try again in ${data.retry_after || 60} seconds.`);
+                    narratorLost(`Too many requests. Try again in ${data.retry_after || 60} seconds.`);
                     return;
                 }
                 if (!response.ok || data.error || !data.caption) {
                     failures += 1;
                     console.warn("[semantic] caption failed:", data.error, data.detail || response.status);
                     if (failures >= MAX_CONSECUTIVE_FAILURES) {
-                        narratorLost("The stranger has lost its voice. The narration service is offline right now, so please try again later.");
+                        narratorLost("It has gone quiet — the service behind it is down right now. Try again later.");
                     }
                     return;
                 }
                 failures = 0;
-                setCaption(data.caption, "Now showing");
+                setCaption(data.caption, "It says");
             } catch (e) {
                 failures += 1;
                 console.warn("[semantic] caption skipped:", e.message);
                 if (failures >= MAX_CONSECUTIVE_FAILURES) {
-                    narratorLost("Couldn't reach the narrator. Check your connection and try again.");
+                    narratorLost("Could not reach it. Check your connection and try again.");
                 }
             } finally {
                 listening.classList.remove("on");
@@ -244,7 +244,7 @@
                 failures = 0;
                 document.body.classList.add("is-live");
                 stopAmbient();
-                setCaption("Step into frame.", "Curtain up");
+                setCaption("Step into the frame.", "Watching");
 
                 // Wait until the video element actually has a frame before
                 // the first inference; otherwise we'd capture a 0×0 canvas.
