@@ -141,7 +141,6 @@ function markup(id) {
       </g>
       </g>
 
-      <!-- props, shown by class on the wrapper -->
     </svg>`);
 }
 
@@ -177,10 +176,6 @@ export function createFace(el, opts = {}) {
         if (hold) resting = name;
         Object.assign(target, e);
     }
-    // Kept so pages can call them; the drawing is face-only.
-    function setPose() {}
-    function setProp() {}
-
     // A wink: one eye closes while that brow lifts, then it all comes back.
     function wink(side = "R", ms = 420) {
         const key = side === "L" ? "blink" : "blinkR";
@@ -308,8 +303,6 @@ export function createFace(el, opts = {}) {
         setExpression,
         wink,
         glance,
-        setPose,
-        setProp,
         react,
         lookAt,
         destroy() { cancelAnimationFrame(raf); el.innerHTML = ""; },
