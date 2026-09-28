@@ -131,7 +131,7 @@
 
     <footer class="land-foot">
         <span id="readout">Turning the lights on</span>
-        <span class="hint">Double-click to turn the lights off</span>
+        <span class="hint" id="hint">Double-click to turn the lights off</span>
     </footer>
 
     <div class="house" aria-hidden="true"></div>
@@ -142,6 +142,7 @@
         const canvas = document.getElementById("spot");
         const ctx = canvas.getContext("2d");
         const readout = document.getElementById("readout");
+        const hintEl = document.getElementById("hint");
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
         const EXPRESSIONS = EXPRESSION_NAMES;
@@ -314,20 +315,25 @@
             spot.tx = e.clientX; spot.ty = e.clientY; lastPointer = performance.now();
         }, { passive: true });
 
-        // Cue: blackout. Lights snap out, then fade back up.
-        let blackoutTimer = null;
-        function blackout() {
-            masterTarget = 0;
-            for (const f of faces) f.duck(true);              // he ducks off in the dark…
-            clearTimeout(blackoutTimer);
-            blackoutTimer = setTimeout(() => {
-                masterTarget = 1;
-                for (const f of faces) f.duck(false);          // …and pops back when the lights return
-            }, 900);
+        // The lights are a switch, not a flinch: they stay out until you bring them back.
+        let lightsOut = false;
+        function toggleLights() {
+            lightsOut = !lightsOut;
+            masterTarget = lightsOut ? 0 : 1;
+            hintEl.textContent = lightsOut
+                ? "Double-click to bring them back"
+                : "Double-click to turn the lights off";
         }
-        window.addEventListener("dblclick", (e) => { if (!e.target.closest("a")) blackout(); });
+        function lightsBackOn() {
+            if (!lightsOut) return;
+            lightsOut = false;
+            masterTarget = 1;
+            hintEl.textContent = "Double-click to turn the lights off";
+        }
+        window.addEventListener("dblclick", (e) => { if (!e.target.closest("a")) toggleLights(); });
         window.addEventListener("keydown", (e) => {
-            if (e.key === "b" || e.key === "B") blackout();
+            if (e.key === "b" || e.key === "B") toggleLights();
+            if (e.key === "Escape") lightsBackOn();
             if (e.key === "Enter" && document.activeElement === document.body) document.querySelector(".land-enter").click();
         });
 
