@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proof of Place — Amogh Bajpai</title>
+    <meta name="description" content="Proof of Place: checking a photo's claimed place and date against what satellites recorded at that spot on that day. Research in progress.">
+    <meta name="theme-color" content="#f3efe7">
+    <link rel="canonical" href="https://www.amoghbajpai.com/research/proof-of-place/">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Proof of Place — liveness for places">
+    <meta property="og:description" content="A photo says where and when it was taken. Satellites were watching too.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f3efe7'/%3E%3Cpath d='M6 13c0-5 4-8 10-8s10 3 10 8v3c0 6-4 11-10 11S6 22 6 16z' fill='%23191410'/%3E%3Cpath d='M9 15c0-4 3-7 7-7s7 3 7 7v3c0 5-3 8-7 8s-7-3-7-8z' fill='%23e3bd95'/%3E%3Crect x='7' y='13' width='8' height='6' rx='1.4' fill='none' stroke='%23120f0c' stroke-width='2'/%3E%3Crect x='17' y='13' width='8' height='6' rx='1.4' fill='none' stroke='%23120f0c' stroke-width='2'/%3E%3Cpath d='M6 13h20' stroke='%23120f0c' stroke-width='2'/%3E%3C/svg%3E">
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/site.css">
+    <link rel="stylesheet" href="/assets/face/face.css">
+    <style>
+        .scroll-x { overflow-x: auto; }
+        .card svg { display: block; width: 100%; min-width: 520px; height: auto; font-family: var(--mono); }
+        .card .grid { stroke: var(--rule); stroke-width: 1; }
+        .card .axis { fill: var(--ink-3); font-size: 11px; }
+        .card .line { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linejoin: round; }
+        .card .dot { fill: var(--ink); }
+        .card .claim { stroke: var(--accent); stroke-width: 2; }
+        .card .claim-t { fill: var(--accent); font-size: 11px; }
+        .article-body .checks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+        .checks li { border: 1px solid var(--rule-strong); background: var(--paper); padding: 14px; margin: 0 !important; font-size: 16px !important; line-height: 1.4 !important; }
+        .checks b { display: block; font-family: var(--mono); font-weight: 400; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+        @media (max-width: 640px) { .checks { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="masthead">
+        <div class="wrap">
+            <a class="name" href="/">Amogh Bajpai</a>
+            <nav aria-label="Sections">
+                <a href="/research/" aria-current="page">Research</a>
+                <a href="/works/">Works</a>
+                <a href="/about/" class="opt">About</a>
+                <a href="/contact/">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main" class="wrap">
+        <div class="article-head">
+            <a class="crumb meta" href="/research/">← Research · 01</a>
+            <div class="head-grid">
+                <div>
+                <p class="label">Research · in progress</p>
+                <h1 class="display"><em>Proof of Place</em></h1>
+                <p class="dek">A photo says where and when it was taken. Satellites were watching that spot too. So I check the photo against them.</p>
+                </div>
+                <div class="face-art head-face" id="page-face" role="img" aria-label="A drawn caricature of Amogh Bajpai"></div>
+            </div>
+        </div>
+
+        <dl class="article-meta">
+            <div><dt>Status</dt><dd>Building the first checks</dd></div>
+            <div><dt>Data</dt><dd>Sentinel-1 radar and Sentinel-2 optical, free</dd></div>
+            <div><dt>Next</dt><dd>Preprint and demo, March 2027</dd></div>
+        </dl>
+
+        <div class="article-body">
+            <section>
+                <h2>The problem</h2>
+                <div class="block">
+                    <p class="pull">Liveness checks ask "is this a real face?" Nobody asks "is this a real field?"</p>
+                    <p>
+                        A lot of public money in India moves on the strength of a geotagged photo. A worksite photo for
+                        MGNREGA, a house for PMAY, a damaged crop for an insurance claim. Officials already complain
+                        about photos of photos and pictures reused from last season. The location stamp is easy to fake,
+                        and the date is easier.
+                    </p>
+                    <p>
+                        I spend my day job on liveness: checking that the face in front of a camera is a real person,
+                        here, now. Proof of Place asks the same question of a place.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>How it checks</h2>
+                <div class="block">
+                    <p>
+                        The European Sentinel satellites photograph every field in India every few days. Optical images
+                        show how green a crop is. Radar sees through monsoon cloud and shows water and change. So for any
+                        photo that claims a place and a date, there is an independent record of what that place looked
+                        like that week.
+                    </p>
+                    <ul class="checks">
+                        <li><b>Crop stage</b>Does the greenness on that date match what the photo shows?</li>
+                        <li><b>Water</b>Was the field flooded, or dry, the way the photo says?</li>
+                        <li><b>Change</b>Did something actually happen between before and after?</li>
+                    </ul>
+                    <p style="margin-top: 1.2em;">
+                        Each claim gets a verdict, the check that failed, and a one-page evidence card a person can read
+                        in thirty seconds. When cloud, missing radar or a tiny plot leave too little evidence, it says
+                        <strong>"can't tell"</strong> instead of guessing. A tool like this is only useful if it is
+                        honest about that.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>The first evidence card</h2>
+                <figure class="figure block">
+                    <div class="plate scroll-x card">
+                        <svg viewBox="0 0 640 260" role="img" aria-label="Greenness of a wheat field near Jewar from February to July 2026. It is high until mid-March, falls to near bare soil by early April, and stays low. The claimed date, 20 April, sits in the low part.">
+                            <line class="grid" x1="44" x2="624" y1="58" y2="58"/>
+                            <line class="grid" x1="44" x2="624" y1="121" y2="121"/>
+                            <line class="grid" x1="44" x2="624" y1="184" y2="184"/>
+                            <line class="grid" x1="44" x2="624" y1="226" y2="226"/>
+                            <text class="axis" x="36" y="62" text-anchor="end">0.8</text>
+                            <text class="axis" x="36" y="125" text-anchor="end">0.5</text>
+                            <text class="axis" x="36" y="188" text-anchor="end">0.2</text>
+                            <text class="axis" x="94" y="246" text-anchor="middle">Feb</text>
+                            <text class="axis" x="176" y="246" text-anchor="middle">Mar</text>
+                            <text class="axis" x="268" y="246" text-anchor="middle">Apr</text>
+                            <text class="axis" x="356" y="246" text-anchor="middle">May</text>
+                            <text class="axis" x="447" y="246" text-anchor="middle">Jun</text>
+                            <text class="axis" x="536" y="246" text-anchor="middle">Jul</text>
+                            <line class="claim" x1="323.7" x2="323.7" y1="16" y2="226"/>
+                            <text class="claim-t" x="330" y="30">Photo claims green wheat, 20 Apr</text>
+                            <polyline class="line" points="126.4,62.2 141.2,57.4 141.2,56.9 155.9,55.7 170.6,61.4 185.3,68.7 191.2,68.1 191.2,66.4 220.6,107.1 279.5,186.1 288.4,187.6 303.1,189.0 317.8,191.8 332.5,190.9 347.2,195.8 362.0,195.5 376.7,191.8 397.3,205.6 420.9,207.5 465.0,210.5 494.5,209.0 515.1,212.1 523.9,213.6 553.3,210.9 568.1,202.1 582.8,192.2"/>
+                            <g class="dot"><circle cx="126.4" cy="62.2" r="3"/><circle cx="141.2" cy="57.4" r="3"/><circle cx="155.9" cy="55.7" r="3"/><circle cx="170.6" cy="61.4" r="3"/><circle cx="185.3" cy="68.7" r="3"/><circle cx="191.2" cy="66.4" r="3"/><circle cx="220.6" cy="107.1" r="3"/><circle cx="279.5" cy="186.1" r="3"/><circle cx="288.4" cy="187.6" r="3"/><circle cx="303.1" cy="189.0" r="3"/><circle cx="317.8" cy="191.8" r="3"/><circle cx="332.5" cy="190.9" r="3"/><circle cx="347.2" cy="195.8" r="3"/><circle cx="362.0" cy="195.5" r="3"/><circle cx="376.7" cy="191.8" r="3"/><circle cx="397.3" cy="205.6" r="3"/><circle cx="420.9" cy="207.5" r="3"/><circle cx="465.0" cy="210.5" r="3"/><circle cx="494.5" cy="209.0" r="3"/><circle cx="515.1" cy="212.1" r="3"/><circle cx="523.9" cy="213.6" r="3"/><circle cx="553.3" cy="210.9" r="3"/><circle cx="568.1" cy="202.1" r="3"/><circle cx="582.8" cy="192.2" r="3"/></g>
+                        </svg>
+                    </div>
+                    <figcaption class="meta">A wheat field near Jewar, 2026. Each dot is one cloud-free Sentinel-2 pass; higher means greener. The field was harvested in early April, so a photo of green wheat "taken on 20 April" fails the crop-stage check.</figcaption>
+                </figure>
+            </section>
+
+            <section>
+                <h2>What's new about it</h2>
+                <div class="block">
+                    <p>
+                        Earlier work checks whether a photo's hour and month fit its location, or compares it with a fixed
+                        map image. As far as I can find, nobody checks a ground photo against the satellite state of that
+                        exact field on the claimed date. Nobody treats it as an attack-detection problem either, with a
+                        list of attacks (wrong date, shifted GPS, the neighbour's field, a photo of a screen, an AI edit)
+                        and error rates reported for each one.
+                    </p>
+                    <p>
+                        What it can't do, said plainly: satellite pixels are 10 metres wide, so very small plots are out
+                        of reach. It catches the wrong place, the wrong time or the wrong state of the land. It does not
+                        catch a fake photo of the right scene.
+                    </p>
+                    <p class="note">No results yet beyond single evidence cards. I will put them here when there are some.</p>
+                </div>
+            </section>
+        </div>
+
+        <nav class="next" aria-label="More research">
+            <a href="/research/">← Research</a>
+            <a href="/research/morphs/">Morphs →</a>
+        </nav>
+
+        <footer class="footer meta">
+            <span>© 2026 Amogh Bajpai</span>
+            <nav aria-label="Elsewhere">
+                <a href="mailto:amoghbajpai8@gmail.com">Email</a>
+                <a href="https://github.com/amoghgg" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </footer>
+    </main>
+    <script src="/assets/site.js" defer></script>
+    <script type="module">
+        import { initPageFace } from "/assets/face/page-face.js";
+        initPageFace({ expression: "skeptical" });
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morphs — Amogh Bajpai</title>
+    <meta name="description" content="Morphs: detecting face morphing attacks from a single photo, and the bugs that made the early results look too good.">
+    <meta name="theme-color" content="#f3efe7">
+    <link rel="canonical" href="https://www.amoghbajpai.com/research/morphs/">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Morphs — one passport photo, two people">
+    <meta property="og:description" content="My first result was 98% right. It was wrong.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f3efe7'/%3E%3Cpath d='M6 13c0-5 4-8 10-8s10 3 10 8v3c0 6-4 11-10 11S6 22 6 16z' fill='%23191410'/%3E%3Cpath d='M9 15c0-4 3-7 7-7s7 3 7 7v3c0 5-3 8-7 8s-7-3-7-8z' fill='%23e3bd95'/%3E%3Crect x='7' y='13' width='8' height='6' rx='1.4' fill='none' stroke='%23120f0c' stroke-width='2'/%3E%3Crect x='17' y='13' width='8' height='6' rx='1.4' fill='none' stroke='%23120f0c' stroke-width='2'/%3E%3Cpath d='M6 13h20' stroke='%23120f0c' stroke-width='2'/%3E%3C/svg%3E">
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Fragment+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/site.css">
+    <link rel="stylesheet" href="/assets/face/face.css">
+    <style>
+        .scroll-x { overflow-x: auto; }
+        .deer { width: 100%; min-width: 460px; border-collapse: collapse; font-size: 17px; }
+        .deer th { text-align: left; font-family: var(--mono); font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); padding: 0 16px 10px 0; border-bottom: 1px solid var(--rule-strong); }
+        .deer td { padding: 11px 16px 11px 0; border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 13px; }
+        .deer td:first-child { font-family: inherit; font-size: 17px; font-style: italic; }
+        .deer tr.dead td { color: var(--ink-3); }
+        .bugs { margin: 0; padding-left: 1.2em; }
+        .bugs li { margin-bottom: 0.9em; }
+    </style>
+</head>
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="masthead">
+        <div class="wrap">
+            <a class="name" href="/">Amogh Bajpai</a>
+            <nav aria-label="Sections">
+                <a href="/research/" aria-current="page">Research</a>
+                <a href="/works/">Works</a>
+                <a href="/about/" class="opt">About</a>
+                <a href="/contact/">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main" class="wrap">
+        <div class="article-head">
+            <a class="crumb meta" href="/research/">← Research · 02</a>
+            <div class="head-grid">
+                <div>
+                <p class="label">Research · in progress</p>
+                <h1 class="display"><em>Morphs</em></h1>
+                <p class="dek">One passport photo made from two people's faces, so that it matches both of them. Can you catch that from the photo alone?</p>
+                </div>
+                <div class="face-art head-face" id="page-face" role="img" aria-label="A drawn caricature of Amogh Bajpai"></div>
+            </div>
+        </div>
+
+        <dl class="article-meta">
+            <div><dt>Status</dt><dd>First pass, not published</dd></div>
+            <div><dt>Data</dt><dd>10,042 consented research images</dd></div>
+            <div><dt>Measured with</dt><dd>ISO/IEC 30107-3 error rates</dd></div>
+        </dl>
+
+        <div class="article-body">
+            <section>
+                <h2>The attack</h2>
+                <div class="block">
+                    <p class="pull">A morph is a face built to pass as two people.</p>
+                    <p>
+                        Two people blend their faces into one photo and put it on a passport or an ID. Face matching then
+                        accepts the photo for either of them, so two people can share one document. Border agencies
+                        call this a morphing attack. The hard version is catching it from the one photo on the
+                        document, with no second picture to compare against.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Why this one is about honesty</h2>
+                <div class="block">
+                    <p>
+                        This is a field where papers report 99% and the number falls apart the moment it meets real
+                        photos. So I built the project around rules that make flattering results hard to get. No person
+                        appears on both the training and the test side, not even as half of a morph. The detector is
+                        tested on morphing tools it never saw in training. I wrote the scoring code and its tests before
+                        any model existed. And a modern neural network has to beat a 1990s texture method, or I say it didn't.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Three bugs caught by distrusting good news</h2>
+                <div class="block">
+                    <ol class="bugs">
+                        <li><strong>The 98% that wasn't.</strong> My first error rate was 1.6%. That was too good, so I went looking. 3,532 images from the "unseen" morphing tools had quietly slipped into training. Nobody overlapped, so my checks stayed quiet. What gave it away: every tool scored equally well, and generalisation never looks like that.</li>
+                        <li><strong>Reading the frame, not the face.</strong> The texture method was partly spotting warp marks near the image edge. Cropping to the face roughly doubled the error. The honest number is the worse one.</li>
+                        <li><strong>Two people called "001".</strong> Two datasets numbered their people the same way, so different people would have counted as one. I caught it before it did any damage.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section>
+                <h2>What survived</h2>
+                <figure class="figure block">
+                    <div class="plate scroll-x">
+                        <table class="deer">
+                            <thead><tr><th>Photo</th><th>Texture + SVM</th><th>Neural net</th></tr></thead>
+                            <tbody>
+                                <tr><td>Clean</td><td>5.5%</td><td>4.8% ± 1.1</td></tr>
+                                <tr><td>JPEG, quality 90</td><td>4.4%</td><td>10.5% ± 3.0</td></tr>
+                                <tr class="dead"><td>JPEG, quality 70</td><td>22.8%</td><td>56.8% ± 7.3</td></tr>
+                                <tr class="dead"><td>Shrunk to half size</td><td>89.2%</td><td>73.4% ± 4.7</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <figcaption class="meta">Equal error rate: lower is better, 50% is a coin flip. Neural net results are averaged over three training seeds. Greyed rows are where neither method works any more.</figcaption>
+                </figure>
+                <div class="block">
+                    <p>
+                        On clean photos the neural network only ties the 1990s method. Under compression too light to
+                        see, it gets measurably worse. Below that, both fall apart. An earlier single run seemed to show
+                        the network pulling ahead on badly damaged photos. That went away once I ran three seeds, so I
+                        withdrew it.
+                    </p>
+                    <p>
+                        My guess at why: the source photos are 1350 pixels wide and both detectors see 224. That throws
+                        away 97% of the pixels, and the fine skin texture where a morph shows is what goes first. That's
+                        the next experiment.
+                    </p>
+                    <p class="note">Everything here is a first pass on stand-in data, with simulated print-and-scan. Nothing is published.</p>
+                </div>
+            </section>
+        </div>
+
+        <nav class="next" aria-label="More research">
+            <a href="/research/proof-of-place/">← Proof of Place</a>
+            <a href="/research/signflip/">SignFlip →</a>
+        </nav>
+
+        <footer class="footer meta">
+            <span>© 2026 Amogh Bajpai</span>
+            <nav aria-label="Elsewhere">
+                <a href="mailto:amoghbajpai8@gmail.com">Email</a>
+                <a href="https://github.com/amoghgg" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </footer>
+    </main>
+    <script src="/assets/site.js" defer></script>
+    <script type="module">
+        import { initPageFace } from "/assets/face/page-face.js";
+        initPageFace({ expression: "wry" });
+    </script>
+</body>
+</html>
