@@ -56,7 +56,7 @@
 
     <main id="main" class="wrap">
         <div class="article-head">
-            <a class="crumb meta" href="/research/">← Research · 02</a>
+            <a class="crumb meta" href="/research/">← Research · 04</a>
             <div class="head-grid">
                 <div>
                 <p class="label">Research · paper in preparation</p>
@@ -147,7 +147,27 @@
                         structural fixes, and a small causal temporal network. Evaluation is split by participant, not by
                         clip.
                     </p>
-                    <p class="note">There are no published results yet. I will put them here once the testing is done.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>A first look on someone else's footage</h2>
+                <div class="block">
+                    <p>
+                        Before trusting our own recordings, I ran the same model and the same firing rule on IPN Hand, a
+                        public gesture dataset, using its official split so the test people were never seen in training.
+                        IPN also has long stretches of people just moving their hands without meaning anything, which is
+                        exactly what a stage looks like between cues.
+                    </p>
+                    <p>
+                        On that idle footage the system fires far too often. At loose settings it is hundreds of false
+                        cues an hour. Tighten the rule until it is down to a handful an hour, and it also stops noticing
+                        most of the real gestures. That trade-off is what the paper is about, and it is why accuracy
+                        alone tells you nothing here. The camera also loses the hand on about a third of frames, so I
+                        report false cues per hour the hand is actually tracked as well as per hour of clock time. The
+                        smaller number flatters the system.
+                    </p>
+                    <p class="note">These are early checks, not the paper's results. Those will go here once the testing is done.</p>
                 </div>
             </section>
 
