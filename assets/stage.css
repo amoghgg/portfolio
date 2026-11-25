@@ -71,11 +71,11 @@ body.is-live .note-panel { opacity: 0; transform: translateY(24px); pointer-even
     display: flex; align-items: center; gap: 16px; white-space: nowrap;
     padding: 8px 8px 8px 20px; border-radius: 999px;
     background: rgba(22, 20, 15, 0.72); border: 1px solid var(--stage-rule);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    
     transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
 }
 body.is-live .live-bar { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
-.live-bar .live-title { font-size: 16px; font-style: italic; }
+.live-bar .live-title { font-size: 16px; font-family: var(--display); }
 .live-bar .status { font-family: var(--mono); font-size: 11px; color: var(--stage-ink-2); min-width: 7.5em; }
 
 /* buttons */
@@ -100,14 +100,14 @@ body.is-live .adjust { opacity: 1; pointer-events: auto; }
 .adjust summary {
     list-style: none; cursor: pointer; font-family: var(--mono); font-size: 12px; color: var(--stage-ink-2);
     padding: 7px 14px; border: 1px solid var(--stage-rule); border-radius: 999px; background: rgba(22,20,15,0.6);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-align: center;
+     text-align: center;
 }
 .adjust summary::-webkit-details-marker { display: none; }
 .adjust[open] summary { color: var(--stage-ink); }
 .adjust .drawer {
     margin-top: 8px; padding: 14px; display: grid; gap: 10px; justify-items: end;
     background: rgba(22, 20, 15, 0.8); border: 1px solid var(--stage-rule); border-radius: 12px;
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    
 }
 .adjust .drawer .grp { display: flex; gap: 6px; align-items: center; }
 .adjust .drawer .grp span { font-family: var(--mono); font-size: 11px; color: var(--stage-ink-3); margin-right: 6px; }
@@ -131,7 +131,7 @@ body.is-live .meter { opacity: 1; }
 }
 .cue-center.on { opacity: 1; }
 .cue-center .small { font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; color: var(--stage-ink-3); margin-bottom: 14px; }
-.cue-center .big { font-size: clamp(30px, 4.4vw, 56px); font-style: italic; font-weight: 340; font-variation-settings: "opsz" 144, "SOFT" 100; color: var(--stage-ink); text-shadow: 0 0 40px rgba(237,232,221,0.35); transition: opacity 0.38s ease; }
+.cue-center .big { font-size: clamp(30px, 4.4vw, 56px); font-family: var(--display); font-weight: 500; color: var(--stage-ink); text-shadow: 0 0 40px rgba(237,232,221,0.35); transition: opacity 0.38s ease; }
 @keyframes breathe { 0%, 100% { opacity: 0.35; letter-spacing: 0.3em; } 50% { opacity: 0.95; letter-spacing: 0.5em; } }
 .cue-center.on .small { animation: breathe 1.6s ease-in-out infinite; }
 
