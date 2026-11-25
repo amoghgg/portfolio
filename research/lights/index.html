@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lights — Amogh Bajpai</title>
-    <meta name="description" content="Lights: markerless gestural cue triggering for theatrical lighting, evaluated by false triggers per hour. Paper in preparation, prototype live.">
+    <meta name="description" content="Lights: markerless gestural cue triggering for theatrical lighting, evaluated by false triggers per hour. Paper written, prototype live.">
     <meta name="theme-color" content="#f3efe7">
     <link rel="canonical" href="https://www.amoghbajpai.com/research/lights/">
     <meta property="og:type" content="article">
@@ -59,7 +59,7 @@
             <a class="crumb meta" href="/research/">← Research · 04</a>
             <div class="head-grid">
                 <div>
-                <p class="label">Research · paper in preparation</p>
+                <p class="label">Research · paper written</p>
                 <h1 class="display"><em>Lights</em></h1>
                 <p class="dek">Calling the lighting cues in a play with your hands. A camera watches from the wings, and a mistake blacks out the stage in front of an audience.</p>
                 </div>
@@ -68,7 +68,7 @@
         </div>
 
         <dl class="article-meta">
-            <div><dt>Status</dt><dd>Paper in preparation</dd></div>
+            <div><dt>Status</dt><dd>Paper written, not yet published</dd></div>
             <div><dt>With</dt><dd>Varun Tiwari, Manipal University Jaipur</dd></div>
             <div><dt>Prototype</dt><dd><a href="https://lights.amoghbajpai.com" target="_blank" rel="noopener">lights.amoghbajpai.com</a></dd></div>
             <div><dt>Code</dt><dd><a href="https://github.com/amoghgg/lights" target="_blank" rel="noopener">github.com/amoghgg/lights</a></dd></div>
@@ -110,64 +110,53 @@
                 <h2>The five cues</h2>
                 <div class="block">
                     <p>
-                        The prototype reads five cues from your bare hands — no markers, no gloves, nothing to calibrate.
-                        The set is deliberately tiny, and picked so the gestures are hard to mistake for each other:
-                        some held still, some moving, some one hand, some two.
+                        The system reads five cues from bare hands. There are no markers, no gloves, and nothing to calibrate.
+                        Each cue gets a <em>timing contract</em>. A blackout has to land within a fifth of a second, so it
+                        fires the moment it is recognised, and the gesture is made hard to do by accident instead. A colour
+                        change can wait, so it only gets lined up, and fires when you confirm it. The master level moves
+                        through every value on its way, so it can't be confirmed. It works like a fader: nothing moves until
+                        you take hold of it.
                     </p>
                     <p class="meta" style="margin-bottom: 10px;">Hover a cue and the lights do it to him.</p>
                     <div class="scroll-x">
                         <table class="cues">
-                            <thead><tr><th>Cue</th><th>Gesture</th><th>Kind</th></tr></thead>
+                            <thead><tr><th>Cue</th><th>Gesture</th><th>Contract</th></tr></thead>
                             <tbody>
-                                <tr data-cue="blackout"><td>Blackout</td><td>Double clap</td><td>Dynamic · two hands</td></tr>
-                                <tr data-cue="cover"><td>General cover</td><td>Both palms open, raised</td><td>Static · two hands</td></tr>
-                                <tr data-cue="special"><td>Centre special</td><td>Index finger pointing, held</td><td>Static · one hand</td></tr>
-                                <tr data-cue="dim"><td>Master dim</td><td>Flat palm height sets the level</td><td>Continuous · one hand</td></tr>
-                                <tr data-cue="colour"><td>Colour state</td><td>Lateral swipe</td><td>Dynamic · one hand</td></tr>
+                                <tr data-cue="blackout"><td>Blackout</td><td>Both hands, open to fist</td><td>Instant · two hands</td></tr>
+                                <tr data-cue="cover"><td>Restore</td><td>Both hands, fist to open</td><td>Instant · two hands</td></tr>
+                                <tr data-cue="special"><td>Area special</td><td>Both palms held toward an area</td><td>Confirmed · two hands</td></tr>
+                                <tr data-cue="dim"><td>Master</td><td>Open hand moving up or down</td><td>Held, like a fader · one hand</td></tr>
+                                <tr data-cue="colour"><td>Colour state</td><td>One hand sweeping sideways</td><td>Confirmed · one hand</td></tr>
                             </tbody>
                         </table>
                     </div>
+                    <p style="margin-top: 1.2em;">
+                        The first version used a double clap for blackout. It never worked, because the camera loses both
+                        hands at the exact moment they meet. Any gesture that is invisible at its own climax has the same
+                        problem. The master used to need a palm facing down, which meant looking at your own hand, and the
+                        whole point is that your eyes stay on the stage.
+                    </p>
                 </div>
             </section>
 
             <section>
-                <h2>What we actually measure</h2>
+                <h2>What we measure</h2>
                 <div class="block">
                     <p>
-                        Papers on gesture recognition routinely report accuracy in the nineties. Those numbers come from
-                        short clips that were cut to contain a gesture in the first place, so they cannot measure false
-                        firing at all. On a stage the two errors are not equal: a missed cue just fails to help, but a
+                        Papers on gesture recognition routinely report accuracy in the high nineties. Those numbers come
+                        from short clips cut to contain a gesture in the first place, so they can't measure false firing at
+                        all. On a stage the two errors are nothing alike: a missed cue just goes back to the old way, but a
                         false one blacks out the stage in front of an audience.
                     </p>
                     <p>
-                        So the headline number is <strong>false triggers per hour</strong>, alongside cue delivery latency
-                        against a manual baseline. Cues are grouped by timing contract: timing-critical cues commit as
-                        soon as they are recognised, while selective ones wait behind an explicit confirmation. Three
-                        detectors run on identical data through an identical streaming loop: naive rules, rules with
-                        structural fixes, and a small causal temporal network. Evaluation is split by participant, not by
+                        So the headline number is <strong>false cues per hour</strong>. People wear the system for hours
+                        while doing ordinary work in the wings, like handling a script, talking with their hands or standing
+                        still, and every cue it fires is a mistake. Next to that, we time how long a cue takes to land
+                        against the usual relay to a desk operator. Several versions of the detector run through the same
+                        loop, from plain rules to a small learned network, and everything is split by person rather than by
                         clip.
                     </p>
-                </div>
-            </section>
-
-            <section>
-                <h2>A first look on someone else's footage</h2>
-                <div class="block">
-                    <p>
-                        Before trusting our own recordings, I ran the same model and the same firing rule on IPN Hand, a
-                        public gesture dataset, using its official split so the test people were never seen in training.
-                        IPN also has long stretches of people just moving their hands without meaning anything, which is
-                        exactly what a stage looks like between cues.
-                    </p>
-                    <p>
-                        On that idle footage the system fires far too often. At loose settings it is hundreds of false
-                        cues an hour. Tighten the rule until it is down to a handful an hour, and it also stops noticing
-                        most of the real gestures. That trade-off is what the paper is about, and it is why accuracy
-                        alone tells you nothing here. The camera also loses the hand on about a third of frames, so I
-                        report false cues per hour the hand is actually tracked as well as per hour of clock time. The
-                        smaller number flatters the system.
-                    </p>
-                    <p class="note">These are early checks, not the paper's results. Those will go here once the testing is done.</p>
+                    <p class="note">The paper is written. Results will go here once it is out.</p>
                 </div>
             </section>
 
