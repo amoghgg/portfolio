@@ -1,40 +1,8 @@
-/* Caricature palette. Pages override these; the drawing itself never changes. */
-.face-art {
-    --f-skin: #e3bd95;
-    --f-line: #2b1d12;
-    --f-hair: #17120d;
-    --f-specs: #15120e;
-    --f-eye: #fdf8ee;
-    --f-tee: #17150f;
-    --f-chain: #cdd2d8;
-    display: block;
+/* The pixel sprite. Pages recolour it with these slots; the drawing never changes. */
+.face-art { display: block; }
+.face-art .face-sprite {
+    display: block; width: 100%; height: auto; aspect-ratio: 48 / 54;
+    image-rendering: pixelated; image-rendering: crisp-edges;
 }
-.face-art .face-svg { display: block; width: 100%; height: auto; overflow: visible; }
-
-.face-art .f-skin { fill: var(--f-skin); }
-.face-art .f-line { stroke: var(--f-line); stroke-width: 3; }
-.face-art .f-hair { fill: var(--f-hair); }
-.face-art .f-tee { fill: var(--f-tee); }
-.face-art .f-tee-neck { fill: none; stroke: var(--f-line); stroke-width: 3; opacity: 0.45; }
-.face-art .f-chain { fill: none; stroke: var(--f-chain); stroke-width: 3; opacity: 0.9; }
-.face-art .f-chain-drop { fill: var(--f-chain); opacity: 0.9; }
-.face-art .f-neck { fill: var(--f-skin); stroke: var(--f-line); stroke-width: 3; }
-.face-art .f-neck-shade { fill: var(--f-line); opacity: 0.14; }
-.face-art .f-jaw { fill: none; stroke: var(--f-line); stroke-width: 2; opacity: 0.25; }
-.face-art .f-eye { fill: var(--f-eye); }
-.face-art .f-pupil { fill: #241a12; }
-.face-art .f-spark { fill: #fff; opacity: 0.85; }
-.face-art .f-brow { fill: none; stroke: var(--f-hair); stroke-width: 10; stroke-linecap: round; }
-.face-art .f-specs { fill: none; stroke: var(--f-specs); stroke-width: 7; stroke-linejoin: round; stroke-linecap: round; }
-.face-art .f-specs-fill { fill: none; stroke: var(--f-specs); stroke-width: 8; }
-.face-art .f-nose { fill: none; stroke: var(--f-line); stroke-width: 3; stroke-linecap: round; }
-.face-art .f-stache { fill: none; stroke: var(--f-hair); stroke-width: 5; stroke-linecap: round; opacity: 0.32; }
-.face-art .f-stubble { fill: var(--f-hair); opacity: 0.17; }
-.face-art .f-mouth { fill: none; stroke: var(--f-line); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
-.face-art .f-mouth.is-open { fill: #6e2c1c; }
-.face-art .f-lip { fill: none; stroke: var(--f-line); stroke-width: 3; stroke-linecap: round; opacity: 0.3; }
-
 /* Lores tribute: four-tone Game Boy green, used on hover of that row. */
 .face-art.is-pixel { filter: grayscale(1) sepia(1) hue-rotate(50deg) saturate(2.6) contrast(1.4); }
-
-.face-art .f-lowlid { opacity: 0.98; }
