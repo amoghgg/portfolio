@@ -27,7 +27,9 @@ between a line, a smile, an open smile with teeth, and a round "o".
 Colours come from `--f-*` custom properties on the element, so a page (the dark
 home stage, Lores mode) can recolour him without touching the drawing.
 
-`page-face.js` puts him on a paper page with a speech box: he types the page's
-line on arrival and a line about whatever you hover (`data-say`), mouth moving
-while he talks. `preview.html` shows every expression.
+`page-face.js` puts him on a paper page: he follows the cursor, changes face on
+whatever you hover (`data-face`), and laughs when clicked. `preview.html` shows
+every expression. On the home page (`/assets/world/world.js`) the same sprite is
+smoothed up 3× and cast in gold as a fairground attraction, with the mouth as
+the gate.
 No photograph of him is used anywhere on the site.

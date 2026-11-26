@@ -1,10 +1,10 @@
 <!doctype html><meta charset="utf-8"><title>Sprite preview</title>
-<link rel="stylesheet" href="/assets/face/face.css?v=px7">
+<link rel="stylesheet" href="/assets/face/face.css?v=px8">
 <style>body{margin:0;background:#f3efe7;font:12px monospace;display:grid;grid-template-columns:repeat(6,1fr);gap:8px;padding:12px}
 .cell{text-align:center}.cell .face-art{width:200px;margin:auto}.dark{background:#0b0a08;color:#ede8dd}</style>
 <body>
 <script type="module">
-import { createFace } from "/assets/face/face.js?v=px7";
+import { createFace } from "/assets/face/face.js?v=px8";
 const names=["resting","curious","amused","wry","direct","warm","dazzled","amazed","unsettled","talking","smirk","skeptical","thinking","laughing","sleepy","reading","question","flattened"];
 for (const n of names){const c=document.createElement("div");c.className="cell";c.innerHTML=`<div class="face-art"></div>${n}`;document.body.appendChild(c);createFace(c.querySelector(".face-art"),{expression:n});}
 </script>

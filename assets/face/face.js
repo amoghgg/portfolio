@@ -57,6 +57,7 @@ const SLOTS = {
     collar: ["--f-collar", "#f6f8fb"], chain: ["--f-chain", "#cfd4da"], edge: ["--f-edge", "#0e0b08"],
 };
 const ORDER = Object.keys(SLOTS);
+export const SLOT_ORDER = ORDER;
 const IDX = Object.fromEntries(ORDER.map((k, i) => [k, i + 1]));   // 0 = empty
 
 // A big, wide cloud of curls: wider than the face, hanging over the temples.
