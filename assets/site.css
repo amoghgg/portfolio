@@ -174,10 +174,21 @@ a:hover { color: var(--accent); }
 .facts p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--ink-2); }
 
 .links { list-style: none; margin: 0; padding: 0; }
-.links li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 2px dashed var(--rule); font-size: 17px; }
+.links li { position: relative; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 2px dashed var(--rule); font-size: 17px;
+    transition: background-color 0.12s steps(2), padding 0.12s steps(2); }
 .links li:first-child { border-top: 2px dashed var(--rule); }
-.links a { text-decoration: none; font-family: var(--mono); font-weight: 500; }
-.links a:hover { text-decoration: underline; }
+/* the whole row is the link: a game-menu item that inverts when you point at it */
+.links a { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.22em; font-family: var(--mono); font-weight: 500; color: var(--ink); }
+.links a::before { content: "\25B6"; display: inline-block; width: 0; overflow: hidden; color: var(--accent); vertical-align: 1px; font-size: 0.75em; transition: width 0.12s steps(2); }
+.links a::after { content: ""; position: absolute; inset: 0; }
+.links .meta { color: var(--ink-2); }
+.links .meta::after { content: " \2197"; font-family: var(--pixel); color: var(--accent); }
+.links li:has(a[href^="mailto:"]) .meta::after { content: " \2192"; }
+.links li:hover, .links li:focus-within { background: var(--ink); padding-inline: 14px; }
+.links li:hover a, .links li:focus-within a { color: var(--paper); text-decoration: none; }
+.links li:hover a::before, .links li:focus-within a::before { width: 1.4em; }
+.links li:hover .meta, .links li:focus-within .meta { color: rgba(243, 239, 231, 0.8); }
+.links a:focus-visible { outline: none; }
 @media (max-width: 560px) { .links li { flex-direction: column; gap: 2px; } }
 
 /* ── footer ───────────────────────────────────────────────── */
