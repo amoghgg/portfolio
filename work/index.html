@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just the work — Amogh Bajpai</title>
+    <meta name="description" content="Amogh Bajpai on one page: face verification for national exams in India, and research on where machine perception breaks.">
+    <meta name="theme-color" content="#f3efe7">
+    <link rel="canonical" href="https://www.amoghbajpai.com/work/">
+    <meta property="og:title" content="Amogh Bajpai — just the work">
+    <meta property="og:description" content="I build systems that watch people, and study where they get it wrong.">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon.png?v=1">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=1">
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Pixelify+Sans:wght@400..700&family=Silkscreen&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/site.css?v=px10">
+    <style>
+        .plain-head { padding-top: clamp(40px, 7vw, 96px); }
+        .plain-head .display { max-width: 18ch; }
+        .walk { font-family: var(--pixel); font-size: 11px; letter-spacing: 0.06em; text-decoration: none; color: var(--ink);
+            border: 3px solid var(--ink); padding: 7px 10px 6px; white-space: nowrap; }
+        .walk:hover, .walk:focus-visible { background: #f3c23a; outline: none; }
+        .job { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+        .job li { padding-left: 1.2em; position: relative; }
+        .job li::before { content: "▸"; position: absolute; left: 0; }
+        .row .line b { font-weight: 600; }
+        @media (max-width: 640px) {
+            .masthead nav a.nav-x { display: none; }
+            .walk { padding: 5px 7px 4px; font-size: 10px; }
+        }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: clamp(32px, 5vw, 56px) 0 0; padding: 0; list-style: none; border-top: 3px solid var(--ink); }
+        .stats li { padding: 16px 16px 4px 0; }
+        .stats b { display: block; font-family: var(--display); font-weight: 600; font-size: clamp(26px, 3.4vw, 40px); line-height: 1; }
+        .stats span { display: block; margin-top: 8px; font-size: 14px; line-height: 1.4; opacity: 0.8; }
+        @media (max-width: 760px) { .stats { grid-template-columns: 1fr 1fr; } }
+        .role { margin: 0 0 14px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; }
+        .role h3 { margin: 0; font-size: 18px; font-weight: 600; }
+        .job + .role { margin-top: 32px; }
+        .job li b { font-weight: 600; }
+        .tail { margin: clamp(48px, 7vw, 88px) 0 24px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+    </style>
+</head>
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="masthead">
+        <div class="wrap">
+            <a class="name" href="/work/">Amogh Bajpai</a>
+            <nav aria-label="Sections">
+                <a href="#job" class="nav-x">Day job</a>
+                <a href="#research" class="nav-x">Research</a>
+                <a href="#works" class="nav-x">Works</a>
+                <a href="#contact">Contact</a>
+                <a class="walk" href="/?world" title="The same site, as a little pixel world">Walk around &#9654;</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main" class="wrap">
+        <section class="page-head plain-head">
+            <p class="label">Noida, India · Software engineer, applied ML</p>
+            <h1 class="display">I build systems that watch people, <em>and study where they get it wrong.</em></h1>
+            <div class="page-intro">
+                <p class="label">In short</p>
+                <div>
+                    <p>
+                        I'm a software engineer at Innovatiview, India's largest exam-security company. I built the
+                        identity check that roughly 300,000 exam operators clear (ID, liveness and face match), and the
+                        platform it runs inside. Now I'm rebuilding rrbapply.gov.in, where candidates apply for Indian
+                        Railways jobs. Around it I do research on where machine perception breaks: morphed
+                        passport photos, geotagged photos that lie about time and place, and gesture control where one
+                        false trigger blacks out a stage. I came to engineering through theatre, trained at the National
+                        School of Drama, which is why I care about how people actually move.
+                    </p>
+                </div>
+            </div>
+            <ul class="stats">
+                <li><b>300K</b><span>roughly, exam operators through the identity check I built</span></li>
+                <li><b>&lt;300&nbsp;ms</b><span>dashboard load, down from 4–8 s; CPU from 96% to under 1%</span></li>
+                <li><b>2M</b><span>roughly, exam photos screened for proxy candidates by room, not face</span></li>
+                <li><b>0 / 2,250</b><span>differences between my JavaScript port of the RRB eligibility and fee rules and the Go original</span></li>
+            </ul>
+        </section>
+
+        <section class="page-body" id="job" aria-labelledby="job-h">
+            <div class="section-head">
+                <h2 id="job-h">Day job</h2>
+                <a class="meta" href="https://innovatiview.com" target="_blank" rel="noopener">Innovatiview India ↗</a>
+            </div>
+            <div class="role"><h3>Now: rebuilding RRB Apply</h3><span class="meta">Nov 2026 – now · Go, Postgres, AWS</span></div>
+            <ul class="job">
+                <li><b>The application portal for Indian Railways jobs.</b> Rebuilding rrbapply.gov.in, where candidates register, apply to a recruitment notice, upload documents and pay, as a Go and Postgres system covering 9 recruitment notices. 79 commits so far, in a two-person team. For scale: a single notice, NTPC 2025, drew about 1.22 crore applications for 11,558 posts, roughly a thousand people for every seat, and Group D 2025 drew another 1.08 crore.</li>
+                <li><b>Identity without leaving the page.</b> Aadhaar OTP e-KYC and DigiLocker sign-in (OAuth 2.0 with PKCE, HMAC-checked eAadhaar XML), with a live card comparing what you typed against Aadhaar. Driving-licence numbers are validated down to state, RTO, year and serial.</li>
+                <li><b>Real OTPs, safely.</b> An SMS and email delivery service with per-recipient rate limits, hCaptcha checked on the server, and an OTP check that verifies as you type without spending the code.</li>
+                <li><b>Rules ported, then proven.</b> Ported the Go eligibility and fee rules (CEL) to JavaScript for a form simulator of the whole candidate journey. Zero differences on 2,250 random candidates; Playwright runs every notice through to payment and opens all 469 rule dialogs.</li>
+                <li><b>33 bugs closed in one day,</b> one commit each, including a rule that never offers SC candidates a zone with no SC seats. Deployed to production with backups, migrations, a written rollback and a separate staging site.</li>
+            </ul>
+            <div class="role"><h3>Software Engineer · seQRview</h3><span class="meta">Jan – Nov 2026 · intern May–Aug 2025, converted</span></div>
+            <ul class="job">
+                <li><b>The identity check every exam operator clears.</b> Aadhaar and driving-licence checks, face liveness, 1:1 selfie-to-ID matching, and hashed-ID deduplication that blocks repeat sign-ups. Roughly 300,000 operators, every check audit-logged.</li>
+                <li><b>One backend for three apps.</b> Rebuilt seQRview as a single Django and Postgres backend (about 40 models): a dashboard that sets up exams, shifts and centres; an operator app for self-onboarding with Aadhaar KYC; and a field app that confirms the right person reached the right centre, by geofence and face match.</li>
+                <li><b>Off MongoDB with zero downtime,</b> through a resumable change-stream bridge into Postgres.</li>
+                <li><b>4–8 seconds to under 300 ms.</b> Fixed the query patterns behind the main dashboard; CPU fell from about 96% to under 1%, and the smaller server saves about ₹70,000 a year.</li>
+                <li><b>A shuffle nobody can game.</b> Operators are moved between centres before exam day so nobody knows their posting in advance: min-cost max-flow that maximises dispersion while every centre keeps its exact headcount per role and a single vendor. Ships with a seven-check verifier and a dry-run preview.</li>
+                <li><b>Run without SSH.</b> Docker with autoscaling and health checks, plus a Telegram bot the team uses to deploy and monitor. No unplanned downtime since launch.</li>
+            </ul>
+        </section>
+
+        <section class="page-body" id="research" aria-labelledby="research-h">
+            <div class="section-head">
+                <h2 id="research-h">Research</h2>
+                <span class="meta">Where machine perception breaks</span>
+            </div>
+            <ol class="index">
+                <li>
+                    <a class="row" href="/research/morphs/">
+                        <span class="num">01</span>
+                        <span>
+                            <span class="title">Morphs</span>
+                            <span class="line">Detecting passport photos blended from two faces, from the photo alone. <b>Result:</b> on 10,042 images, a neural net ties a 1990s texture method on clean photos (4.8% vs 5.5% EER) and breaks first under JPEG. Caught three silent bugs by distrusting good results, including 3,532 images leaking into training. 97 tests.</span>
+                        </span>
+                        <span class="kind">Face biometrics<span class="status">First pass</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true">→</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="row" href="/research/lights/">
+                        <span class="num">02</span>
+                        <span>
+                            <span class="title">Lights</span>
+                            <span class="line">Five bare-hand gestures fire five DMX lighting cues. Measured by false cues per hour, not clip accuracy, because one stray blackout ruins a show. The live prototype logs per-stage latency and every false trigger.</span>
+                        </span>
+                        <span class="kind">HCI · paper<span class="status">Written</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true">→</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="row" href="/research/proof-of-place/">
+                        <span class="num">03</span>
+                        <span>
+                            <span class="title">Proof of Place</span>
+                            <span class="line">Checking a geotagged photo's place and date against what Sentinel-1 and -2 saw of that field that week, with an honest "can't tell". Preprint and demo planned for March 2027.</span>
+                        </span>
+                        <span class="kind">Satellite imagery<span class="status">In progress</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true">→</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="row" href="/research/signflip/">
+                        <span class="num">04</span>
+                        <span>
+                            <span class="title">SignFlip</span>
+                            <span class="line">Whether AI video codecs that redraw your face change the grammar of sign language.</span>
+                        </span>
+                        <span class="kind">Computer vision<span class="status">On hold</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true">→</span>
+                    </a>
+                </li>
+            </ol>
+        </section>
+
+        <section class="page-body" id="works" aria-labelledby="works-h">
+            <div class="section-head">
+                <h2 id="works-h">Things I built</h2>
+                <span class="meta">Engineering, then the live pieces</span>
+            </div>
+            <ol class="index">
+                <li>
+                    <div class="row">
+                        <span class="num">01</span>
+                        <span>
+                            <span class="title">Proxy Fraud Detector</span>
+                            <span class="line">Flags exam verifications done away from the official desk by looking at the room, not the person: people masked out with DeepLabV3, the background embedded with DINOv2, outliers found per centre. Runs on CPU behind a ranked human-review queue, across about 2M images.</span>
+                        </span>
+                        <span class="kind">Applied ML<span class="status">At work</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true"></span>
+                    </div>
+                </li>
+                <li>
+                    <div class="row">
+                        <span class="num">02</span>
+                        <span>
+                            <span class="title">Tejas</span>
+                            <span class="line">A help bot for RRB Apply candidates in English, Hindi and Hinglish ("otp nahi aa raha"): 77 answers mapped from 50+ real pain points, each citing its source, with live IST deadlines and an age checker. No AI, no network calls, no dependencies; 39 KB, and it runs under a strict CSP.</span>
+                        </span>
+                        <span class="kind">Conversational UX<span class="status">At work</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true"></span>
+                    </div>
+                </li>
+                <li>
+                    <a class="row" href="https://github.com/amoghgg/face-biometrics-api" target="_blank" rel="noopener">
+                        <span class="num">03</span>
+                        <span>
+                            <span class="title">Face Biometrics API</span>
+                            <span class="line">What the commercial face SDKs we buy at work do inside, rebuilt: active liveness (head turns, smile), 1:1 and 1:N matching, behind a containerised FastAPI service.</span>
+                        </span>
+                        <span class="kind">FastAPI · InsightFace<span class="status">Open source</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true">↗</span>
+                    </a>
+                </li>
+                <li>
+                    <div class="row">
+                        <span class="num">04</span>
+                        <span>
+                            <span class="title">Dispatch Comms</span>
+                            <span class="line">Bulk SMS driven by Excel uploads: diffs each upload, queues only the changed rows and sends idempotently, so nobody is texted twice. Replies come back by SMS or a proof-of-delivery photo.</span>
+                        </span>
+                        <span class="kind">FastAPI · Celery<span class="status">Private</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true"></span>
+                    </div>
+                </li>
+                <li>
+                    <a class="row" href="/works/talking/">
+                        <span class="num">05</span>
+                        <span>
+                            <span class="title">Talking</span>
+                            <span class="line">A live mirror that repaints your face as mine: TouchDesigner, Stable Diffusion img2img, a fast LoRA and a face LoRA, running live on a MacBook. A credited re-build of Aisling Phelan's Surrogate Bodies.</span>
+                        </span>
+                        <span class="kind">Installation<span class="status">Runs on a Mac</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true">→</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="row" href="https://lores.amoghbajpai.com" target="_blank" rel="noopener">
+                        <span class="num">06</span>
+                        <span>
+                            <span class="title">Lores</span>
+                            <span class="line">Film looks and real pixel art (Game Boy, PICO-8 and C64 palettes, Floyd–Steinberg or Bayer dithering) for photos and video, computed entirely in the browser with WebGPU. Plus a Mac app with on-device AI edits.</span>
+                        </span>
+                        <span class="kind">Tool<span class="status">Live</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true">↗</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="row" href="/works/pixel-manifold/">
+                        <span class="num">07</span>
+                        <span>
+                            <span class="title">Pixel Manifold</span>
+                            <span class="line">Face and hand tracking turned into 1,298 points of light, in the browser. Camera frames never leave the device.</span>
+                        </span>
+                        <span class="kind">In your browser<span class="status">Needs a webcam</span></span>
+                        <span class="year">2026</span>
+                        <span class="arrow" aria-hidden="true">→</span>
+                    </a>
+                </li>
+            </ol>
+        </section>
+
+        <section class="page-body" aria-labelledby="before-h">
+            <div class="section-head">
+                <h2 id="before-h">Before this</h2>
+            </div>
+            <div class="role"><h3>Parvarish, co-founder</h3><span class="meta">Jaipur · 2022–2024</span></div>
+            <ul class="job">
+                <li>A platform for finding and booking vetted daycares, with verified centres and 24/7 CCTV for parents. <b>First of 22 teams</b> in the university's Shark Tank, then incubated at an Atal Incubation Centre (NITI Aayog) on a monthly grant. I owned design, brand and SEO, and managed two interns.</li>
+            </ul>
+            <div class="role"><h3>Cinefilia Theatre Club, president</h3><span class="meta">Manipal University Jaipur · 2024–2025</span></div>
+            <ul class="job">
+                <li>Led a <b>150-member</b> theatre team to award-winning productions, and took it to national festivals at IIT Bombay and IIT Roorkee. Trained at the National School of Drama.</li>
+            </ul>
+            <div class="role"><h3>B.Tech, Computer Science</h3><span class="meta">Manipal University Jaipur · 2022–2026</span></div>
+        </section>
+
+        <section class="page-body" aria-labelledby="stack-h">
+            <div class="section-head">
+                <h2 id="stack-h">Tools</h2>
+                <a class="meta" href="https://github.com/amoghgg" target="_blank" rel="noopener">github.com/amoghgg ↗</a>
+            </div>
+            <div class="facts" style="border-top: 0; margin-top: 0;">
+                <div><h3 class="label">ML and vision</h3><p>PyTorch, timm, DINOv2, DeepLabV3, MediaPipe, InsightFace, OpenCV, scikit-learn, HDBSCAN; evaluation design (subject-disjoint splits, ISO/IEC 30107-3)</p></div>
+                <div><h3 class="label">Backend</h3><p>Python, Go, SQL; Django, DRF, FastAPI, Celery, Channels; Postgres, Redis; AWS, Docker, Nginx</p></div>
+                <div><h3 class="label">Graphics</h3><p>TypeScript, React, Vue, Three.js, GLSL, WebGPU, TouchDesigner</p></div>
+                <div><h3 class="label">Code to read</h3><p><a href="https://github.com/amoghgg/face-biometrics-api" target="_blank" rel="noopener">face-biometrics-api</a>, <a href="https://github.com/amoghgg/lights" target="_blank" rel="noopener">lights</a>, <a href="https://github.com/amoghgg/talking" target="_blank" rel="noopener">talking</a>, <a href="https://github.com/amoghgg/lores" target="_blank" rel="noopener">lores</a></p></div>
+            </div>
+        </section>
+
+        <section class="page-body" id="contact" aria-labelledby="contact-h">
+            <div class="section-head">
+                <h2 id="contact-h">Contact</h2>
+            </div>
+            <ul class="links" style="margin-top: 0;">
+                <li style="border-top: 0;"><a href="mailto:amoghbajpai8@gmail.com">Email</a><span class="meta">amoghbajpai8@gmail.com</span></li>
+                <li><a href="https://linkedin.com/in/amogh-bajpai" target="_blank" rel="noopener">LinkedIn</a><span class="meta">linkedin.com/in/amogh-bajpai</span></li>
+                <li><a href="https://github.com/amoghgg" target="_blank" rel="noopener">GitHub</a><span class="meta">github.com/amoghgg</span></li>
+            </ul>
+        </section>
+
+        <div class="tail">
+            <p class="meta">The same work also lives in a little pixel world, if you have a minute.</p>
+            <a class="walk" href="/?world">Walk around &#9654;</a>
+        </div>
+    </main>
+    <script src="/assets/site.js?v=px8" defer></script>
+</body>
+</html>

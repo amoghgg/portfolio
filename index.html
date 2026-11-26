@@ -11,6 +11,16 @@
     <meta property="og:title" content="Amogh Bajpai">
     <meta property="og:description" content="I build systems that watch people, and study where they get it wrong.">
     <meta property="og:url" content="https://www.amoghbajpai.com/">
+    <script>
+        // returning visitors who chose "just the work" go straight there; ?world always shows the world
+        (function () {
+            var q = new URLSearchParams(location.search), v = null;
+            try { if (q.has("world")) localStorage.setItem("view", "world"); v = localStorage.getItem("view"); } catch (e) { v = "world"; }
+            if (q.has("world") || q.has("p")) return;
+            if (v === "plain") location.replace("/work/");
+            else if (!v) document.documentElement.classList.add("choosing");
+        })();
+    </script>
     <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon.png?v=1">
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,6 +53,23 @@
             text-shadow: 3px 3px 0 #140f1c, -1px -1px 0 #140f1c, 1px -1px 0 #140f1c, -1px 1px 0 #140f1c; }
         .w-sub { margin: 10px 0 0; font-family: var(--pixel); font-size: 11px; letter-spacing: 0.06em; color: #fff; text-shadow: 2px 2px 0 #140f1c; }
 
+        .w-plain { pointer-events: auto; display: inline-block; margin-top: 10px; font-family: var(--pixel); font-size: 10px; letter-spacing: 0.06em;
+            color: #140f1c; background: #fff; text-decoration: none; padding: 6px 8px 5px; box-shadow: 3px 3px 0 #140f1c; }
+        .w-plain:hover, .w-plain:focus-visible { background: #f3c23a; outline: none; }
+        /* first visit: two doors */
+        .door { display: none; }
+        .choosing .door { display: grid; place-items: center; position: fixed; inset: 0; z-index: 20; background: rgba(20, 15, 28, 0.5); padding: 16px; }
+        .choosing .w-top, .choosing .w-hint, .choosing .w-hud, .choosing .spots { visibility: hidden; }
+        .door-card { width: min(380px, 100%); background: var(--paper); color: var(--ink); border: 4px solid #140f1c; box-shadow: 8px 8px 0 #140f1c; padding: 22px 22px 20px; }
+        .door-card h2 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 30px; line-height: 1; }
+        .door-card p { margin: 10px 0 18px; font-size: 15px; line-height: 1.45; }
+        .door-card .q { margin: 0 0 10px; font-family: var(--pixel); font-size: 11px; letter-spacing: 0.06em; }
+        .door-card a, .door-card button { display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; margin-top: 8px;
+            font: inherit; font-family: var(--pixel); font-size: 12px; letter-spacing: 0.06em; text-decoration: none; cursor: pointer;
+            padding: 12px 14px 11px; border: 3px solid #140f1c; background: #fff; color: #140f1c; text-align: left; }
+        .door-card a { background: #140f1c; color: #fff; }
+        .door-card a:hover, .door-card a:focus-visible, .door-card button:hover, .door-card button:focus-visible { background: #f3c23a; color: #140f1c; outline: none; }
+        .door-card small { display: block; font-family: var(--sans, inherit); font-size: 12px; letter-spacing: 0; opacity: 0.7; margin-top: 3px; text-align: left; }
         .w-hud { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 3; display: flex; gap: 0;
             background: #140f1c; box-shadow: 0 0 0 3px #fff, 0 0 0 6px #140f1c; }
         .w-hud a { font-family: var(--pixel); font-size: 11px; letter-spacing: 0.06em; color: #fff; text-decoration: none; padding: 9px 14px 8px; white-space: nowrap; }
@@ -157,8 +184,18 @@
 
     <header class="w-top">
         <h1 class="w-name">Amogh Bajpai</h1>
-        <p class="w-sub">A little world where I put machines on stage. Walk around.</p>
+        <p class="w-sub">I build systems that watch people, and study where they get it wrong.</p>
+        <a class="w-plain" href="/work/" data-view="plain">Just the work &rarr;</a>
     </header>
+    <div class="door" role="dialog" aria-modal="true" aria-labelledby="door-h">
+        <div class="door-card">
+            <h2 id="door-h">Amogh Bajpai</h2>
+            <p>I ship face verification for national exams in India, and research where machine perception breaks.</p>
+            <p class="q">HOW WOULD YOU LIKE IT?</p>
+            <a href="/work/" data-view="plain"><span>Just the work<small>One plain page. A two-minute read.</small></span>&rarr;</a>
+            <button type="button" data-view="world"><span>Walk around<small>The same work, as a little pixel world.</small></span>&#9654;</button>
+        </div>
+    </div>
     <p class="w-hint">Drag to walk around<span class="keys">, or use &larr; &rarr;</span></p>
 
     <nav class="spots" aria-label="Places on the map">
@@ -195,6 +232,13 @@
         import { createPanel } from "/assets/world/panel.js?v=px20";
         const world = createWorld({ canvas: document.getElementById("world"), spots: document.querySelectorAll(".spot") });
         createPanel({ world });
+        // remember the choice; the world idles behind the doors until one is picked
+        const remember = (v) => { try { localStorage.setItem("view", v); } catch (e) {} };
+        document.querySelectorAll("[data-view]").forEach((el) => el.addEventListener("click", () => {
+            remember(el.dataset.view);
+            if (el.dataset.view === "world") document.documentElement.classList.remove("choosing");
+        }));
+        if (document.documentElement.classList.contains("choosing")) document.querySelector('.door [data-view="plain"]').focus({ preventScroll: true });
         // the travel bar walks you to a place; clicking it goes in
         document.querySelectorAll(".w-hud a").forEach((a) => {
             const go = () => world.lookAt(a.dataset.go);
