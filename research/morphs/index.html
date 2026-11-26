@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Pixelify+Sans:wght@400..700&family=Silkscreen&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/site.css?v=px9">
+    <link rel="stylesheet" href="/assets/site.css?v=px10">
     <link rel="stylesheet" href="/assets/face/face.css?v=px8">
     <style>
         .scroll-x { overflow-x: auto; }
@@ -50,7 +50,7 @@
                 <div>
                 <p class="label">Research · in progress</p>
                 <h1 class="display"><em>Morphs</em></h1>
-                <p class="dek">One passport photo made from two people's faces, so that it matches both of them. Can you catch that from the photo alone?</p>
+                <p class="dek">One passport photo, quietly made from two people's faces, so it passes for both. Can you catch it from that photo alone?</p>
                 </div>
                 <div class="face-art head-face" id="page-face" role="img" aria-label="A drawn caricature of Amogh Bajpai"></div>
             </div>
@@ -68,20 +68,20 @@
                 <div class="block">
                     <p class="pull">A morph is a face built to pass as two people.</p>
                     <p>
-                        Two people blend their faces into one photo and put it on a passport or an ID. Face matching then
-                        accepts the photo for either of them, so two people can share one document. Border agencies
-                        call this a morphing attack. The hard version is catching it from the one photo on the
-                        document, with no second picture to compare against.
+                        Two people blend their faces into one picture and put it on a passport or an ID. Face matching
+                        now says yes to either of them, so two people can travel on one document. Border agencies call
+                        it a morphing attack. The hard version is catching it from the photo on the document alone, with
+                        nothing beside it to compare.
                     </p>
                 </div>
             </section>
 
             <section>
-                <h2>Why this one is about honesty</h2>
+                <h2>The rule I set myself</h2>
                 <div class="block">
                     <p>
-                        This is a field where papers report 99% and the number falls apart the moment it meets real
-                        photos. So I built the project around rules that make flattering results hard to get. No person
+                        This is a field where papers report 99%, and the number falls apart the moment it meets real
+                        photos. So I set the project up to make flattering results hard to get. No person
                         appears on both the training and the test side, not even as half of a morph. The detector is
                         tested on morphing tools it never saw in training. I wrote the scoring code and its tests before
                         any model existed. And a modern neural network has to beat a 1990s texture method, or I say it didn't.
@@ -90,7 +90,7 @@
             </section>
 
             <section>
-                <h2>Three bugs caught by distrusting good news</h2>
+                <h2>Three times the good news was wrong</h2>
                 <div class="block">
                     <ol class="bugs">
                         <li><strong>The 98% that wasn't.</strong> My first error rate was 1.6%. That was too good, so I went looking. 3,532 images from the "unseen" morphing tools had quietly slipped into training. Nobody overlapped, so my checks stayed quiet. What gave it away: every tool scored equally well, and generalisation never looks like that.</li>
@@ -118,10 +118,10 @@
                 </figure>
                 <div class="block">
                     <p>
-                        On clean photos the neural network only ties the 1990s method. Under compression too light to
-                        see, it gets measurably worse. Below that, both fall apart. An earlier single run seemed to show
-                        the network pulling ahead on badly damaged photos. That went away once I ran three seeds, so I
-                        withdrew it.
+                        On clean photos, the neural network only ties the 1990s method. Add compression too light to see
+                        and it gets measurably worse. Below that, both of them fall apart. An earlier single run seemed to
+                        show the network pulling ahead on badly damaged photos. It vanished once I ran three seeds, so I
+                        took it back.
                     </p>
                     <p>
                         My guess at why: the source photos are 1350 pixels wide and both detectors see 224. That throws

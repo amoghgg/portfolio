@@ -18,7 +18,7 @@ import * as SP from "/assets/world/sprites.js?v=px12";
 
 const SH = 300;            // scene height in world pixels
 const GY = 236;            // the ground line: buildings stand here
-const WW = 1120;           // world width
+const WW = 1200;           // world width
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // ── colour, dithering, noise ─────────────────────────────────────
@@ -800,8 +800,8 @@ function makeSite() {
 
 // ── the little things: lamps, benches, signposts, a ticket booth, a pond… ──
 const D = {
-    lamps: [60, 262, 940, 1112], benches: [226], signs: [[484, "<LAB", "ME>"]],
-    birdhouse: 86, booth: 514, cart: 622, cones: [996, 1006, 1016], potty: 1092,
+    lamps: [60, 262, 958, 1190], cinema: { x: 992, w: 48, h: 27 }, arcade: { x: 911, sw: 18, sh: 24 }, photobooth: { x: 940, pw: 14, ph: 20 }, benches: [226], signs: [[484, "<LAB", "ME>"]],
+    birdhouse: 86, booth: 514, cart: 622, cones: [996, 1006, 1016], potty: 1164,
     pond: { x: 330, y: GY + 31, rx: 32, ry: 6 }, picnic: { x: 700, y: GY + 31 }, laundry: [204, 244], cctv: 378,
     kite: { x: 470, y: GY + 40 }, veg: [116, 184],
 };
@@ -882,6 +882,52 @@ function decorate(g, front) {
         for (const [x, y] of posts) { g.rect(x, y - 6, x, y, YEL[2]); g.set(x, y - 7, YEL[4]); g.rect(x - 1, y, x + 1, y, YEL[1]); }
         const [[x0, y0], [x1, y1]] = posts;
         for (let i = 0; i <= 10; i++) { const t = i / 10; g.set(Math.round(x0 + (x1 - x0) * t), Math.round(y0 - 5 + (y1 - y0) * t + Math.sin(Math.PI * t) * 2), RED[1]); }
+    }
+    { // an outdoor screen for Talking: a white frame on legs, a marquee on top
+        const c = D.cinema, x0 = c.x - c.w / 2 - 3, sy = GY - 48;
+        prop(c.w + 14, 62, x0 - 4, sy - 14, (q) => {
+            const ox = 4, oy = 14;   // where the screen frame starts inside q
+            for (const lx of [ox + 6, ox + c.w - 1]) { q.fill(lx, oy + c.h + 5, lx + 1, 61, (x, y) => tone(METAL, x === lx ? 3.4 : 2, x, y)); }
+            q.line(ox + 7, oy + c.h + 10, ox + c.w - 1, 58, METAL[1]); q.line(ox + c.w, oy + c.h + 10, ox + 8, 58, METAL[1]);
+            q.fill(ox, oy, ox + c.w + 5, oy + c.h + 5, (x, y) => tone(CR, (x === ox || y === oy ? 3.6 : 2.6) - (x > ox + c.w + 3 ? 1 : 0), x, y));
+            q.fill(ox + 3, oy + 3, ox + c.w + 2, oy + c.h + 2, () => C("#0b0a08"));
+            q.fill(ox + 6, oy - 11, ox + c.w - 1, oy - 2, (x, y) => (x === ox + 6 || x === ox + c.w - 1 || y === oy - 11 || y === oy - 2) ? RED[2] : C("#1b1424"));
+            text(q, "TALKING", ox + Math.round((c.w + 5) / 2 - textW("TALKING") / 2), oy - 9, YEL[4]);
+            q.fill(ox + c.w + 6, oy + c.h - 4, ox + c.w + 9, oy + c.h + 4, (x, y) => tone(METAL, 1.6, x, y)); q.set(ox + c.w + 7, oy + c.h, METAL[4]);   // a speaker
+        });
+        D.cinemaScreen = { x: x0 + 3, y: sy + 3 };
+        D.cinemaBulbs = []; for (let x = x0 + 6; x <= x0 + c.w - 1; x += 2) D.cinemaBulbs.push([x, sy - 11], [x, sy - 2]);
+    }
+    { // Pixel Manifold lives in an arcade cabinet
+        const c = D.arcade, W2 = 26, H2 = 48, x0 = c.x - W2 / 2, y0 = GY - H2 + 1;
+        const PUR = R("#1e1030", "#33204e", "#4e3478", "#7050a8", "#9a7ad0");
+        prop(W2 + 2, H2 + 2, x0 - 1, y0 - 1, (q) => {
+            const L = 1, Rr = W2;
+            q.fill(L, 1, Rr, H2, (x, y) => tone(PUR, (x <= L + 1 ? 3.4 : x >= Rr - 1 ? 1.4 : 2.4) - (y > H2 - 4 ? 0.6 : 0), x, y));
+            q.fill(L + 2, 2, Rr - 2, 7, (x, y) => (y === 2 || y === 7) ? PUR[4] : C("#0f0a18"));           // marquee
+            text(q, "PIXEL", L + 4, 3, C("#7fe0ff"));
+            q.fill(L + 3, 9, Rr - 3, 9 + c.sh + 1, () => C("#05060c"));                                    // the screen's bezel
+            q.fill(L + 1, 11 + c.sh, Rr - 1, 14 + c.sh, (x, y) => tone(PUR, y === 11 + c.sh ? 4 : 3, x, y)); // control panel
+            q.rect(L + 6, 8 + c.sh + 2, L + 6, 10 + c.sh + 2, METAL[1]); q.set(L + 6, 7 + c.sh + 2, RED[3]);   // joystick
+            q.set(L + 12, 12 + c.sh, YEL[3]); q.set(L + 15, 12 + c.sh, C("#7fe0ff")); q.set(L + 18, 12 + c.sh, RED[3]);
+            q.rect(L + 9, H2 - 8, L + 12, H2 - 6, C("#0f0a18")); q.set(L + 10, H2 - 7, YEL[4]); q.set(L + 11, H2 - 7, YEL[4]);   // coin slot
+        });
+        D.arcadeScreen = { x: x0 + 3, y: y0 + 9 };
+    }
+    { // Lores lives in a photo booth: a curtain, a sign, and a print on the side
+        const c = D.photobooth, W2 = 30, H2 = 46, x0 = c.x - W2 / 2, y0 = GY - H2 + 1;
+        prop(W2 + 2, H2 + 4, x0 - 1, y0 - 3, (q) => {
+            const L = 1, Rr = W2, T = 3;
+            q.fill(L, T, Rr, T + H2 - 1, (x, y) => tone(R("#5a6a3a", "#7a9a3e", "#a3d14a", "#c8f06a", "#e6ffa0"), (x <= L + 1 ? 3.4 : x >= Rr - 1 ? 1.4 : 2.5), x, y));
+            q.fill(L + 1, T - 2, Rr - 1, T + 6, (x, y) => (y <= T - 1 ? C("#1a1220") : C("#0c0c0c")));
+            text(q, "LORES", L + 6, T, C("#a3e635"));
+            q.fill(L + 3, T + 9, L + 11, T + H2 - 4, (x, y) => tone(R("#3a1420", "#6a2232", "#9a3044", "#c84a5a"), (x - L) % 2 ? 2 : 3, x, y));   // the curtain
+            q.rect(L + 3, T + 8, L + 11, T + 8, METAL[3]);
+            q.fill(L + 13, T + 9, L + 13 + c.pw + 1, T + 9 + c.ph + 1, () => C("#f6efe2"));                // the print's white border
+            q.fill(L + 1, T + H2 - 2, Rr - 1, T + H2 - 1, (x, y) => tone(METAL, 2, x, y));
+            q.rect(L + 5, T + H2 - 3, L + 9, T + H2 - 3, C("#2a1a14"));                                      // feet under the curtain
+        });
+        D.photoPrint = { x: x0 + 15, y: y0 + 10 };
     }
     { // a portable toilet, of course (with a vent, a little sign, a skid)
         const x0 = D.potty;
@@ -1094,7 +1140,7 @@ export function createWorld({ canvas, spots, onReady }) {
     // places on the map
     const P = {
         house: { x: 150 }, lab: { x: 350 }, rocket: { x: 446 }, head: { x: 570 },
-        wheel: { x: 726 }, office: { x: 840 }, site: { x: 1010 },
+        wheel: { x: 726 }, office: { x: 840 }, site: { x: 1076 },
     };
 
     // build the static layers
@@ -1159,7 +1205,7 @@ export function createWorld({ canvas, spots, onReady }) {
         ground.set(x, y - 1, col); ground.set(x - 1, y, col); ground.set(x + 1, y, col); ground.set(x, y + 1, col); ground.set(x, y, C("#f3a020"));
     }
     // trees behind the buildings
-    for (const [x, size, seed] of [[30, 58, 1], [70, 46, 2], [244, 52, 3], [268, 38, 4], [930, 60, 5], [1090, 54, 6], [506, 30, 7]]) {
+    for (const [x, size, seed] of [[30, 58, 1], [70, 46, 2], [244, 52, 3], [268, 38, 4], [1150, 54, 6], [506, 30, 7]]) {
         if (!size) continue;
         const tp = new Px(80, 80);
         drawTree(tp, 40, 79, size, seed);
@@ -1218,6 +1264,9 @@ export function createWorld({ canvas, spots, onReady }) {
         lab: { o: lab, href: "/research/" },
         head: { o: head, href: "/about/" },
         office: { o: office, href: "/works/" },
+        cinema: { o: { x0: D.cinema.x - 26, y0: GY - 64, px: { w: 52, h: 64 } } },
+        easel: { o: { x0: D.photobooth.x - 13, y0: GY - 44, px: { w: 26, h: 45 } } },
+        manifold: { o: { x0: D.arcade.x - 12, y0: GY - 40, px: { w: 24, h: 41 } } },
         wheel: { o: { x0: P.wheel.x - WR - 8, y0: WCY - WR - 12, px: { w: (WR + 8) * 2, h: GY - (WCY - WR - 12) } } },
     };
     for (const k in SPOT) if (SPOT[k].o.px.halo) halos[k] = SPOT[k].o.px.halo(WHITE).canvas();
@@ -1246,14 +1295,14 @@ export function createWorld({ canvas, spots, onReady }) {
     spawn({ role: "stroll", x: P.lab.x - 30, min: P.lab.x - 60, max: P.lab.x + 60, speed: 9, spec: { ...randomSpec(), coat: true } });
     spawn({ role: "stroll", x: P.lab.x + 40, min: P.lab.x - 40, max: P.rocket.x + 10, speed: 8, spec: { ...randomSpec(), coat: true } });
     spawn({ role: "work", x: P.head.x + 92, y: GY + 8, dir: -1, spec: { ...randomSpec(), shirt: "#e2553c", hat: "#f6efe2" }, rate: 0, vendor: true });
-    for (let i = 0; i < 4; i++) spawn({ role: "stroll", x: 120 + r() * 880, min: 60, max: 1060, speed: 11 + r() * 6, spec: { ...randomSpec(), brief: r() < 0.5 } });
+    for (let i = 0; i < 4; i++) spawn({ role: "stroll", x: 120 + r() * 880, min: 60, max: 1130, speed: 11 + r() * 6, spec: { ...randomSpec(), brief: r() < 0.5 } });
     spawn({ role: "stroll", x: P.house.x - 30, min: P.house.x - 80, max: P.house.x + 80, speed: 26, dog: true, hop: true });
     const vendor = people.find((p) => p.vendor);
 
     // more people: a queue for tickets, a kid with a kite, someone who keeps visiting the toilet
     for (const [i, x] of [535, 545, 555].entries()) spawn({ role: "work", x, y: GY + 5 + (i % 2), dir: -1, spec: randomSpec(), rate: 0 });
     const kiteKid = spawn({ role: "work", x: D.kite.x, y: D.kite.y, dir: 1, spec: randomSpec(true), rate: 0 });
-    const pottyGuy = spawn({ role: "potty", x: 1040, y: GY + 6, speed: 12, spec: { ...randomSpec(), hat: "#f3c23a" }, state: "walk", tx: 1030, wait: 0 });
+    const pottyGuy = spawn({ role: "potty", x: 1100, y: GY + 6, speed: 12, spec: { ...randomSpec(), hat: "#f3c23a" }, state: "walk", tx: 1090, wait: 0 });
     let pottyDoor = 0;
 
     // critters
@@ -1409,8 +1458,67 @@ export function createWorld({ canvas, spots, onReady }) {
         if (reduced) draw();
     }
 
+    const screensEl = document.createElement("div");
+    screensEl.className = "screens";
+    document.body.appendChild(screensEl);
+    const SCREENS = [
+        { src: "/assets/media/talking-thumb.mp4", at: () => [D.cinemaScreen.x, D.cinemaScreen.y, D.cinema.w, D.cinema.h] },
+        { src: "/assets/media/pixel-manifold-face.mp4", at: () => [D.arcadeScreen.x, D.arcadeScreen.y, D.arcade.sw, D.arcade.sh], cls: "crt" },
+        { src: "/assets/media/lores-print.mp4", at: () => [D.photoPrint.x, D.photoPrint.y, D.photobooth.pw, D.photobooth.ph] },
+    ].map((sc) => {
+        const v = document.createElement("video");
+        v.src = sc.src; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "auto";
+        v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("aria-hidden", "true");
+        if (sc.cls) v.className = sc.cls;
+        if (reduced) v.addEventListener("loadeddata", () => { v.currentTime = 3; }, { once: true }); else { v.autoplay = true; v.play().catch(() => {}); }
+        screensEl.appendChild(v);
+        return { ...sc, v };
+    });
+    function placeScreens(ci) {
+        for (const sc of SCREENS) {
+            const [x, y, w, h] = sc.at();
+            sc.v.style.transform = `translate(${(x - ci) * s}px, ${(y + oy) * s}px)`;
+            sc.v.style.width = w * s + "px"; sc.v.style.height = h * s + "px";
+        }
+    }
+
+    // pointing at a work pops up a big, sharp preview of it
+    // [clip, name, width : height, preferred width]
+    const PEEK = { cinema: ["/assets/media/talking.mp4", "Talking", 16 / 9, 420], manifold: ["/assets/media/pixel-manifold.mp4", "Pixel Manifold", 640 / 754, 300], easel: ["/assets/media/lores.mp4", "Lores", 1280 / 636, 460] };
+    const peek = document.createElement("div");
+    peek.className = "peek";
+    peek.innerHTML = '<video muted loop playsinline></video><span></span>';
+    document.body.appendChild(peek);
+    const peekV = peek.querySelector("video");
+    let peekKey = null;
+    function showPeek(k, a) {
+        if (!PEEK[k] || drag) return;
+        peekKey = k;
+        if (!peekV.src.endsWith(PEEK[k][0])) peekV.src = PEEK[k][0];
+        peekV.muted = true; peekV.play().catch(() => {});
+        peek.querySelector("span").textContent = PEEK[k][1] + " · click to open";
+        peek.classList.add("on");
+        const r = a.getBoundingClientRect();
+        let pw = Math.min(PEEK[k][3], innerWidth - 24), vh = pw / PEEK[k][2];
+        const room = r.top - 14 - 12 - 28;                     // space above the object, minus the caption
+        if (vh > room) { vh = Math.max(120, room); pw = vh * PEEK[k][2]; }
+        peekV.style.height = vh + "px";
+        peek.style.width = pw + 12 + "px";
+        peek.style.left = clamp(r.left + r.width / 2 - (pw + 12) / 2, 12, innerWidth - pw - 24) + "px";
+        peek.style.top = Math.max(12, r.top - vh - 28 - 14 - 12) + "px";
+    }
+    function hidePeek(k) { if (k && k !== peekKey) return; peekKey = null; peek.classList.remove("on"); peekV.pause(); }
+    for (const a of spots) {
+        const k = a.dataset.place;
+        if (!PEEK[k]) continue;
+        a.addEventListener("pointerenter", () => showPeek(k, a));
+        a.addEventListener("pointerleave", () => hidePeek(k));
+        a.addEventListener("click", () => hidePeek());
+    }
+
     function placeSpots() {
         const ci = Math.round(cam);
+        placeScreens(ci);
         for (const a of spots) {
             const o = SPOT[a.dataset.place].o;
             const x = (o.x0 - ci) * s, y = (o.y0 + oy) * s;
@@ -1543,6 +1651,66 @@ export function createWorld({ canvas, spots, onReady }) {
             for (let i = 1; i <= 9; i++) { const tx = kx + Math.round(Math.sin(time * 4 - i * 0.7) * 2), ty = ky + 6 + i * 2; dot(tx, ty, "#3a2a20"); if (i % 3 === 0) { dot(tx - 1, ty, "#e2553c"); dot(tx + 1, ty, "#e2553c"); } }
         }
     }
+
+    // ── the works, playing in the world: real footage, shrunk to world pixels ──
+    function clip(src) {
+        const v = document.createElement("video");
+        v.muted = true; v.loop = true; v.playsInline = true; v.preload = "auto"; v.setAttribute("muted", ""); v.setAttribute("playsinline", "");
+        v.src = src;
+        if (reduced) v.addEventListener("loadeddata", () => { v.currentTime = src.includes("manifold") ? 7.2 : 2; v.addEventListener("seeked", () => draw(), { once: true }); }, { once: true });
+        else v.play().catch(() => {});
+        return v;
+    }
+    const AMBER = R("#140a04", "#3e2208", "#7a4a10", "#c07a1a", "#eeb442", "#ffe49a");
+    const screen = { v: document.createElement("video"), cv: document.createElement("canvas"), out: document.createElement("canvas") };
+    screen.cv.width = screen.out.width = D.cinema.w; screen.cv.height = screen.out.height = D.cinema.h;
+    const easel = { v: document.createElement("video"), cv: document.createElement("canvas"), out: document.createElement("canvas") };
+    easel.cv.width = easel.out.width = D.photobooth.pw; easel.cv.height = easel.out.height = D.photobooth.ph;
+    const holo = { v: document.createElement("video"), cv: document.createElement("canvas"), out: document.createElement("canvas"), w: D.arcade.sw, h: D.arcade.sh };
+    holo.cv.width = holo.out.width = holo.w; holo.cv.height = holo.out.height = holo.h;
+    function pixelate(src, w, h, cv, out, map) {
+        if (src.readyState < 2) return false;
+        const c = cv.getContext("2d", { willReadFrequently: true }); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = "high";
+        c.drawImage(src, 0, 0, w, h);
+        const im = c.getImageData(0, 0, w, h), d = new Uint32Array(im.data.buffer);
+        for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const i = y * w + x, p = d[i]; d[i] = map(p & 255, (p >> 8) & 255, (p >> 16) & 255, x, y); }
+        out.getContext("2d").putImageData(im, 0, 0);
+        return true;
+    }
+    const amberMap = (r, g, b, x, y) => { const l = (r * 0.3 + g * 0.59 + b * 0.11) / 255; return tone(AMBER, l * 5.6 - (y % 2 ? 0.35 : 0), x, y); };
+    const holoMap = (r, g, b) => {
+        const l = Math.max(r, g, b);
+        if (l < 70) return 0;                                    // black becomes air
+        const k = Math.min(1.6, 255 / l);                         // push the points to full brightness
+        return ((255 << 24) | (Math.min(255, b * k) << 16) | (Math.min(255, g * k) << 8) | Math.min(255, r * k)) >>> 0;
+    };
+    // the sculpture keeps the brightest pixel in each 4 × 4 block, so sparse points of light survive the shrink
+    const bigCv = document.createElement("canvas"); bigCv.width = holo.w * 4; bigCv.height = holo.h * 4;
+    function poolPoints() {
+        const v = holo.v; if (v.readyState < 2) return false;
+        const bc = bigCv.getContext("2d", { willReadFrequently: true });
+        bc.drawImage(v, 0, 0, bigCv.width, bigCv.height);
+        const src = new Uint32Array(bc.getImageData(0, 0, bigCv.width, bigCv.height).data.buffer);
+        const oc = holo.out.getContext("2d"), im = oc.createImageData(holo.w, holo.h), d = new Uint32Array(im.data.buffer);
+        const BW = bigCv.width;
+        for (let y = 0; y < holo.h; y++) for (let x = 0; x < holo.w; x++) {
+            let best = 0, bl = 0;
+            for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) {
+                const p = src[(y * 4 + j) * BW + x * 4 + i], l = Math.max(p & 255, (p >> 8) & 255, (p >> 16) & 255);
+                if (l > bl) { bl = l; best = p; }
+            }
+            d[y * holo.w + x] = holoMap(best & 255, (best >> 8) & 255, (best >> 16) & 255);
+        }
+        oc.putImageData(im, 0, 0);
+        return true;
+    }
+    function drawWorks(X, Y, part) {
+        // the screen
+        D.cinemaBulbs.forEach(([bx, by], i) => dot(X(bx), Y(by), (i + Math.floor(time * 4)) % 4 ? "#fff4c2" : "#8a5a2a"));
+        if (part === "back") return;
+    }
+    function drawEasel() {}
+    function drawSculpture() {}
 
     // ── the Ferris wheel, and the game on it ──
     const WP = makeWheelParts();
@@ -1764,7 +1932,7 @@ export function createWorld({ canvas, spots, onReady }) {
                 if (p.wait > 0) { p.wait -= dt; p.frame = 0; }
                 else {
                     const dx = p.tx - p.x;
-                    if (Math.abs(dx) < 1) { p.wait = 1 + r() * 2; if (r() < 0.45) { p.state = "go"; p.tx = D.potty + 6; } else p.tx = 985 + r() * 90; }
+                    if (Math.abs(dx) < 1) { p.wait = 1 + r() * 2; if (r() < 0.45) { p.state = "go"; p.tx = D.potty + 6; } else p.tx = 1050 + r() * 90; }
                     else { const st = Math.sign(dx) * Math.min(Math.abs(dx), p.speed * dt); p.x += st; p.dir = Math.sign(dx); p.dist += Math.abs(st); p.frame = 1 + (Math.floor(p.dist / 3) % 2); }
                 }
             } else if (p.state === "go") {
@@ -1773,7 +1941,7 @@ export function createWorld({ canvas, spots, onReady }) {
                 else { const st = Math.sign(dx) * Math.min(Math.abs(dx), p.speed * dt); p.x += st; p.dir = Math.sign(dx); p.dist += Math.abs(st); p.frame = 1 + (Math.floor(p.dist / 3) % 2); p.y += (GY + 3 - p.y) * dt; }
             } else if (p.state === "in") {
                 p.wait -= dt;
-                if (p.wait < 0) { p.state = "walk"; p.hidden = false; pottyDoor = 1.2; p.tx = 990 + r() * 70; p.wait = 0.8; say(p, "star", 1.4); }
+                if (p.wait < 0) { p.state = "walk"; p.hidden = false; pottyDoor = 1.2; p.tx = 1055 + r() * 70; p.wait = 0.8; say(p, "star", 1.4); }
             }
             pottyDoor = Math.max(0, pottyDoor - dt);
         }
@@ -1863,6 +2031,9 @@ export function createWorld({ canvas, spots, onReady }) {
         const X = (x) => Math.round(x) - ci, Y = (y) => Math.round(y) + oy;
 
         drawWheel(X, Y);
+        drawWorks(X, Y, "back");
+        drawSculpture(X, Y);
+        drawEasel(X, Y);
         // bunting from the head to two poles
         {
             const poles = [[rocket.x0 + rocket.light.x, rocket.y0 + 4, true], [P.head.x + 104, GY - 60]];
@@ -1972,6 +2143,7 @@ export function createWorld({ canvas, spots, onReady }) {
             }
             ctx.drawImage(img, x, y);
         }
+
         // other particles
         for (const q of parts) {
             if (q.k === "drop") dot(X(q.x), Y(q.y), "#8fd0ff");

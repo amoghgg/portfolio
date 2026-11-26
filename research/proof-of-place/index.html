@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Pixelify+Sans:wght@400..700&family=Silkscreen&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/site.css?v=px9">
+    <link rel="stylesheet" href="/assets/site.css?v=px10">
     <link rel="stylesheet" href="/assets/face/face.css?v=px8">
     <style>
         .scroll-x { overflow-x: auto; }
@@ -54,7 +54,7 @@
                 <div>
                 <p class="label">Research · in progress</p>
                 <h1 class="display"><em>Proof of Place</em></h1>
-                <p class="dek">A photo says where and when it was taken. Satellites were watching that spot too. So I check the photo against them.</p>
+                <p class="dek">A photo says where it was taken, and when. High above, a satellite saw the same ground that week. I make the two of them compare stories.</p>
                 </div>
                 <div class="face-art head-face" id="page-face" role="img" aria-label="A drawn caricature of Amogh Bajpai"></div>
             </div>
@@ -68,30 +68,30 @@
 
         <div class="article-body">
             <section>
-                <h2>The problem</h2>
+                <h2>The scene</h2>
                 <div class="block">
                     <p class="pull">Liveness checks ask "is this a real face?" Nobody asks "is this a real field?"</p>
                     <p>
-                        A lot of public money in India moves on the strength of a geotagged photo. A worksite photo for
-                        MGNREGA, a house for PMAY, a damaged crop for an insurance claim. Officials already complain
-                        about photos of photos and pictures reused from last season. The location stamp is easy to fake,
-                        and the date is easier.
+                        In India, a lot of public money moves because of a single geotagged photo. A worksite for
+                        MGNREGA. A house for PMAY. A ruined crop for an insurance claim. The officials who check them
+                        already know the tricks: a photo of a photo, a picture from last season passed off as this one.
+                        The location stamp is easy to fake. The date is easier.
                     </p>
                     <p>
-                        I spend my day job on liveness: checking that the face in front of a camera is a real person,
-                        here, now. Proof of Place asks the same question of a place.
+                        My day job is liveness: making sure the face in front of a camera belongs to a real person,
+                        standing there, right now. Proof of Place asks the same question of a place.
                     </p>
                 </div>
             </section>
 
             <section>
-                <h2>How it checks</h2>
+                <h2>The second witness</h2>
                 <div class="block">
                     <p>
-                        The European Sentinel satellites photograph every field in India every few days. Optical images
-                        show how green a crop is. Radar sees through monsoon cloud and shows water and change. So for any
-                        photo that claims a place and a date, there is an independent record of what that place looked
-                        like that week.
+                        The European Sentinel satellites photograph every field in India every few days. Their cameras see
+                        how green a crop is. Their radar sees through monsoon cloud, and it sees water and change. So any
+                        photo that claims a place and a date has a second witness: an independent record of what that
+                        ground looked like that week.
                     </p>
                     <ul class="checks">
                         <li><b>Crop stage</b>Does the greenness on that date match what the photo shows?</li>
@@ -99,10 +99,10 @@
                         <li><b>Change</b>Did something actually happen between before and after?</li>
                     </ul>
                     <p style="margin-top: 1.2em;">
-                        Each claim gets a verdict, the check that failed, and a one-page evidence card a person can read
-                        in thirty seconds. When cloud, missing radar or a tiny plot leave too little evidence, it says
-                        <strong>"can't tell"</strong> instead of guessing. A tool like this is only useful if it is
-                        honest about that.
+                        Every claim gets a verdict, the check it failed, and a one-page evidence card a person can read in
+                        thirty seconds. And when the witness didn't see clearly, because of cloud, missing radar or a plot
+                        too small to make out, it says <strong>"can't tell"</strong>. It doesn't guess. A tool like this is
+                        only worth anything if it admits what it doesn't know.
                     </p>
                 </div>
             </section>
@@ -136,21 +136,21 @@
             </section>
 
             <section>
-                <h2>What's new about it</h2>
+                <h2>What nobody has tried</h2>
                 <div class="block">
                     <p>
-                        Earlier work checks whether a photo's hour and month fit its location, or compares it with a fixed
-                        map image. As far as I can find, nobody checks a ground photo against the satellite state of that
-                        exact field on the claimed date. Nobody treats it as an attack-detection problem either, with a
-                        list of attacks (wrong date, shifted GPS, the neighbour's field, a photo of a screen, an AI edit)
-                        and error rates reported for each one.
+                        Earlier work checks whether a photo's hour and month make sense for where it claims to be, or
+                        compares it with a fixed map image. As far as I can find, nobody checks a ground photo against
+                        what the satellite saw of that exact field on that exact date. And nobody treats it as an attack
+                        to defend against, with a list of tricks (the wrong date, a shifted GPS pin, the neighbour's field,
+                        a photo of a screen, an AI edit) and an error rate for each one.
                     </p>
                     <p>
-                        What it can't do, said plainly: satellite pixels are 10 metres wide, so very small plots are out
-                        of reach. It catches the wrong place, the wrong time or the wrong state of the land. It does not
-                        catch a fake photo of the right scene.
+                        What it can't do, plainly: a satellite pixel is 10 metres wide, so very small plots are out of
+                        reach. It catches the wrong place, the wrong time or the wrong state of the land. It won't catch a
+                        fake photo of the right scene.
                     </p>
-                    <p class="note">No results yet beyond single evidence cards. I will put them here when there are some.</p>
+                    <p class="note">No results yet beyond single evidence cards. When there are, they will be here.</p>
                 </div>
             </section>
         </div>

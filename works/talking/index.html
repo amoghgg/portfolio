@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talking — Amogh Bajpai</title>
+    <meta name="description" content="Talking: a live mirror. The room, your clothes and your hands stay yours, but your face slowly turns into mine. Runs live on a MacBook.">
+    <meta name="theme-color" content="#f3efe7">
+    <link rel="canonical" href="https://www.amoghbajpai.com/works/talking/">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://www.amoghbajpai.com/assets/media/talking-poster.jpg">
+    <meta property="og:title" content="Talking — a mirror that gives you my face">
+    <meta property="og:description" content="Everything stays yours except your face.">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon.png?v=1">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=1">
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Pixelify+Sans:wght@400..700&family=Silkscreen&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/site.css?v=px10">
+    <link rel="stylesheet" href="/assets/face/face.css?v=px8">
+    <style>
+        .reel { margin: 0; }
+        .reel video { display: block; width: 100%; height: auto; background: #0b0a08; border: var(--px) solid var(--ink); box-shadow: calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--ink); }
+        .reel figcaption { margin-top: 12px; }
+        .reel + .reel { margin-top: 28px; }
+        .pipeline { font-family: var(--mono); font-size: 13px; line-height: 1.6; background: var(--paper-2); border: var(--px) solid var(--ink); padding: 14px 16px; overflow-x: auto; white-space: pre; }
+        .steps { counter-reset: st; list-style: none; padding: 0 !important; }
+        .steps li { counter-increment: st; padding-left: 2.4em; position: relative; }
+        .steps li::before { content: "0" counter(st); position: absolute; left: 0; top: 0.2em; font-family: var(--pixel); font-size: 12px; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="masthead">
+        <div class="wrap">
+            <a class="name" href="/">Amogh Bajpai</a>
+            <nav aria-label="Sections">
+                <a href="/research/">Research</a>
+                <a href="/works/" aria-current="page">Works</a>
+                <a href="/about/" class="opt">About</a>
+                <a href="/contact/">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main" class="wrap">
+        <div class="article-head">
+            <a class="crumb meta" href="/works/">&larr; Works · 03</a>
+            <div class="head-grid">
+                <div>
+                <p class="label">Installation · runs on a Mac</p>
+                <h1 class="display"><em>Talking</em></h1>
+                <p class="dek">Stand in front of the mirror. The room stays yours. So do your clothes, your hands, the way you move. Only the face, slowly, turns into mine.</p>
+                </div>
+                <div class="face-art head-face" id="page-face" role="img" aria-label="A drawn caricature of Amogh Bajpai"></div>
+            </div>
+        </div>
+
+        <dl class="article-meta">
+            <div><dt>Status</dt><dd>Working, runs live on a MacBook</dd></div>
+            <div><dt>Built with</dt><dd>TouchDesigner, Stable Diffusion 1.5, a face LoRA</dd></div>
+            <div><dt>Based on</dt><dd>Aisling Phelan's <em>Surrogate Bodies</em></dd></div>
+            <div><dt>Code</dt><dd><a href="https://github.com/amoghgg/talking" target="_blank" rel="noopener">github.com/amoghgg/talking</a></dd></div>
+        </dl>
+
+        <div class="article-body">
+            <section>
+                <h2>See it</h2>
+                <div class="block">
+                    <figure class="reel">
+                        <video src="/assets/media/talking.mp4" poster="/assets/media/talking-poster.jpg" autoplay muted loop playsinline controls preload="metadata"></video>
+                        <figcaption class="meta">The mirror running, filmed off the screen. Sound is off; turn it on in the player.</figcaption>
+                    </figure>
+                    <figure class="reel">
+                        <video src="/assets/media/talking-raw.mp4" poster="/assets/media/talking-raw-poster.jpg" muted loop playsinline controls preload="none"></video>
+                        <figcaption class="meta">The raw output, straight from the model: every frame repainted, which is why the face drifts and glitches as I move.</figcaption>
+                    </figure>
+                </div>
+            </section>
+
+            <section>
+                <h2>What it is</h2>
+                <div class="block">
+                    <p class="pull">It isn't a filter pasted on top. Every frame is repainted by a model that has learned one face.</p>
+                    <p>
+                        You walk up to a screen and see yourself. Then something starts to drift. As you turn your head, the
+                        face morphs and glitches, because a model is repainting the whole picture many times a second, and
+                        the only face it has ever learned is mine.
+                    </p>
+                    <p>
+                        It's about what it feels like to have your face borrowed. And what it feels like to borrow someone
+                        else's body.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>How it works</h2>
+                <div class="block">
+                    <div class="pipeline">camera &rarr; TouchDesigner &rarr; Stable Diffusion, img2img &rarr; TouchDesigner &rarr; screen
+                 + a fast LoRA (1&ndash;2 steps) + my face LoRA</div>
+                    <ol class="steps" style="margin-top: 1.2em;">
+                        <li><b>Photos.</b> About fifty ordinary photos of me, in different places, light and clothes.</li>
+                        <li><b>Captions.</b> Each photo is labelled with only what changes between them. The things that make me look like me, the glasses and the curls, are left out on purpose, so the model ties them to my name.</li>
+                        <li><b>Training.</b> A small add-on that teaches the image model one face, trained in about fifteen minutes on a rented GPU.</li>
+                        <li><b>Live.</b> Each camera frame is repainted gently: enough for the face to become mine, not so much that the room and your pose are lost. A speed-up trick gets that down to one or two steps a frame, which is what makes it run live on a laptop.</li>
+                    </ol>
+                    <p>
+                        There's also a room version: instead of selfies, the model is trained on full frames of the room the
+                        piece stands in, from the same camera. It learns the space as well as the face, so the colours of
+                        the room stay true.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Credit</h2>
+                <div class="block">
+                    <p>
+                        This is a learning re-build of <a href="https://youtu.be/HaBnUxYS8Xo" target="_blank" rel="noopener"><em>Surrogate Bodies</em></a>
+                        by Aisling Phelan, an installation where visitors wear the artist's AI-generated face, which she
+                        presented at the TouchDesigner Event in Dublin in June 2025. The idea and the pipeline are hers. I
+                        rebuilt it from her talk, with my own face, and changed it to run on a Mac instead of a gaming PC.
+                    </p>
+                    <p class="note">
+                        The code is open. It doesn't include my photos or my face model, and it asks one thing: only train it
+                        on your own face, or on someone who has said yes.
+                    </p>
+                </div>
+            </section>
+        </div>
+
+        <nav class="next" aria-label="More works">
+            <a href="/works/">&larr; Works</a>
+            <a href="/works/pixel-manifold/">Pixel Manifold &rarr;</a>
+        </nav>
+
+        <footer class="footer meta">
+            <span>&copy; 2026 Amogh Bajpai</span>
+            <nav aria-label="Elsewhere">
+                <a href="mailto:amoghbajpai8@gmail.com">Email</a>
+                <a href="https://github.com/amoghgg" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </footer>
+    </main>
+    <script src="/assets/site.js?v=px8" defer></script>
+    <script type="module">
+        import { initPageFace } from "/assets/face/page-face.js?v=px8";
+        initPageFace({ expression: "unsettled" });
+    </script>
+</body>
+</html>
