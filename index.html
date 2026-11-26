@@ -192,8 +192,8 @@
             <h2 id="door-h">Amogh Bajpai</h2>
             <p>I ship face verification for national exams in India, and research where machine perception breaks.</p>
             <p class="q">HOW WOULD YOU LIKE IT?</p>
-            <a href="/work/" data-view="plain"><span>Just the work<small>One plain page. A two-minute read.</small></span>&rarr;</a>
             <button type="button" data-view="world"><span>Walk around<small>The same work, as a little pixel world.</small></span>&#9654;</button>
+            <a href="/work/" data-view="plain"><span>Just the work<small>One plain page. A two-minute read.</small></span>&rarr;</a>
         </div>
     </div>
     <p class="w-hint">Drag to walk around<span class="keys">, or use &larr; &rarr;</span></p>
@@ -238,7 +238,7 @@
             remember(el.dataset.view);
             if (el.dataset.view === "world") document.documentElement.classList.remove("choosing");
         }));
-        if (document.documentElement.classList.contains("choosing")) document.querySelector('.door [data-view="plain"]').focus({ preventScroll: true });
+        if (document.documentElement.classList.contains("choosing")) document.querySelector('.door [data-view="world"]').focus({ preventScroll: true });
         // the travel bar walks you to a place; clicking it goes in
         document.querySelectorAll(".w-hud a").forEach((a) => {
             const go = () => world.lookAt(a.dataset.go);
